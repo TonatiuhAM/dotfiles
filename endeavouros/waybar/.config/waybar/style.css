@@ -1,0 +1,82 @@
+@import "colors.css";
+
+* {
+    all: unset;
+    font-family: "JetBrainsMono Nerd Font Propo", "JetBrainsMono Nerd Font", sans-serif;
+    font-size: 13px; /* Reducido para que la barra sea más pequeña */
+    font-weight: 700;
+}
+
+/* Transparente para que el módulo parezca flotar */
+window#waybar {
+    background: transparent;
+}
+
+/* El contendor principal tipo píldora */
+.modules-center {
+    background-color: alpha(@base, 0.9);
+    border-radius: 99px;
+    padding: 2px 10px; /* Reducido el padding vertical y horizontal */
+    margin-top: 4px; /* Margen superior reducido */
+}
+
+/* Espaciado general y color base del texto */
+#clock,
+#workspaces,
+#pulseaudio,
+#network {
+    color: @text;
+    margin: 0 4px; /* Margen horizontal reducido */
+}
+
+/* Reloj */
+#clock {
+    color: @text;
+    margin-left: 6px; /* Ajuste para compensar padding */
+    margin-right: 4px;
+}
+
+/* Contenedor de Workspaces (la píldora interna) */
+#workspaces {
+    background-color: @surface0;
+    border-radius: 99px;
+    padding: 2px 4px; /* Menor padding */
+    margin: 0 4px; /* Menor margen horizontal */
+}
+
+/* Estilo para cada botón de workspace inactivo */
+#workspaces button {
+    color: @overlay0;
+    background-color: transparent;
+    border-radius: 99px;
+    min-width: 20px; /* Reducir el tamaño base del círculo */
+    min-height: 20px; /* Reducir el tamaño base del círculo */
+    padding: 0 4px; /* Un poco de padding horizontal en vez de forzar cuadrado grande */
+    margin: 0 1px; /* Margen diminuto entre números */
+    transition: all 0.2s ease;
+}
+
+/* Efecto hover */
+#workspaces button:hover {
+    background-color: @surface1;
+    color: @text;
+    box-shadow: none;
+    text-shadow: none;
+}
+
+/* Workspace Activo (Verde como en la imagen) */
+#workspaces button.active {
+    background-color: @green; /* Usando el verde de catppuccin */
+    color: @base; /* Texto oscuro para generar buen contraste sobre el verde */
+}
+
+/* Workspace con actividad/urgente */
+#workspaces button.urgent {
+    background-color: @red;
+    color: @base;
+}
+
+/* Ajustes finos de márgenes para los módulos de la derecha */
+#pulseaudio {
+    margin-left: 6px;
+}
