@@ -1,0 +1,63 @@
+{
+ :profiles {
+  :Mac2026 {:default true}
+  :Minecraft {}
+ }
+
+ :main [
+  ;; ===== REGLAS EXCLUSIVAS DE Mac2026 (PERFIL POR DEFECTO) =====
+  {
+   :des "Mac2026: Caps Lock como Activador de Hyper Mode"
+   :rules [
+    ;; Al presionar activa la variable, al soltar la apaga
+    [:caps_lock ["hyper_mode" 1] nil {:afterup ["hyper_mode" 0]}]
+   ]
+  }
+
+  {
+   :des "Mac2026: Modulo de Navegacion HJKL (Hyper Mode)"
+   :rules [
+    [:h :left_arrow  :hyper_mode]
+    [:j :down_arrow  :hyper_mode]
+    [:k :up_arrow    :hyper_mode]
+    [:l :right_arrow :hyper_mode]
+   ]
+  }
+
+  {
+   :des "Mac2026: Cambiar a Minecraft (Hyper + 2)"
+   :rules [
+    [:2 "'/Library/Application Support/org.pqrs/Karabiner-Elements/bin/karabiner_cli' --select-profile 'Minecraft'" :hyper_mode]
+   ]
+  }
+
+  {
+   :des "Mac2026: Recuperar teclas Mayor y Menor (Teclado MX)"
+   :rules [
+    ;; Estructura: [<from> <to> <conditions> <other_options>]
+    ;; El pegado (!Cv = Cmd+V) se mueve a :afterup para que ocurra después del copy
+    [:grave_accent_and_tilde   "printf '<' | pbcopy" nil {:afterup [:!Cv]}]
+    [:!Sgrave_accent_and_tilde "printf '>' | pbcopy" nil {:afterup [:!Cv]}]
+    [:!Rgrave_accent_and_tilde "printf '>' | pbcopy" nil {:afterup [:!Cv]}]
+   ]
+  }
+
+  {
+   :des "Mac2026: Simple Modifications"
+   :rules [
+    ;; Tecla fn de MacBook a Control
+    [:fn :left_control]
+   ]
+  }
+
+  ;; ===== REGLAS EXCLUSIVAS DE MINECRAFT =====
+  {
+   :des "Minecraft: Hyper Mode y Regreso"
+   :rules [:Minecraft  ; ← SINTAXIS CLAVE: perfil antes de las reglas
+           ;; Activar Hyper Mode solo en Minecraft
+           [:caps_lock ["hyper_mode" 1] nil {:afterup ["hyper_mode" 0]}]
+           ;; Regresar a Mac2026 con Hyper + 1
+           [:1 "'/Library/Application Support/org.pqrs/Karabiner-Elements/bin/karabiner_cli' --select-profile 'Mac2026'" :hyper_mode]]
+  }
+ ]
+}
