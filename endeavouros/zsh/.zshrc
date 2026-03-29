@@ -1,3 +1,4 @@
+fastfetch
 # 1. Primero el Instant Prompt de P10K (Siempre arriba)
 if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]; then
   source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"

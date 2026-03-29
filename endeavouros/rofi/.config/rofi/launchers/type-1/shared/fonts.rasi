@@ -8,5 +8,5 @@
  **/
 
 * {
-    font: "JetBrains Mono Nerd Font Propo";
+    font: "JetBrains Mono Nerd Font 10";
 }
