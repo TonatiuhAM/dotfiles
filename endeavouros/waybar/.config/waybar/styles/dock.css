@@ -14,13 +14,14 @@
 }
 
 .modules-right {
-  margin-right: 0px;
+  margin-right: 8px;
 }
 
 window#waybar {
   background-color: @background;
   transition-property: background-color;
   transition-duration: .5s;
+  border-radius: 32px;
 }
 
 window#waybar.empty #window {
@@ -108,14 +109,12 @@ window#waybar.empty #window {
 
 #pulseaudio {
   margin-right: 5px;
-  color: #cdd6f4;
-  font-size: 16px;
+  color: @foreground;
 }
 
 #bluetooth {
   margin-right: 12px;
-  color: #cdd6f4;
-  font-size: 16px;
+  color: @foreground;
 }
 
 #custom-idle-indicator,
