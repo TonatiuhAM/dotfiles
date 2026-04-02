@@ -24,29 +24,52 @@ configuration {
 @import                          "shared/fonts.rasi"
 
 * {
+    /* Mapeo de Matugen a Rofi */
+    background:         #121318; /* surface */
+    background-alt:     #1f1f25; /* surface-container */
+    foreground:         #e3e1e9; /* on-surface */
+    selected:           #b8c3ff; /* primary */
+    active:             #e4bad9; /* tertiary */
+    urgent:             #ffb4ab; /* error */
+
+    /* Propiedades funcionales del tema */
     border-colour:               var(selected);
     handle-colour:               var(selected);
     background-colour:           var(background);
     foreground-colour:           var(foreground);
     alternate-background:        var(background-alt);
+    
+    /* Normal */
     normal-background:           var(background);
     normal-foreground:           var(foreground);
+    
+    /* Urgent */
     urgent-background:           var(urgent);
-    urgent-foreground:           var(background);
+    urgent-foreground:           #690005; /* on-error */
+    
+    /* Active */
     active-background:           var(active);
-    active-foreground:           var(background);
+    active-foreground:           #44273f; /* on-tertiary */
+
+    /* Selected */
     selected-normal-background:  var(selected);
-    selected-normal-foreground:  var(background);
-    selected-urgent-background:  var(active);
-    selected-urgent-foreground:  var(background);
-    selected-active-background:  var(urgent);
-    selected-active-foreground:  var(background);
-    alternate-normal-background: var(background);
+    selected-normal-foreground:  #202c61; /* on-primary */
+    
+    selected-urgent-background:  var(urgent);
+    selected-urgent-foreground:  #690005;
+    
+    selected-active-background:  var(active);
+    selected-active-foreground:  #44273f;
+
+    /* Alternate (Aquí estaban los faltantes) */
+    alternate-normal-background: var(background-alt);
     alternate-normal-foreground: var(foreground);
+
     alternate-urgent-background: var(urgent);
-    alternate-urgent-foreground: var(background);
+    alternate-urgent-foreground: #690005;
+
     alternate-active-background: var(active);
-    alternate-active-foreground: var(background);
+    alternate-active-foreground: #44273f;
 }
 
 /*****----- Main Window -----*****/
@@ -64,9 +87,9 @@ window {
     enabled:                     true;
     margin:                      0px;
     padding:                     0px;
-    border:                      0px solid;
-    border-radius:               0px;
-    border-color:                @border-colour;
+    border:                      2px solid;
+    border-radius:               12px;
+    border-color:                @outline-variant;
     cursor:                      "default";
     /* Backgroud Colors */
     background-color:            @background-colour;
@@ -100,9 +123,9 @@ inputbar {
     margin:                      0px;
     padding:                     10px;
     border:                      0px solid;
-    border-radius:               0px;
+    border-radius:               8px;
     border-color:                @border-colour;
-    background-color:            @alternate-background;
+    background-color:            @surface-container-high;
     text-color:                  @foreground-colour;
     children:                    [ "prompt", "textbox-prompt-colon", "entry" ];
 }

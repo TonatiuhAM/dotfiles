@@ -4,74 +4,78 @@
   "position": "top",
   "spacing": 0,
   "height": 3,
-  "modules-left": ["custom/omarchy", "custom/active_window", ],
-  "modules-center": [ "group/center3", "hyprland/workspaces", "group/center2" ],
+  "modules-left": [
+    "custom/omarchy"
+  ],
+  "modules-center": [
+    "group/center3",
+    "hyprland/workspaces",
+    "group/center2"
+  ],
   "modules-right": [
     "group/right1",
   ],
-
-// GROUPS MODULE
-
+  // GROUPS MODULE
   "group/center2": {
-	"orientation": "inherit",
-	"modules": [
-    "clock",
-    "custom/gamemode",
-    "custom/idle-indicator",
-    "custom/notification-silencing-indicator",
-    "custom/screenrecording-indicator", 
-    "custom/update", 
-	]
-},
-
+    "orientation": "inherit",
+    "modules": [
+      "clock",
+      "custom/notification",
+    ]
+  },
   "group/center3": {
-	"orientation": "inherit",
-	"modules": [
-    "cpu",
-    "memory",
-    "custom/separator#blank",
-    "custom/media", 
-	]
-},
-
+    "orientation": "inherit",
+    "modules": [
+      "cpu",
+      "memory",
+      "custom/separator#blank",
+      "custom/media",
+    ]
+  },
   "group/right1": {
-	"orientation": "inherit",
-	"modules": [
-    "tray",
-    "custom/separator#blank",
-    "custom/separator#dot",
-    "custom/separator#blank",
-    "pulseaudio",
-    "bluetooth",
-    "network",
-    "battery",
-	]
-},
-
-// MODULES
-
-  "custom/mode": {
-      "exec": "~/.config/waybar/mode.sh",
-      "on-click": "~/.config/waybar/mode.sh toggle",
-      "return-type": "json",
-      "format": "{}"
+    "orientation": "inherit",
+    "modules": [
+      "tray",
+      "custom/separator#blank",
+      "custom/separator#dot",
+      "custom/separator#blank",
+      "network",
+      "custom/separator#blank",
+      "bluetooth",
+      "pulseaudio",
+      "custom/separator#blank",
+    ]
   },
-
-  "custom/active_window": {
-    "exec": "~/.config/waybar/window.sh",
+  // MODULES
+  "custom/notification": {
+    "tooltip": true,
+    "format": "<span size='16pt'>{icon}</span>",
+    "format-icons": {
+      "notification": "󱅫",
+      "none": "󰂜",
+      "dnd-notification": "󰂠",
+      "dnd-none": "󰪓",
+      "inhibited-notification": "󰂛",
+      "inhibited-none": "󰪑",
+      "dnd-inhibited-notification": "󰂛",
+      "dnd-inhibited-none": "󰪑"
+    },
     "return-type": "json",
-    "markup": true
+    "exec-if": "which swaync-client",
+    "exec": "swaync-client -swb",
+    "on-click": "swaync-client -t -sw",
+    "on-click-right": "swaync-client -d -sw",
+    "escape": true
   },
-  
   "hyprland/workspaces": {
-	  "on-click": "activate",
-        "format": "{icon}",
-        "format-icons": {
-          "default": "",
-          "active": "",
-          "empty": "",
-        },
-      "persistent-workspaces": {
+    "on-click": "activate",
+    "format": "{icon}",
+    "format-icons": {
+      "default": "",
+      "active": "",
+      "empty": "",
+    },
+    "persistent-workspaces": {
       "1": [],
       "2": [],
       "3": [],
@@ -81,38 +85,56 @@
       "7": [],
       "8": [],
     },
-	},
-
+  },
   "custom/omarchy": {
     // "format": "󰹡",
     "format": "<span size='11500'></span>",
-    "on-click": "omarchy-menu",
-    "on-click-right": "xdg-terminal-exec",
-    "tooltip-format": "Omarchy Menu\n\nSuper + Alt + Space"
+    "on-click": "/home/tona/.config/rofi/launcher.sh",
+    "on-click-right": "kitty"
   },
-
-"cpu": {
-  "interval": 2,
-  "format": "{icon} ",
-  "format-icons": ["󰪞", "󰪟", "󰪠", "󰪡", "󰪢", "󰪣", "󰪤", "󰪥"],
-  "on-click": "omarchy-launch-or-focus-tui btop"
-},
-
-"memory": {
-  "interval": 2,
-  "format": "{icon} ",
-  "format-icons": ["󰪞", "󰪟", "󰪠", "󰪡", "󰪢", "󰪣", "󰪤", "󰪥"],
-  "on-click": "omarchy-launch-or-focus-tui btop"
-},
-
-"clock": {
+  "cpu": {
+    "interval": 2,
+    "format": "{icon} ",
+    "format-icons": [
+      "󰪞",
+      "󰪟",
+      "󰪠",
+      "󰪡",
+      "󰪢",
+      "󰪣",
+      "󰪤",
+      "󰪥"
+    ],
+    "on-click": "omarchy-launch-or-focus-tui btop"
+  },
+  "memory": {
+    "interval": 2,
+    "format": "{icon} ",
+    "format-icons": [
+      "󰪞",
+      "󰪟",
+      "󰪠",
+      "󰪡",
+      "󰪢",
+      "󰪣",
+      "󰪤",
+      "󰪥"
+    ],
+    "on-click": "omarchy-launch-or-focus-tui btop"
+  },
+  "clock": {
     "format": " {:%I:%M %p • %a, %d/%m}     ",
     "format-alt": "{:%A, %d %B %Y}   ",
     "tooltip-format": "<big>{:%Y %B}</big>\n<tt><small>{calendar}</small></tt>"
-},
-
+  },
   "network": {
-    "format-icons": ["󰤯", "󰤟", "󰤢", "󰤥", "󰤨"],
+    "format-icons": [
+      "󰤯",
+      "󰤟",
+      "󰤢",
+      "󰤥",
+      "󰤨"
+    ],
     "format": "{icon}",
     "format-wifi": "{icon}",
     "format-ethernet": "<span size='11500'>󰌘</span>",
@@ -122,29 +144,8 @@
     "tooltip-format-disconnected": "Disconnected",
     "interval": 3,
     "spacing": 1,
-    "on-click": "omarchy-launch-wifi"
+    "on-click": "kitty --hold impala"
   },
-
-  "battery": {
-    "format": "{capacity}% {icon}",
-    "format-discharging": "{icon}",
-    "format-charging": "{icon}",
-    "format-plugged": "",
-    "format-icons": {
-      "charging": ["󰢜", "󰂆", "󰂇", "󰂈", "󰢝", "󰂉", "󰢞", "󰂊", "󰂋", "󰂅"],
-      "default": ["󰁺", "󰁻", "󰁼", "󰁽", "󰁾", "󰁿", "󰂀", "󰂁", "󰂂", "󰁹"]
-    },
-    "format-full": "󰂅",
-    "tooltip-format-discharging": "{power:>1.0f}W↓ {capacity}%",
-    "tooltip-format-charging": "{power:>1.0f}W↑ {capacity}%",
-    "interval": 5,
-    "on-click": "omarchy-menu power",
-    "states": {
-      "warning": 20,
-      "critical": 10
-    }
-  },
-
   "bluetooth": {
     "format": "󰂯",
     "format-disabled": "󰂲",
@@ -152,7 +153,6 @@
     "tooltip-format": "Devices connected: {num_connections}",
     "on-click": "kitty --hold bluetui"
   },
-
   "pulseaudio": {
     "format": "{icon} {volume}%",
     "on-click": "kitty --hold pulsemixer",
@@ -161,84 +161,45 @@
     "scroll-step": 5,
     "format-muted": "󰖁 Muted",
     "format-icons": {
-      "default": ["", "", ""]
+      "default": [
+        "",
+        "",
+        ""
+      ]
     }
   },
-  
   "group/tray-expander": {
     "orientation": "inherit",
     "drawer": {
       "transition-duration": 600,
       "children-class": "tray-group-item"
     },
-    "modules": ["custom/expand-icon", "tray"]
+    "modules": [
+      "custom/expand-icon",
+      "tray"
+    ]
   },
-
   "custom/expand-icon": {
     "format": "",
     "tooltip": false
   },
-
-  "custom/screenrecording-indicator": {
-    "on-click": "omarchy-cmd-screenrecord",
-    "exec": "$OMARCHY_PATH/default/waybar/indicators/screen-recording.sh",
-    "signal": 8,
-    "return-type": "json"
-  },
-
   "tray": {
     "icon-size": 16,
     "spacing": 8
   },
-
-"custom/media": {
-  "exec": "title=$(playerctl metadata title 2>/dev/null); if [ -n \"$title\" ]; then echo \"  ${title:0:25} \"; else echo \"         No media           \"; fi",
-  "interval": 2,
-  "on-click": "playerctl play-pause"
-},
-
+  "custom/media": {
+    "exec": "title=$(playerctl metadata title 2>/dev/null); if [ -n \"$title\" ]; then echo \"  ${title:0:25} \"; else echo \"         No media           \"; fi",
+    "interval": 2,
+    "on-click": "playerctl play-pause"
+  },
   "custom/separator#blank": {
-	  "format": " ",
-	  "interval": "once",
-	  "tooltip": false
-},
-
+    "format": " ",
+    "interval": "once",
+    "tooltip": false
+  },
   "custom/separator#dot": {
-	  "format": " ",
-	  "interval": "once",
-	  "tooltip": false
-},
-
-  "custom/idle-indicator": {
-    "on-click": "omarchy-toggle-idle",
-    "exec": "$OMARCHY_PATH/default/waybar/indicators/idle.sh",
-    "signal": 9,
-    "return-type": "json"
+    "format": " ",
+    "interval": "once",
+    "tooltip": false
   },
-  
-  "custom/notification-silencing-indicator": {
-    "on-click": "omarchy-toggle-notification-silencing",
-    "exec": "$OMARCHY_PATH/default/waybar/indicators/notification-silencing.sh",
-    "signal": 10,
-    "return-type": "json"
-  },
-
-  "custom/update": {
-    "format": "",
-    "exec": "omarchy-update-available",
-    "on-click": "omarchy-launch-floating-terminal-with-presentation omarchy-update",
-    "tooltip-format": "Omarchy update available",
-    "signal": 7,
-    "interval": 21600
-  },
-
-  "custom/gamemode": {
-    "exec": "test -f ~/.cache/hypr_gamemode && echo '{\"text\":\"\"}' || echo '{\"text\":\"\"}'",
-    "on-click": "test -f ~/.cache/hypr_gamemode && (rm ~/.cache/hypr_gamemode && hyprctl keyword animations:enabled 1 && hyprctl keyword decoration:blur:enabled 1) || (touch ~/.cache/hypr_gamemode && hyprctl keyword animations:enabled 0 && hyprctl keyword decoration:blur:enabled 0)",
-    "interval": 1,
-    "return-type": "json",
-    "tooltip": true,
-    "tooltip-format": "GameMode"
-  },
-
 }
