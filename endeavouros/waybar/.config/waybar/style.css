@@ -5,8 +5,8 @@
   border: none;
   border-radius: 1;
   min-height: 0;
-  font-family: 'JetBrainsMono Nerd Font Propo';
-  font-size: 12px;
+  font-family: 'SN Pro', 'JetBrainsMono Nerd Font Propo';
+  font-size: 15px;
   color: @foreground;
 }
 

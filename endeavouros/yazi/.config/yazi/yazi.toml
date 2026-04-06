@@ -1,0 +1,14 @@
+[opener]
+open_pdf = [
+  { run = "okular %s", orphan = true, for = "unix"},
+]
+open_image = [
+  { run = "swayimg %s", orphan = true, for = "unix" },
+]
+
+[open]
+prepend_rules = [
+  { url = "*.pdf", use = "open_pdf" },
+  { url = "*.png", use = "open_image" },
+  { url = "*.jpg", use = "open_image" },
+]

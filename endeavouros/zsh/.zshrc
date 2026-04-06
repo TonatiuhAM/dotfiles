@@ -51,6 +51,8 @@ alias brave='brave --password-store=gnome-keyring'
 alias zshrc="nvim $ZSHCONF"
 alias hyprc="nvim $HYPRCONF"
 
+alias claude-local='ANTHROPIC_AUTH_TOKEN=ollama ANTHROPIC_API_KEY="" ANTHROPIC_BASE_URL=http://localhost:11434 claude --model gemma4:26b'
+
 # Almacenamiento de las rutas a directorios y configuraciones más utilizados
 export SDDMCONF="/usr/lib/sddm/sddm.conf.d/default.conf"
 export KEDYCONF="/etc/keyd/default.conf"

@@ -12,7 +12,8 @@
 @define-color bg-selected @primary;
 
 * {
-    font-family: JetBrainsMono NFP;
+    /* font-family: JetBrainsMono NFP; */
+    font-family: SN Pro;
     font-weight: bold;
 	font-size: 14px
 }

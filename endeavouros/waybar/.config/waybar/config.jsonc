@@ -105,7 +105,7 @@
       "󰪤",
       "󰪥"
     ],
-    "on-click": "omarchy-launch-or-focus-tui btop"
+    "on-click": " kitty --hold btop"
   },
   "memory": {
     "interval": 2,
@@ -120,7 +120,6 @@
       "󰪤",
       "󰪥"
     ],
-    "on-click": "omarchy-launch-or-focus-tui btop"
   },
   "clock": {
     "format": " {:%I:%M %p • %a, %d/%m}     ",

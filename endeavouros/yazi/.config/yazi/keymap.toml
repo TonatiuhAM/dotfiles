@@ -1,0 +1,8 @@
+[[mgr.prepend_keymap]]
+on   = "<S-t>"
+run  = "close"
+desc = "Cerrar pestaña actual"
+[[mgr.prepend_keymap]]
+on   = "<C-Enter>"
+run  = 'shell "$SHELL" --block'
+desc = "Abrir shell en el directorio actual"
