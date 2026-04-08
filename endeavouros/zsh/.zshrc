@@ -1,4 +1,5 @@
 fastfetch
+
 # 1. Primero el Instant Prompt de P10K (Siempre arriba)
 if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]; then
   source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
@@ -20,6 +21,7 @@ plugins=(
         git
         zsh-autosuggestions
         zsh-syntax-highlighting
+        zsh-vi-mode
         )
 source $ZSH/oh-my-zsh.sh
 
@@ -43,9 +45,6 @@ alias ls='lsd -lA'
 alias lssh='lazyssh'
 alias lg='lazygit'
 alias ld='lazydocker'
-
-# Para que brave siempre se abra con el keyring de gnome y poder guardar sesiones
-alias brave='brave --password-store=gnome-keyring'
 
 # Alias para editar archivos de configuracion rápidamente
 alias zshrc="nvim $ZSHCONF"

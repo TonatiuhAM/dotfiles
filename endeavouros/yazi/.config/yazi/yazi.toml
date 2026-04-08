@@ -1,3 +1,7 @@
+[mgr]
+sort_dir_first = true
+show_hidden = true
+
 [opener]
 open_pdf = [
   { run = "okular %s", orphan = true, for = "unix"},

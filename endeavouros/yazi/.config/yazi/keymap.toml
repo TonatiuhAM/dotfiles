@@ -2,7 +2,28 @@
 on   = "<S-t>"
 run  = "close"
 desc = "Cerrar pestaña actual"
+
 [[mgr.prepend_keymap]]
 on   = "<C-Enter>"
 run  = 'shell "$SHELL" --block'
 desc = "Abrir shell en el directorio actual"
+
+[[mgr.prepend_keymap]]
+on = [ "g", "d" ]
+run = "cd ~/dotfiles/endeavouros/"
+desc = "Cd to dotfiles"
+
+[[mgr.prepend_keymap]]
+on = [ "g", "D" ]
+run = "cd ~/Downloads/"
+desc = "Cd to Downloads"
+
+[[mgr.prepend_keymap]]
+on = [ "g", "s" ]
+run = "cd ~/Documents/scripts/"
+desc = "Cd to scripts"
+
+[[mgr.prepend_keymap]]
+on = [ "g", "w" ]
+run = "cd ~/Wallpapers/"
+desc = "Cd to Wallpapers"
