@@ -59,3 +59,6 @@ export ZSHCONF="$HOME/dotfiles/endeavouros/zsh/.zshrc"
 export HYPRCONF="$HOME/dotfiles/endeavouros/hypr/.config/hypr/hyprland.conf"
 
 eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv zsh)"
+
+# opencode
+export PATH=/home/tona/.opencode/bin:$PATH

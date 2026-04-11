@@ -10,11 +10,8 @@
 /*****----- Configuration -----*****/
 configuration {
 	modi:                       "drun,run,filebrowser";
-    show-icons:                 false;
-    display-drun:               " Apps";
-    display-run:                " Run";
-    display-filebrowser:        " Files";
-    display-window:             " Windows";
+    show-icons:                 true;
+    display-drun:               "   Apps";
 	drun-display-format:        "{name} [<span weight='light' size='small'><i>({generic})</i></span>]";
 	window-format:              "{w} · {c} · {t}";
 }
@@ -24,13 +21,13 @@ configuration {
 @import                          "shared/fonts.rasi"
 
 * {
-    /* Mapeo de Matugen a Rofi */
-    background:         #121318; /* surface */
-    background-alt:     #1f1f25; /* surface-container */
-    foreground:         #e3e1e9; /* on-surface */
-    selected:           #b8c3ff; /* primary */
-    active:             #e4bad9; /* tertiary */
-    urgent:             #ffb4ab; /* error */
+    /* Mapeo dinámico directo a las variables de Matugen */
+    background:         var(surface); 
+    background-alt:     var(surface-container); 
+    foreground:         var(on-surface); 
+    selected:           var(primary); 
+    active:             var(tertiary); 
+    urgent:             var(error); 
 
     /* Propiedades funcionales del tema */
     border-colour:               var(selected);
@@ -45,31 +42,31 @@ configuration {
     
     /* Urgent */
     urgent-background:           var(urgent);
-    urgent-foreground:           #690005; /* on-error */
+    urgent-foreground:           var(on-error);
     
     /* Active */
     active-background:           var(active);
-    active-foreground:           #44273f; /* on-tertiary */
+    active-foreground:           var(on-tertiary);
 
     /* Selected */
     selected-normal-background:  var(selected);
-    selected-normal-foreground:  #202c61; /* on-primary */
+    selected-normal-foreground:  var(on-primary);
     
     selected-urgent-background:  var(urgent);
-    selected-urgent-foreground:  #690005;
+    selected-urgent-foreground:  var(on-error);
     
     selected-active-background:  var(active);
-    selected-active-foreground:  #44273f;
+    selected-active-foreground:  var(on-tertiary);
 
-    /* Alternate (Aquí estaban los faltantes) */
+    /* Alternate */
     alternate-normal-background: var(background-alt);
     alternate-normal-foreground: var(foreground);
 
     alternate-urgent-background: var(urgent);
-    alternate-urgent-foreground: #690005;
+    alternate-urgent-foreground: var(on-error);
 
     alternate-active-background: var(active);
-    alternate-active-foreground: #44273f;
+    alternate-active-foreground: var(on-tertiary);
 }
 
 /*****----- Main Window -----*****/
