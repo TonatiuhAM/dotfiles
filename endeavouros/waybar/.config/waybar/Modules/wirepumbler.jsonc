@@ -1,0 +1,17 @@
+{
+  "wireplumber": {
+    "format": "{icon} {volume}%",
+    "on-click": "kitty --hold pulsemixer",
+    "on-click-right": "pamixer -t",
+    "tooltip-format": "Playing at {volume}%",
+    "scroll-step": 5,
+    "format-muted": "󰖁 Muted",
+    "format-icons": {
+      "default": [
+        "",
+        "",
+        ""
+      ]
+    }
+  }
+}
