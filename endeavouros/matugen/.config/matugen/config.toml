@@ -25,7 +25,7 @@ post_hook = "swaync-client -rs"
 
 [templates.rofi]
 input_path = '~/.config/matugen/templates/rofi-colors.rasi'
-output_path = '~/.config/rofi/colors/matugen.rasi'
+output_path = '~/.config/rofi/theme/matugen.rasi'
 
 [templates.yazi]
 input_path = '~/.config/matugen/templates/yazi-theme.toml'

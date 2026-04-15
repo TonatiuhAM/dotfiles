@@ -1,6 +1,6 @@
 #!/bin/bash
 
-option=$(printf "Apagar\nReiniciar\nBloquear" | rofi -dmenu -p "Power Menu" -theme "~/.config/rofi/launchers/type-1/style-11.rasi")
+option=$(printf "Apagar\nReiniciar\nBloquear" | rofi -dmenu -p "Power Menu" -theme "~/.config/rofi/launchers/main-style-11.rasi")
 
 case "$option" in
 "Apagar") poweroff ;;

@@ -20,7 +20,6 @@
   ],
   "modules-center": [],
   "modules-right": [
-    "group/hollow-right-5",
     "group/hollow-right-4",
     "group/hollow-right-1",
     "group/hollow-right-3"
@@ -76,7 +75,6 @@
   "group/hollow-right-4": {
     "orientation": "horizontal",
     "modules": [
-      "idle_inhibitor",
       "tray"
     ]
   },

@@ -45,6 +45,7 @@ alias ls='lsd -lA'
 alias lssh='lazyssh'
 alias lg='lazygit'
 alias ld='lazydocker'
+alias dk='~/Documents/scripts/docker-manager.sh'
 
 # Alias para editar archivos de configuracion rápidamente
 alias zshrc="nvim $ZSHCONF"

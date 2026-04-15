@@ -11,8 +11,8 @@
 ## style-6     style-7     style-8     style-9     style-10
 ## style-11    style-12    style-13    style-14    style-15
 
-dir="/home/tona/.config/rofi/launchers/type-1"
-theme='style-11'
+dir="/home/tona/.config/rofi/launchers"
+theme='main-style-11'
 
 ## Run
 rofi \
