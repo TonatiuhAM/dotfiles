@@ -13,7 +13,7 @@ export VISUAL='nvim'
 
 # 3. Configurar el PATH (Una sola vez de forma limpia)
 # Agregamos todo: Cargo, Bun, Opencode y carpetas locales
-export PATH="$HOME/.cargo/bin:$BUN_INSTALL/bin:$HOME/.opencode/bin:$HOME/bin:$HOME/.local/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:$PATH"
+export PATH="$HOME/.cargo/bin:$BUN_INSTALL/bin:$HOME/.opencode/bin:$HOME/bin:$HOME/.local/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/opt/cuda/bin:$PATH"
 
 # 4. Configuración de Oh My Zsh y Tema
 ZSH_THEME="powerlevel10k/powerlevel10k"
@@ -47,11 +47,12 @@ alias lg='lazygit'
 alias ld='lazydocker'
 alias dk='~/Documents/scripts/docker-manager.sh'
 
+alias pacupdate='sudo timeshift --create --comments "pre-update" --tags D && sudo pacman -Syu'
+alias yayupdate='sudo timeshift --create --comments "pre-update" --tags D && yay -Syu'
+
 # Alias para editar archivos de configuracion rápidamente
 alias zshrc="nvim $ZSHCONF"
 alias hyprc="nvim $HYPRCONF"
-
-alias claude-local='ANTHROPIC_AUTH_TOKEN=ollama ANTHROPIC_API_KEY="" ANTHROPIC_BASE_URL=http://localhost:11434 claude --model gemma4:26b'
 
 # Almacenamiento de las rutas a directorios y configuraciones más utilizados
 export SDDMCONF="/usr/lib/sddm/sddm.conf.d/default.conf"
@@ -63,3 +64,4 @@ eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv zsh)"
 
 # opencode
 export PATH=/home/tona/.opencode/bin:$PATH
+export LD_LIBRARY_PATH="$LD_LIBRARY_PATH:/opt/cuda/lib64"

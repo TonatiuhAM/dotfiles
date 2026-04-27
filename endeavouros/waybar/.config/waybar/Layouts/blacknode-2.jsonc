@@ -1,7 +1,8 @@
 // Copyright (c) 2025 Zhaleff && HollowSec. All Rights Reserved.
 {
   "include": [
-    "~/.config/waybar/Modules/all_modules.jsonc"
+    "~/.config/waybar/Modules/all_modules.jsonc",
+    "/home/tona/.config/waybar/Modules/hyprwhspr-module.jsonc"
   ],
   "layer": "top",
   "position": "top",
@@ -75,7 +76,8 @@
   "group/hollow-right-4": {
     "orientation": "horizontal",
     "modules": [
-      "tray"
+      "tray",
+      "custom/hyprwhspr"
     ]
   },
   "group/hollow-right-5": {

@@ -27,3 +27,8 @@ desc = "Cd to scripts"
 on = [ "g", "w" ]
 run = "cd ~/Wallpapers/"
 desc = "Cd to Wallpapers"
+
+[[mgr.prepend_keymap]]
+on = [ "Shift", "Enter" ]
+run = "shell 'thunar \"$0\"' --block"
+desc = "Open in thunar"

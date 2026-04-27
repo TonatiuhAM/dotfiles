@@ -6,7 +6,7 @@ return {
     -- CAMBIO CLAVE: Desactivamos lazy para que capture el comando 'nvim .'
     lazy = false,
     opts = {
-      default_file_explorer = true,
+      default_file_explorer = false,
       delete_to_trash = true,
       skip_confirm_for_simple_edits = false,
       view_options = {
@@ -19,7 +19,7 @@ return {
     -- Definimos el atajo aquí mismo
     config = function(_, opts)
       require("oil").setup(opts)
-      vim.keymap.set("n", "<leader>e", "<cmd>Oil<cr>", { desc = "Abrir Oil (File Manager)" })
+      -- vim.keymap.set("n", "<leader>e", "<cmd>Oil<cr>", { desc = "Abrir Oil (File Manager)" })
     end,
   },
 

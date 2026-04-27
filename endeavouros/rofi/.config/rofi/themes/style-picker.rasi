@@ -1,0 +1,121 @@
+/* ════════════════════════════════════════════════════════════
+   style-picker.rasi
+   Ruta: ~/.config/rofi/themes/style-picker.rasi
+   ════════════════════════════════════════════════════════════ */
+
+@import "/home/tona/.config/rofi/themes/matugen.rasi"
+
+* {
+    bg:         @surface-container;
+    bg-bar:     @surface-container-high;
+    bg-sel:     @primary-container;
+    fg:         @on-surface;
+    fg-dim:     @on-surface-variant;
+    fg-sel:     @on-primary-container;
+    accent:     @primary;
+    border-col: @outline-variant;
+
+    background-color: transparent;
+    text-color:       @fg;
+    font:             "JetBrainsMono Nerd Font Propo 11";
+}
+
+/* Ventana: 620px — nombre 180px + preview 320px + padding */
+window {
+    location:         center;
+    anchor:           center;
+    width:            620px;
+    padding:          0;
+    border:           1px solid;
+    border-color:     @border-col;
+    border-radius:    0;
+    background-color: @bg;
+}
+
+mainbox {
+    padding:  0;
+    spacing:  0;
+    children: [ inputbar, listview ];
+}
+
+inputbar {
+    padding:          8px 12px;
+    spacing:          6px;
+    background-color: @bg-bar;
+    border:           0 0 1px 0;
+    border-color:     @border-col;
+    children:         [ prompt, entry ];
+}
+
+prompt {
+    padding:          0;
+    background-color: transparent;
+    text-color:       @accent;
+}
+
+entry {
+    padding:          0;
+    background-color: transparent;
+    text-color:       @fg;
+    placeholder:      "Wallpaper...";
+    placeholder-color: @fg-dim;
+    cursor:           text;
+}
+
+/* 5 ítems visibles, altura fija */
+listview {
+    padding:          4px 0;
+    spacing:          0;
+    columns:          1;
+    lines:            5;
+    fixed-height:     true;
+    dynamic:          false;
+    scrollbar:        true;
+    background-color: transparent;
+}
+
+scrollbar {
+    width:            3px;
+    handle-width:     3px;
+    handle-color:     @accent;
+    background-color: @bg-bar;
+    border:           0;
+}
+
+/* Elemento: nombre izquierda + preview derecha */
+element {
+    orientation:      horizontal;
+    padding:          6px 12px;
+    spacing:          0;
+    border-radius:    0;
+    background-color: transparent;
+    cursor:           pointer;
+    children:         [ element-text, element-icon ];
+}
+
+element normal.normal    { background-color: transparent; text-color: @fg;     }
+element normal.active    { background-color: transparent; text-color: @accent; }
+element selected.normal  { background-color: @bg-sel;     text-color: @fg-sel; }
+element selected.active  { background-color: @bg-sel;     text-color: @fg-sel; }
+element alternate.normal { background-color: transparent; text-color: @fg;     }
+
+/* Nombre — ancho fijo, centrado verticalmente */
+element-text {
+    expand:           false;
+    width:            180px;
+    background-color: transparent;
+    text-color:       inherit;
+    vertical-align:   0.5;
+    horizontal-align: 0;
+    cursor:           inherit;
+    highlight:        bold;
+    margin:           0 12px 0 0;
+}
+
+/* Preview — 160px de alto, rofi lo escala manteniendo ratio */
+element-icon {
+    expand:           false;
+    size:             160px;
+    background-color: transparent;
+    cursor:           inherit;
+}

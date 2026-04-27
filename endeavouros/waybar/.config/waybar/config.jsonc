@@ -1,5 +1,6 @@
 {
   "include": [
-    "/home/tona/.config/waybar/Layouts/blacknode-2.jsonc"
+    "/home/tona/.config/waybar/Layouts/blacknode-2.jsonc",
+    "/home/tona/.config/waybar/Modules/hyprwhspr-module.jsonc"
   ]
 }

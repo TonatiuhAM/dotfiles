@@ -93,29 +93,18 @@ decoration {
 
 animations {
     enabled = true
-
-    # Beziers con bounce, pero más tensos y rápidos
-    bezier = wind,    0.05, 0.9,  0.1, 1.05
-    bezier = winIn,   0.1,  1.1,  0.1, 1.1
-    bezier = winOut,  0.3,  -0.3, 0,   1
-    bezier = liner,   1,    1,    1,   1
-    bezier = snap,    0.1,  1.0,  0.1, 1.0   # nuevo: bounce suave ultrarrápido
-
-    # Windows: de 6→3 y 5→2-3 (mitad de duración)
-    animation = windows,      1, 3, wind,  slide
-    animation = windowsIn,    1, 3, winIn, slide
-    animation = windowsOut,   1, 2, winOut, slide
-    animation = windowsMove,  1, 3, wind,  slide
-
-    # Border: igual, ya es instantáneo
-    animation = border,       1, 1,  liner
-    animation = borderangle,  1, 30, liner, loop
-
-    # Fade: de 10→4 (más snappy)
-    animation = fade,         1, 4,  default
-
-    # Workspaces: de 5→3, con snap para sentir el "golpe"
-    animation = workspaces,   1, 3,  snap
+    bezier = wind, 0.05, 0.9, 0.1, 1.05
+    bezier = winIn, 0.1, 1.1, 0.1, 1.1
+    bezier = winOut, 0.3, -0.3, 0, 1
+    bezier = liner, 1, 1, 1, 1
+    animation = windows, 1, 6, wind, slide
+    animation = windowsIn, 1, 6, winIn, slide
+    animation = windowsOut, 1, 5, winOut, slide
+    animation = windowsMove, 1, 5, wind, slide
+    animation = border, 1, 1, liner
+    animation = borderangle, 1, 30, liner, loop
+    animation = fade, 1, 10, default
+    animation = workspaces, 1, 5, wind
 }
 
 # See https://wiki.hypr.land/Configuring/Dwindle-Layout/ for more
@@ -179,13 +168,13 @@ bind = $mainMod ALT, D, exec, /usr/lib/hyprwhspr/config/hyprland/hyprwhspr-tray.
 bind = $mainMod ALT, S, exec, kitty --title pulsemixer pulsemixer
 bind = $mainMod ALT, B, exec, kitty --title bluetui bluetui
 bind = $mainMod SHIFT, S, exec, grim -g "$(slurp)" - | wl-copy
-bind = $mainMod SHIFT, E, exec, rofi -modi emoji -show emoji -emoji-mode copy -theme "~/.config/rofi/themes/launcher.rasi"
+bind = $mainMod SHIFT, E, exec, rofi -modi emoji -show emoji -emoji-mode copy -theme "~/.config/rofi/launchers/main-style-11.rasi"
 bind = $mainMod SHIFT, N, exec, ~/Documents/scripts/quick-note.sh
 bind = $mainMod, F, exec, kitty -e env EDITOR=nvim yazi
 bind = $mainMod, Z, fullscreen, 1
 bind = $mainMod, N, exec, swaync-client -t
 bind = $mainMod, mouse:274, exec, pypr zoom
-bind = $mainMod, comma, exec, /home/tona/.config/rofi/modules/scripts.sh configs
+bind = $mainMod, comma, exec, /home/tona/.config/rofi/modules/scripts.sh
 
 # ======================== SUBMAP: Redimensionar ========================
 bind = $mainMod, R, submap, resize
@@ -277,6 +266,7 @@ bindl = , XF86AudioPrev, exec, playerctl previous
 ##############################
 ### WINDOWS AND WORKSPACES ###
 ##############################
+
 windowrule {
     # Ignore maximize requests from all apps. You'll probably like this.
     name = suppress-maximize-events
@@ -344,4 +334,3 @@ windowrule {
     size        = 700 440
     move        = 460 140
 }
-

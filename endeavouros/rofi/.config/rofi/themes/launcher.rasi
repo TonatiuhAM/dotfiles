@@ -1,0 +1,113 @@
+/* ════════════════════════════════════════════════════════════
+   launcher.rasi  –  Menú principal + submódulos
+   Ruta: ~/.config/rofi/themes/launcher.rasi
+   Estilo: Omarchy-like — compacto, íconos+texto, sin bordes redondos
+   Colores: importados de matugen
+   ════════════════════════════════════════════════════════════ */
+
+@import "/home/tona/.config/rofi/themes/matugen.rasi"
+
+* {
+    bg:         @surface-container;
+    bg-bar:     @surface-container-high;
+    bg-sel:     @primary-container;
+    fg:         @on-surface;
+    fg-dim:     @on-surface-variant;
+    fg-sel:     @on-primary-container;
+    accent:     @primary;
+    border-col: @outline-variant;
+
+    background-color: transparent;
+    text-color:       @fg;
+    font:             "JetBrains Mono 13";
+}
+
+/* ── Ventana ─────────────────────────────────────────────── */
+window {
+    location:         center;
+    anchor:           center;
+    width:            420px;
+    padding:          0;
+    border:           1px solid;
+    border-color:     @border-col;
+    border-radius:    0;
+    background-color: @bg;
+    cursor:           default;
+}
+
+/* ── Layout ──────────────────────────────────────────────── */
+mainbox {
+    padding:  0;
+    spacing:  0;
+    children: [ inputbar, listview ];
+}
+
+/* ── Barra de búsqueda ───────────────────────────────────── */
+inputbar {
+    padding:          8px 12px;
+    spacing:          6px;
+    background-color: @bg-bar;
+    border:           0 0 1px 0;
+    border-color:     @border-col;
+    children:         [ prompt, entry ];
+}
+
+prompt {
+    padding:          0;
+    background-color: transparent;
+    text-color:       @accent;
+}
+
+entry {
+    padding:          0;
+    background-color: transparent;
+    text-color:       @fg;
+    placeholder:      "Go...";
+    placeholder-color: @fg-dim;
+    cursor:           text;
+}
+
+/* ── Lista ───────────────────────────────────────────────── */
+listview {
+    padding:          4px 0;
+    spacing:          0;
+    columns:          1;
+    lines:            8;
+    fixed-height:     false;
+    dynamic:          true;
+    scrollbar:        false;
+    background-color: transparent;
+}
+
+/* ── Elemento ────────────────────────────────────────────── */
+element {
+    padding:          7px 12px;
+    spacing:          8px;
+    orientation:      horizontal;
+    border-radius:    0;
+    background-color: transparent;
+    cursor:           pointer;
+}
+
+element normal.normal    { background-color: transparent;      text-color: @fg;     }
+element normal.urgent    { background-color: @error-container; text-color: @on-error-container; }
+element normal.active    { background-color: transparent;      text-color: @accent; }
+element selected.normal  { background-color: @bg-sel;          text-color: @fg-sel; }
+element selected.urgent  { background-color: @error;           text-color: @on-error; }
+element selected.active  { background-color: @bg-sel;          text-color: @fg-sel; }
+element alternate.normal { background-color: transparent;      text-color: @fg;     }
+
+element-icon {
+    size:             18px;
+    margin:           0 0 0 0;
+    background-color: transparent;
+    cursor:           inherit;
+}
+
+element-text {
+    background-color: transparent;
+    text-color:       inherit;
+    vertical-align:   0.5;
+    cursor:           inherit;
+    highlight:        bold;
+}

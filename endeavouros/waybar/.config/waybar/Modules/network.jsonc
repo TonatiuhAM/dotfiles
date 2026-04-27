@@ -2,13 +2,13 @@
   "network": {
     "interval": 3,
     "format-wifi": "{icon}",
-    "format-ethernet": "󰌗 {ipaddr}",
+    "format-ethernet": "󰌗 ",
     "format-linked": "󰌙 {ifname} (Sin IP)",
     "format-disconnected": "󰖪",
     "format-alt": "󰛳 {ifname}",
     "tooltip-format-wifi": " {bandwidthDownBytes}  {bandwidthUpBytes}",
     "tooltip-format-ethernet": "󰌗 {ifname} | IP: {ipaddr}/{cidr} | GW: {gwaddr}",
-    "on-click": "kitty --hold impala",
+    "on-click": "kitty --title impala impala",
     "format-icons": {
       "wifi": [
         "󰤯",

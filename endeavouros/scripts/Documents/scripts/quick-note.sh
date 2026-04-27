@@ -1,31 +1,51 @@
 #!/bin/bash
-
 # --- CONFIGURACIÓN ---
-VAULT="the-vault" # Asegúrate de que coincida con el nombre de tu bóveda en Obsidian
-MODE="append"     # "append" para el final de la nota, "prepend" para el inicio
+VAULT="the-vault"
+MODE="append"
 
 # 1. Capturar el texto con Rofi
-# El flag -p cambia el prompt, -dmenu lo pone en modo entrada de texto
-TEXT=$(echo "" | rofi -dmenu -p "󰠮 Nueva idea:" -config /dev/null -theme "~/.config/rofi/launchers/type-1/style-11.rasi" -theme-str 'window {width: 40%; font: "JetBrainsMono NF 12";} listview {enabled: false;}')
--dmenu -p "Power Menu"
+TEXT=$(echo "" | rofi -dmenu -p "󰠮 Nueva idea:" \
+  -config /dev/null \
+  -theme "~/.config/rofi/launchers/main-style-11.rasi" \
+  -theme-str 'window {width: 40%; font: "JetBrainsMono NF 12";} listview {enabled: false;}')
 
-# Salir si el usuario presiona ESC o no escribe nada
 if [ -z "$TEXT" ]; then
   exit 0
 fi
 
-# 2. Formatear la hora en 12h (ej: 5:30pm)
-# %-I elimina el cero inicial, %M los minutos y %P el am/pm en minúsculas
+# 2. Formatear hora y construir texto
 TIME=$(date +"%-I:%M%P")
-
-# 3. Construir el bloque de texto con los saltos de línea solicitados
-# Usamos $'\n' para representar los saltos de línea reales en Bash
 FINAL_TEXT="${TIME}"$'\n'"- [ ] ${TEXT}"$'\n'
 
-# 3. URL-encode (necesario para que Obsidian entienda espacios y símbolos)
+# 3. URL-encode
 ENCODED_TEXT=$(python3 -c "import urllib.parse; print(urllib.parse.quote('''$FINAL_TEXT'''))")
 
-# 4. Enviar a Obsidian mediante Advanced URI
+# 4. Construir URI
 URI="obsidian://advanced-uri?vault=${VAULT}&daily=true&data=${ENCODED_TEXT}&mode=${MODE}"
 
+# 5. Función: esperar hasta que Obsidian tenga ventana visible en Hyprland
+wait_for_obsidian_window() {
+  local MAX_WAIT=20
+  local WAITED=0
+  while [ $WAITED -lt $MAX_WAIT ]; do
+    # hyprctl clients lista todas las ventanas abiertas en Hyprland
+    if hyprctl clients -j 2>/dev/null | python3 -c \
+      "import sys,json; clients=json.load(sys.stdin); exit(0 if any('obsidian' in c.get('class','').lower() or 'obsidian' in c.get('title','').lower() for c in clients) else 1)" 2>/dev/null; then
+      return 0
+    fi
+    sleep 0.3
+    WAITED=$(echo "$WAITED + 0.3" | bc)
+  done
+  return 1 # timeout
+}
+
+# 6. Arrancar Obsidian si no está corriendo
+if ! pgrep -f "obsidian" >/dev/null 2>&1; then
+  obsidian >/dev/null 2>&1 &
+  wait_for_obsidian_window
+  # Pequeña pausa mínima para que el vault termine de indexar
+  sleep 0.8
+fi
+
+# 7. Enviar URI
 xdg-open "$URI"
