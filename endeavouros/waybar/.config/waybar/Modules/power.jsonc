@@ -3,7 +3,7 @@
     "format": "{icon}",
     "format-icons": "",
     "exec-on-event": "true",
-    "on-click": "/home/tona/Documents/scripts/rofi-menus/powermenu.sh",
+    "on-click": "/home/tona/.config/rofi/launcher.sh",
     "tooltip-format": "Power Menu"
   }
 }

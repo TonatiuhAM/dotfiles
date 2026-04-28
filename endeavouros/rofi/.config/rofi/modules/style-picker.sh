@@ -1,26 +1,24 @@
 #!/usr/bin/env bash
 # ╔══════════════════════════════════════════════════════════════╗
-# ║  style-picker.sh  —  Submódulo: Wallpapers                  ║
+# ║  style-picker.sh  —  Submódulo: Selector de Wallpapers      ║
 # ║                                                             ║
-# ║  Lista de nombres a la izquierda.                           ║
-# ║  Preview del wallpaper como ícono nativo de rofi            ║
-# ║  a la derecha de cada ítem — se actualiza al navegar.       ║
-# ║                                                             ║
-# ║  Requiere: rofi-wayland, matugen, imagemagick               ║
+# ║  fzf + chafa dentro de kitty flotante                       ║
+# ║  Requiere: fzf, chafa, kitty, matugen, notify-send          ║
 # ╚══════════════════════════════════════════════════════════════╝
 
-THEME="$HOME/.config/rofi/themes/launcher.rasi"
-THEME_WIDE="$HOME/.config/rofi/themes/style-picker.rasi"
 WALL_DIR="$HOME/Wallpapers"
-CACHE_DIR="$HOME/.cache/style-picker/thumbs"
+SCRIPT="$(realpath "${BASH_SOURCE[0]}")"
 
-# Tamaño del thumbnail — ancho x alto en px
-# Para wallpapers landscape 16:9, una buena proporción es 480x270
-THUMB_W=320
-THUMB_H=180
+# ── Relanza dentro de kitty si no viene con --interactive ──────
+if [[ "$1" != "--interactive" ]]; then
+    exec kitty \
+        --class="style-picker" \
+        --title="style-picker" \
+        -e bash "$SCRIPT" --interactive
+fi
 
-# ── Verificaciones ─────────────────────────────────────────────
-for dep in rofi matugen convert notify-send; do
+# ── Dependencias ───────────────────────────────────────────────
+for dep in fzf chafa matugen notify-send; do
     command -v "$dep" &>/dev/null || {
         notify-send -u critical "Style Picker" "❌ Falta: $dep"; exit 1; }
 done
@@ -39,68 +37,37 @@ mapfile -t wallpapers < <(
 [[ ${#wallpapers[@]} -eq 0 ]] && {
     notify-send -u critical "Style Picker" "❌ Sin imágenes en: $WALL_DIR"; exit 1; }
 
-# ── Genera thumbnails landscape ────────────────────────────────
-mkdir -p "$CACHE_DIR"
-for wall in "${wallpapers[@]}"; do
-    thumb="$CACHE_DIR/${wall%.*}.png"
-    [[ -f "$thumb" ]] && continue
-    convert "$WALL_DIR/$wall" \
-        -resize "${THUMB_W}x${THUMB_H}^" \
-        -gravity center \
-        -extent "${THUMB_W}x${THUMB_H}" \
-        "$thumb" 2>/dev/null
-done
-
-# ── Construye lista con íconos para rofi ──────────────────────
-# Formato: "nombre\0icon\x1f/ruta/thumb.png"
-# El nombre sin extensión queda más limpio visualmente
-rofi_input=""
-for wall in "${wallpapers[@]}"; do
-    thumb="$CACHE_DIR/${wall%.*}.png"
-    name="${wall%.*}"          # nombre sin extensión
-    if [[ -f "$thumb" ]]; then
-        rofi_input+="${name}\0icon\x1f${thumb}\n"
-    else
-        rofi_input+="${name}\n"
-    fi
-done
-
-# ── Lanza rofi con tema wide ───────────────────────────────────
-selected=$(printf "%b" "$rofi_input" \
-    | rofi -dmenu \
-           -p "󰏘" \
-           -theme "$THEME_WIDE" \
-           -no-custom \
-           -show-icons \
-           -i \
-           -format s)
+# ── Selector fzf + preview chafa ──────────────────────────────
+selected=$(printf '%s\n' "${wallpapers[@]}" \
+    | fzf \
+        --prompt="󰏘  Wallpaper: " \
+        --preview "chafa --size=\${FZF_PREVIEW_COLUMNS}x\${FZF_PREVIEW_LINES} $WALL_DIR/{}" \
+        --preview-window=right:65%:wrap \
+        --height=100% \
+        --border=none \
+        --no-info \
+        --cycle)
 
 [[ -z "$selected" ]] && exit 0
 
-# Reconstruye el nombre de archivo original (agrega extensión)
-wall_path=""
-for wall in "${wallpapers[@]}"; do
-    [[ "${wall%.*}" == "$selected" ]] && wall_path="$WALL_DIR/$wall" && break
-done
+wall_path="$WALL_DIR/$selected"
+[[ ! -f "$wall_path" ]] && {
+    notify-send -u critical "Style Picker" "❌ No encontrado: $selected"
+    exit 1
+}
 
-[[ -z "$wall_path" || ! -f "$wall_path" ]] && {
-    notify-send -u critical "Style Picker" "❌ No encontrado: $selected"; exit 1; }
+# ── Aplica wallpaper + matugen ────────────────────────────────
+notify-send -u normal "Theme Changer" "🎨 Aplicando...\n<b>${selected%.*}</b>"
 
-# ── Aplica con matugen ─────────────────────────────────────────
-thumb_notify="$CACHE_DIR/${selected}.png"
-[[ -f "$thumb_notify" ]] \
-    && notify-send -u normal -i "$thumb_notify" \
-           "Theme Changer" "🎨 Aplicando...\n<b>$selected</b>" \
-    || notify-send -u normal \
-           "Theme Changer" "🎨 Aplicando...\n<b>$selected</b>"
+awww img "$wall_path" --transition-type center
 
 matugen image "$wall_path" \
     --source-color-index 0 \
     --type scheme-tonal-spot \
     --mode dark
 
-[[ $? -eq 0 ]] \
-    && notify-send -u low -i "$thumb_notify" \
-           "Theme Changer" "✅ Tema aplicado\n<b>$selected</b>" \
-    || notify-send -u critical \
-           "Theme Changer" "❌ Error al aplicar\n$selected"
+if [[ $? -eq 0 ]]; then
+    notify-send -u low "Theme Changer" "✅ Tema aplicado\n<b>${selected%.*}</b>"
+else
+    notify-send -u critical "Theme Changer" "❌ Error al aplicar\n${selected%.*}"
+fi

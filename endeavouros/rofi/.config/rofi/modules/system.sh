@@ -8,7 +8,7 @@ THEME="$HOME/.config/rofi/themes/launcher.rasi"
 
 selection=$(printf "Apagar\nReiniciar\nBloquear" \
     | rofi -dmenu \
-           -p "󰐥" \
+           -p "" \
            -theme "$THEME" \
            -no-custom \
            -i)

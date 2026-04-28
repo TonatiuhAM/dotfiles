@@ -17,7 +17,7 @@ if [[ "$1" == "configs" ]]; then
 else
   section=$(printf "Configuraciones\nDev-Mode" |
     rofi -dmenu \
-      -p "󰆍" \
+      -p "" \
       -theme "$THEME" \
       -no-custom \
       -i)
@@ -31,7 +31,7 @@ case "$section" in
   selection=$(printf \
     "zsh\nhyprland\nrofi\nwaybar\nswaync\nmatugen\nkitty\nkeyd\nnvim\ntmux\nscripts\nmenus" |
     rofi -dmenu \
-      -p "󰒓" \
+      -p "" \
       -theme "$THEME" \
       -i)
 
