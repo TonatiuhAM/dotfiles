@@ -1,5 +1,6 @@
 {
   "include": [
+    "/home/tona/.config/waybar/Modules/hyprwhspr-module.jsonc",
     "~/.config/waybar/Modules/backlight.jsonc",
     "~/.config/waybar/Modules/battery.jsonc",
     "~/.config/waybar/Modules/clock.jsonc",

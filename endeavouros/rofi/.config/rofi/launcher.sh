@@ -9,8 +9,8 @@ MODS="$ROFI_DIR/modules"
 APPS_CACHE="$HOME/.cache/rofi-launcher/apps.txt"
 
 # ── Caché de apps ──────────────────────────────────────────────
-# Se regenera solo si algún .desktop cambió desde la última vez.
-# En caso normal (sin instalar apps nuevas) es instantáneo.
+# Se regenera en cada apertura del launcher (gawk lee todo en un solo proceso,
+# ~50ms). Garantiza que apps recién instaladas aparezcan inmediatamente.
 DESKTOP_DIRS=(
   /usr/share/applications
   "$HOME/.local/share/applications"
@@ -19,34 +19,20 @@ DESKTOP_DIRS=(
 )
 
 _refresh_cache() {
-  local cache_dir
+  local cache_dir tmp_cache
   cache_dir=$(dirname "$APPS_CACHE")
   mkdir -p "$cache_dir"
+  tmp_cache="${APPS_CACHE}.tmp.$$"
 
-  # Fecha del .desktop más reciente
-  local newest
-  newest=$(find "${DESKTOP_DIRS[@]}" \
-    -name "*.desktop" 2>/dev/null |
-    xargs stat -c "%Y" 2>/dev/null |
-    sort -n | tail -1)
-
-  # Fecha del caché actual
-  local cache_time=0
-  [[ -f "$APPS_CACHE" ]] && cache_time=$(stat -c "%Y" "$APPS_CACHE" 2>/dev/null)
-
-  # Solo reconstruye si hay archivos más nuevos que el caché
-  if [[ "$newest" -gt "$cache_time" ]]; then
-    find "${DESKTOP_DIRS[@]}" \
-      -name "*.desktop" 2>/dev/null |
-      while read -r f; do
-        local name icon nodisplay
-        name=$(grep -m1 "^Name=" "$f" | cut -d= -f2-)
-        icon=$(grep -m1 "^Icon=" "$f" | cut -d= -f2-)
-        nodisplay=$(grep -m1 "^NoDisplay=" "$f" | cut -d= -f2-)
-        [[ "$nodisplay" == "true" ]] && continue
-        [[ -n "$name" ]] && echo "$name|$icon"
-      done | sort -u >"$APPS_CACHE"
-  fi
+  find "${DESKTOP_DIRS[@]}" -name "*.desktop" 2>/dev/null \
+    -print0 | xargs -0 gawk '
+    BEGINFILE { name=""; icon=""; nodisplay=0 }
+    /^Name=/      && !name      { name      = substr($0, 6) }
+    /^Icon=/      && !icon      { icon      = substr($0, 6) }
+    /^NoDisplay=/ && !nodisplay { nodisplay = (substr($0, 11) == "true") }
+    ENDFILE { if (name && !nodisplay) print name "|" icon }
+  ' 2>/dev/null | sort -u > "$tmp_cache" &&
+  mv "$tmp_cache" "$APPS_CACHE"
 }
 
 # ── Construye lista unificada ──────────────────────────────────
@@ -62,17 +48,21 @@ build_list() {
       else printf "  %s\n", $1
   }' "$APPS_CACHE"
 
+  # Aliases de mensajería → Ferdium
+  printf "  WhatsApp\0icon\x1fferdium\n"
+  printf "  Discord\0icon\x1fferdium\n"
+
   # Scripts / configs
   printf "  zsh\n  hyprland\n  rofi\n  waybar\n  swaync\n"
   printf "  matugen\n  kitty\n  keyd\n  nvim\n  tmux\n"
-  printf "  scripts\n  menus\n  Dev-Mode\n"
+  printf "  scripts\n  menus\n  yazi\n  Dev-Mode\n"
 
   # System
   printf "  Apagar\n  Reiniciar\n  Bloquear\n"
 }
 
-# Refresca el caché en background — no bloquea la apertura del menú
-_refresh_cache &
+# Reconstruye el caché siempre — garantiza apps recién instaladas visibles
+_refresh_cache
 
 # ── Lanza rofi ─────────────────────────────────────────────────
 selection=$(build_list |
@@ -105,13 +95,27 @@ if [[ -f "$APPS_CACHE" ]] && awk -F'|' -v n="$clean" '$1==n{found=1}END{exit !fo
     -name "*.desktop" 2>/dev/null |
     while read -r f; do
       name=$(grep -m1 "^Name=" "$f" | cut -d= -f2-)
-      exc=$(grep -m1 "^Exec=" "$f" | cut -d= -f2- \
-           | sed 's/ @@[^ ]*//g; s/ %[A-Za-z]//g; s/ --$//')
+      exc=$(grep -m1 "^Exec=" "$f" | cut -d= -f2- |
+        sed 's/ @@[^ ]*//g; s/ %[A-Za-z]//g; s/ --$//')
       [[ "$name" == "$clean" ]] && echo "$exc" && break
     done)
-  [[ -n "$exec_cmd" ]] && setsid bash -c "$exec_cmd" &>/dev/null &
+  if [[ -n "$exec_cmd" ]]; then
+    if [[ "$exec_cmd" != *" "* ]]; then
+      setsid "$exec_cmd" </dev/null &>/dev/null &
+    else
+      setsid bash -c "$exec_cmd" </dev/null &>/dev/null &
+    fi
+  fi
   exit 0
 fi
+
+# ¿Alias mensajería?
+case "$clean" in
+"WhatsApp"|"Discord")
+  (setsid /usr/bin/ferdium </dev/null &>/dev/null &)
+  exit 0
+  ;;
+esac
 
 # ¿System?
 case "$clean" in
@@ -145,6 +149,7 @@ kitty) kitty nvim "/home/tona/.config/kitty/kitty.conf" ;;
 keyd) kitty nvim "/etc/keyd/default.conf" ;;
 nvim) kitty nvim "/home/tona/.config/nvim" ;;
 tmux) kitty nvim "/home/tona/.tmux.conf" ;;
+yazi) kitty nvim "/home/tona/.config/yazi" ;;
 scripts) kitty nvim "/home/tona/Documents/scripts/" ;;
 menus) kitty nvim "/home/tona/.local/share/applications/" ;;
 esac

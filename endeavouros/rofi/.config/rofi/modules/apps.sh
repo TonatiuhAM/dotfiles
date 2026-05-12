@@ -26,6 +26,10 @@ app_list=$(find "${DESKTOP_DIRS[@]}" \
                [[ -n "$name" && -n "$exec_cmd" ]] && echo "$name|$exec_cmd|$icon"
              done | sort -u)
 
+# Aliases de mensajería → Ferdium
+app_list+=$'\n'"WhatsApp|/usr/bin/ferdium|ferdium"
+app_list+=$'\n'"Discord|/usr/bin/ferdium|ferdium"
+
 selection=$(printf '%s\n' "$app_list" \
     | awk -F'|' '{
         if ($3 != "") printf "%s\0icon\x1f%s\n", $1, $3
@@ -42,4 +46,11 @@ selection=$(printf '%s\n' "$app_list" \
 exec_cmd=$(printf '%s\n' "$app_list" \
     | awk -F'|' -v s="$selection" '$1==s {print $2; exit}')
 
-[[ -n "$exec_cmd" ]] && setsid bash -c "$exec_cmd" &>/dev/null &
+[[ -z "$exec_cmd" ]] && exit 0
+
+# Ejecutar directamente si es un binario simple, con bash -c si lleva argumentos
+if [[ "$exec_cmd" != *" "* ]]; then
+  setsid "$exec_cmd" </dev/null &>/dev/null &
+else
+  setsid bash -c "$exec_cmd" </dev/null &>/dev/null &
+fi

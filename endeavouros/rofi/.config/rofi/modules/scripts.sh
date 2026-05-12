@@ -29,7 +29,7 @@ case "$section" in
 # ── Configuraciones (configs.sh) ──────────────────────────
 "Configuraciones")
   selection=$(printf \
-    "zsh\nhyprland\nrofi\nwaybar\nswaync\nmatugen\nkitty\nkeyd\nnvim\ntmux\nscripts\nmenus" |
+    "zsh\nhyprland\nrofi\nwaybar\nswaync\nmatugen\nkitty\nkeyd\nnvim\ntmux\nyazi\nscripts\nmenus" |
     rofi -dmenu \
       -p "" \
       -theme "$THEME" \
@@ -48,6 +48,7 @@ case "$section" in
   keyd) kitty nvim "/etc/keyd/default.conf" ;;
   nvim) kitty nvim "/home/tona/.config/nvim" ;;
   tmux) kitty nvim "/home/tona/.tmux.conf" ;;
+  yazi) kitty nvim "/home/tona/.config/yazi" ;;
   scripts) kitty nvim "/home/tona/Documents/scripts/" ;;
   menus) kitty nvim "/home/tona/.local/share/applications/" ;;
   esac

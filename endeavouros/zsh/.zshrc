@@ -50,6 +50,8 @@ alias dk='~/Documents/scripts/docker-manager.sh'
 alias pacupdate='sudo timeshift --create --comments "pre-update" --tags D && sudo pacman -Syu'
 alias yayupdate='sudo timeshift --create --comments "pre-update" --tags D && yay -Syu'
 
+alias open='thunar . & disown'
+
 # Alias para editar archivos de configuracion rápidamente
 alias zshrc="nvim $ZSHCONF"
 alias hyprc="nvim $HYPRCONF"
