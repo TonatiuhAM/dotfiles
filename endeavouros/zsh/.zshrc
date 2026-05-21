@@ -1,5 +1,14 @@
 fastfetch
 
+
+# =======================================================================================
+# Comportamiento del Shell
+# =======================================================================================
+setopt AUTOCD
+setopt NOBEEP
+setopt NUMERIC_GLOB_SORT
+
+
 # 1. Primero el Instant Prompt de P10K (Siempre arriba)
 if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]; then
   source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
@@ -51,6 +60,7 @@ alias pacupdate='sudo timeshift --create --comments "pre-update" --tags D && sud
 alias yayupdate='sudo timeshift --create --comments "pre-update" --tags D && yay -Syu'
 
 alias open='thunar . & disown'
+alias sunshine-start='~/scripts/sunshine-start.sh'
 
 # Alias para editar archivos de configuracion rápidamente
 alias zshrc="nvim $ZSHCONF"
@@ -67,3 +77,6 @@ eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv zsh)"
 # opencode
 export PATH=/home/tona/.opencode/bin:$PATH
 export LD_LIBRARY_PATH="$LD_LIBRARY_PATH:/opt/cuda/lib64"
+
+# bun completions
+[ -s "/home/tona/.bun/_bun" ] && source "/home/tona/.bun/_bun"

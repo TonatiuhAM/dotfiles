@@ -59,7 +59,7 @@ wall_path="$WALL_DIR/$selected"
 # ── Aplica wallpaper + matugen ────────────────────────────────
 notify-send -u normal "Theme Changer" "🎨 Aplicando...\n<b>${selected%.*}</b>"
 
-awww img "$wall_path" --transition-type center
+awww img "$wall_path" --transition-type center 2>/dev/null
 
 matugen image "$wall_path" \
     --source-color-index 0 \

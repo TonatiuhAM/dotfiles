@@ -24,15 +24,15 @@ _refresh_cache() {
   mkdir -p "$cache_dir"
   tmp_cache="${APPS_CACHE}.tmp.$$"
 
-  find "${DESKTOP_DIRS[@]}" -name "*.desktop" 2>/dev/null \
-    -print0 | xargs -0 gawk '
+  find "${DESKTOP_DIRS[@]}" -name "*.desktop" \
+    -print0 2>/dev/null | xargs -0 gawk '
     BEGINFILE { name=""; icon=""; nodisplay=0 }
     /^Name=/      && !name      { name      = substr($0, 6) }
     /^Icon=/      && !icon      { icon      = substr($0, 6) }
     /^NoDisplay=/ && !nodisplay { nodisplay = (substr($0, 11) == "true") }
     ENDFILE { if (name && !nodisplay) print name "|" icon }
-  ' 2>/dev/null | sort -u > "$tmp_cache" &&
-  mv "$tmp_cache" "$APPS_CACHE"
+  ' 2>/dev/null | sort -u >"$tmp_cache" &&
+    mv "$tmp_cache" "$APPS_CACHE"
 }
 
 # ── Construye lista unificada ──────────────────────────────────
@@ -41,6 +41,7 @@ build_list() {
   echo "󰏘  Style"
   echo "󰆍  Scripts"
   echo "󰐥  System"
+  echo "󰣀  SSH"
 
   # Apps desde caché (instantáneo)
   [[ -f "$APPS_CACHE" ]] && awk -F'|' '{
@@ -85,6 +86,7 @@ case "$selection" in
 "󰏘  Style") exec bash "$MODS/style-picker.sh" ;;
 "󰆍  Scripts") exec bash "$MODS/scripts.sh" ;;
 "󰐥  System") exec bash "$MODS/system.sh" ;;
+"󰣀  SSH") exec bash "$MODS/ssh.sh" ;;
 esac
 
 # ── Búsqueda unificada ─────────────────────────────────────────
@@ -111,8 +113,8 @@ fi
 
 # ¿Alias mensajería?
 case "$clean" in
-"WhatsApp"|"Discord")
-  (setsid /usr/bin/ferdium </dev/null &>/dev/null &)
+"WhatsApp" | "Discord")
+  (setsid env ELECTRON_IS_DEV=0 /usr/bin/electron37 /opt/ferdium-bin/ --ozone-platform=wayland --enable-features=UseOzonePlatform,WaylandWindowDecorations </dev/null &>/dev/null &)
   exit 0
   ;;
 esac

@@ -15,7 +15,7 @@ THEME="$HOME/.config/rofi/themes/launcher.rasi"
 if [[ "$1" == "configs" ]]; then
   section="Configuraciones"
 else
-  section=$(printf "Configuraciones\nDev-Mode" |
+  section=$(printf "Configuraciones\nDev-Mode\nSSH" |
     rofi -dmenu \
       -p "" \
       -theme "$THEME" \
@@ -39,7 +39,7 @@ case "$section" in
 
   case "$selection" in
   zsh) kitty nvim "/home/tona/.zshrc" ;;
-  hyprland) kitty nvim "/home/tona/.config/hypr/hyprland.conf" ;;
+  hyprland) kitty nvim "/home/tona/.config/hypr/hyprland.lua" ;;
   rofi) kitty nvim "/home/tona/.config/rofi" ;;
   waybar) kitty nvim "/home/tona/.config/waybar" ;;
   swaync) kitty nvim "/home/tona/.config/swaync" ;;
@@ -57,5 +57,9 @@ case "$section" in
 # ── Layouts (layout-menu.sh) ──────────────────────────────
 "Dev-Mode")
   bash "$HOME/dotfiles/endeavouros/scripts/Documents/scripts/hypr-scripts/dev-layout.sh"
+  ;;
+
+"SSH")
+  exec bash "$HOME/.config/rofi/modules/ssh.sh"
   ;;
 esac
