@@ -1,0 +1,70 @@
+fastfetch
+
+
+# =======================================================================================
+# Comportamiento del Shell
+# =======================================================================================
+setopt AUTOCD
+setopt NOBEEP
+setopt NUMERIC_GLOB_SORT
+
+
+# 1. Primero el Instant Prompt de P10K (Siempre arriba)
+if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]; then
+  source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
+fi
+
+# 2. Definir variables base (Bun, Cargo, etc.) ANTES de usarlas en el PATH
+export ZSH="$HOME/.oh-my-zsh"
+export BUN_INSTALL="$HOME/.bun"
+
+# 3. Configurar el PATH (Una sola vez de forma limpia)
+# Agregamos todo: Cargo, Bun, Opencode y carpetas locales
+export PATH="$HOME/.cargo/bin:$BUN_INSTALL/bin:$HOME/.opencode/bin:$HOME/bin:$HOME/.local/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/opt/cuda/bin:$PATH"
+
+# 4. Configuración de Oh My Zsh y Tema
+ZSH_THEME="powerlevel10k/powerlevel10k"
+plugins=(
+        git
+        zsh-autosuggestions
+        zsh-syntax-highlighting
+        zsh-vi-mode
+        )
+source $ZSH/oh-my-zsh.sh
+
+# 5. Inicialización de herramientas (Zoxide, P10k, Bun completions)
+eval "$(zoxide init zsh)"
+[[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
+[ -s "$HOME/.bun/_bun" ] && source "$HOME/.bun/_bun"
+
+# 6. Tus Funciones y Alias (Al final para que no estorben)
+function y() {
+    local tmp="$(mktemp -t "yazi-cwd.XXXXXX")" cwd
+    command yazi "$@" --cwd-file="$tmp"
+    IFS= read -r -d '' cwd < "$tmp"
+    [ "$cwd" != "$PWD" ] && [ -d "$cwd" ] && builtin cd -- "$cwd"
+    rm -f -- "$tmp"
+}
+
+alias vim='nvim'
+alias ls='lsd -lA'
+
+alias lssh='lazyssh'
+alias lg='lazygit'
+alias ld='lazydocker'
+alias dk='~/Documents/scripts/docker-manager.sh'
+
+alias pacupdate='sudo timeshift --create --comments "pre-update" --tags D && sudo pacman -Syu'
+alias yayupdate='sudo timeshift --create --comments "pre-update" --tags D && yay -Syu'
+
+alias open='thunar . & disown'
+alias sunshine-start='~/Documents/scripts/sunshine-start.sh'
+
+eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv zsh)"
+
+# opencode
+export PATH=/home/tona/.opencode/bin:$PATH
+export LD_LIBRARY_PATH="$LD_LIBRARY_PATH:/opt/cuda/lib64"
+
+# bun completions
+[ -s "/home/tona/.bun/_bun" ] && source "/home/tona/.bun/_bun"
