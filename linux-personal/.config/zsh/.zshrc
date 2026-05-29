@@ -1,5 +1,5 @@
+# 1. Ejecutar el comando visual (Fastfetch) al abrir la terminal
 fastfetch
-
 
 # =======================================================================================
 # Comportamiento del Shell
@@ -8,36 +8,34 @@ setopt AUTOCD
 setopt NOBEEP
 setopt NUMERIC_GLOB_SORT
 
-
-# 1. Primero el Instant Prompt de P10K (Siempre arriba)
+# 2. Instant Prompt de P10K (Siempre arriba)
 if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]; then
   source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
 fi
 
-# 2. Definir variables base (Bun, Cargo, etc.) ANTES de usarlas en el PATH
-export ZSH="$HOME/.oh-my-zsh"
-export BUN_INSTALL="$HOME/.bun"
-
-# 3. Configurar el PATH (Una sola vez de forma limpia)
-# Agregamos todo: Cargo, Bun, Opencode y carpetas locales
-export PATH="$HOME/.cargo/bin:$BUN_INSTALL/bin:$HOME/.opencode/bin:$HOME/bin:$HOME/.local/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/opt/cuda/bin:$PATH"
-
-# 4. Configuración de Oh My Zsh y Tema
+# 3. Configuración de Oh My Zsh y Tema
 ZSH_THEME="powerlevel10k/powerlevel10k"
 plugins=(
-        git
-        zsh-autosuggestions
-        zsh-syntax-highlighting
-        zsh-vi-mode
-        )
+    git
+    zsh-autosuggestions
+    zsh-syntax-highlighting
+    zsh-vi-mode
+)
+# Carga Oh My Zsh usando la variable que definimos en el perfil
 source $ZSH/oh-my-zsh.sh
 
-# 5. Inicialización de herramientas (Zoxide, P10k, Bun completions)
+# 4. Inicialización de herramientas interactivas
 eval "$(zoxide init zsh)"
-[[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
-[ -s "$HOME/.bun/_bun" ] && source "$HOME/.bun/_bun"
 
-# 6. Tus Funciones y Alias (Al final para que no estorben)
+# Cargar P10K desde su nueva ubicación XDG
+[[ ! -f "$ZDOTDIR/.p10k.zsh" ]] || source "$ZDOTDIR/.p10k.zsh"
+
+# Completions de Bun (con su nueva ruta XDG)
+[ -s "$BUN_INSTALL/_bun" ] && source "$BUN_INSTALL/_bun"
+
+# =======================================================================================
+# 5. Funciones y Alias
+# =======================================================================================
 function y() {
     local tmp="$(mktemp -t "yazi-cwd.XXXXXX")" cwd
     command yazi "$@" --cwd-file="$tmp"
@@ -46,25 +44,37 @@ function y() {
     rm -f -- "$tmp"
 }
 
+function _yazi_zle() {
+    y
+    zle reset-prompt
+}
+zle -N _yazi_zle
+
+# zsh-vi-mode resetea los keybindings después de .zshrc — se usa su hook para no perder Ctrl+F
+autoload -Uz edit-command-line
+zle -N edit-command-line
+
+function zvm_after_init() {
+    bindkey '^f' _yazi_zle
+    bindkey '^e' edit-command-line
+    bindkey -M vicmd '^e' edit-command-line
+}
+
+# Alias generales
 alias vim='nvim'
 alias ls='lsd -lA'
+alias open='thunar . & disown'
 
+# Herramientas TUI y Scripts de administración
 alias lssh='lazyssh'
 alias lg='lazygit'
 alias ld='lazydocker'
 alias dk='~/Documents/scripts/docker-manager.sh'
+alias sunshine-start='$XDG_CONFIG_HOME/Scripts/sunshine-start.sh'
 
+# Reload del shell
+alias zshsource='exec zsh'
+
+# Actualizaciones del sistema con respaldo automático en Timeshift
 alias pacupdate='sudo timeshift --create --comments "pre-update" --tags D && sudo pacman -Syu'
 alias yayupdate='sudo timeshift --create --comments "pre-update" --tags D && yay -Syu'
-
-alias open='thunar . & disown'
-alias sunshine-start='~/Documents/scripts/sunshine-start.sh'
-
-eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv zsh)"
-
-# opencode
-export PATH=/home/tona/.opencode/bin:$PATH
-export LD_LIBRARY_PATH="$LD_LIBRARY_PATH:/opt/cuda/lib64"
-
-# bun completions
-[ -s "/home/tona/.bun/_bun" ] && source "/home/tona/.bun/_bun"

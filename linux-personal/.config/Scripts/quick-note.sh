@@ -1,7 +1,7 @@
 #!/bin/bash
 
 VAULT="the-vault"
-MODE="append"
+NOTE="Sticky%20Notes.md"
 TMPFILE=$(mktemp /tmp/quick-note-XXXXXX.md)
 
 # Abrir kitty flotante con nvim editando el archivo temporal
@@ -16,8 +16,19 @@ FINAL_TEXT=$(cat "$TMPFILE")
 
 # Solo hacer append si hay contenido
 if [ -n "$FINAL_TEXT" ]; then
-  ENCODED_TEXT=$(python3 -c "import urllib.parse; print(urllib.parse.quote('''$FINAL_TEXT'''))")
-  URI="obsidian://advanced-uri?vault=${VAULT}&daily=true&data=${ENCODED_TEXT}&mode=${MODE}"
+  # Codificar el texto con salto de línea al inicio (espacio en blanco)
+  ENCODED_TEXT=$(python3 -c "
+import urllib.parse
+text = open('${TMPFILE}').read()
+print(urllib.parse.quote('\n' + text))
+")
+
+  # Primero abrir Obsidian para asegurarse de que esté corriendo
+  xdg-open "obsidian://open?vault=${VAULT}"
+  sleep 1.5
+
+  # Luego hacer append a Sticky Notes.md
+  URI="obsidian://advanced-uri?vault=${VAULT}&filepath=${NOTE}&data=${ENCODED_TEXT}&mode=append"
   xdg-open "$URI"
 fi
 

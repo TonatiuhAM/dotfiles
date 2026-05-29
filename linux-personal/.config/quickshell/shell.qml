@@ -2,6 +2,7 @@
 
 import Quickshell
 import QtQuick
+import "./terminal"
 
 ShellRoot {
     id: root

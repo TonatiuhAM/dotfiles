@@ -10,7 +10,7 @@ desc = "Abrir shell en el directorio actual"
 
 [[mgr.prepend_keymap]]
 on = [ "g", "d" ]
-run = "cd ~/dotfiles/endeavouros/"
+run = "cd ~/dotfiles/linux-personal/.config"
 desc = "Cd to dotfiles"
 
 [[mgr.prepend_keymap]]

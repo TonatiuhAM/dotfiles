@@ -50,7 +50,7 @@ hl.env("HYPRCURSOR_SIZE", "24")
 hl.config({
 	general = {
 		gaps_in = 5, -- 5
-		gaps_out = { top = 8, right = 6, bottom = 8, left = 6 },
+		gaps_out = { top = 20, right = 20, bottom = 20, left = 20 },
 		border_size = 2,
 		col = {
 			active_border = primary,
@@ -71,7 +71,7 @@ hl.config({
 	},
 
 	decoration = {
-		rounding = 10,
+		rounding = 0,
 		rounding_power = 2.0,
 		active_opacity = 1.0,
 		inactive_opacity = 0.9,
@@ -206,6 +206,14 @@ hl.window_rule({
 })
 
 hl.window_rule({
+	name = "btop",
+	match = { class = "btop" },
+	float = true,
+	center = true,
+	size = { 800, 600 },
+})
+
+hl.window_rule({
 	name = "dev-workspace-picker",
 	match = { class = "dev-workspace-picker" },
 	float = true,
@@ -220,11 +228,34 @@ hl.layer_rule({
 	no_anim = true,
 })
 
+-- Regla para poder tomar apuntes con nvim
+hl.window_rule({
+	match = {
+		class = "apuntes-cursos",
+	},
+	-- 1. Forzar a que la ventana sea flotante
+	float = true,
+
+	-- 2. Definir el tamaño predefinido (Ancho, Alto) para que sea un rectángulo
+	size = { 1300, 250 },
+
+	-- 3. Posicionar en el centro horizontal (X) y pegado abajo (Y)
+	-- Usamos expresiones:
+	-- X = (Ancho del monitor / 2) - (Ancho de la ventana / 2)
+	-- Y = Ancho del monitor - Alto de la ventana - un margen (ej. 30px)
+	move = {
+		"(monitor_w * 0.5) - (window_w * 0.5)",
+		"monitor_h - window_h - 20",
+	},
+})
+
 -- ==============================================
 -- BINDS (ATAJOS)
 -- ==============================================
 
 -- Programas y utilidades
+hl.bind("SUPER + Tab", hl.dsp.window.cycle_next({}))
+hl.bind("SUPER + O", hl.dsp.exec_cmd("$XDG_CONFIG_HOME/Scripts/apuntes-cursos.sh"))
 hl.bind("F9", hl.dsp.exec_cmd("kill -USR2 $(pgrep handy)"))
 hl.bind("SUPER + ALT + S", hl.dsp.exec_cmd(terminal .. " --title pulsemixer pulsemixer"))
 hl.bind("SUPER + ALT + B", hl.dsp.exec_cmd(terminal .. " --title bluetui bluetui"))
@@ -238,7 +269,8 @@ hl.bind("SUPER + F", hl.dsp.exec_cmd(terminal .. " --override font_size=13 -e en
 hl.bind("SUPER + Z", hl.dsp.window.fullscreen({ action = "toggle" }))
 hl.bind("SUPER + N", hl.dsp.exec_cmd("swaync-client -t"))
 hl.bind("SUPER + mouse:274", hl.dsp.exec_cmd("pypr zoom"), { mouse = true })
-hl.bind("SUPER + comma", hl.dsp.exec_cmd("/home/tona/.config/rofi/modules/scripts.sh configs"))
+-- hl.bind("SUPER + comma", hl.dsp.exec_cmd("/home/tona/.config/rofi/modules/scripts.sh configs"))
+hl.bind("SUPER + comma", hl.dsp.exec_cmd("$XDG_CONFIG_HOME/Scripts/config-picker.sh"))
 
 --Recuperar mayor y menor que
 hl.bind("CTRL + bar", hl.dsp.exec_cmd("wtype '>'"))
@@ -247,18 +279,23 @@ hl.bind("CTRL + SHIFT + bar", hl.dsp.exec_cmd("wtype '<'"))
 -- Básicos
 hl.bind("SUPER + Return", hl.dsp.exec_cmd(terminal))
 hl.bind("SUPER + SHIFT + Return", hl.dsp.exec_cmd(terminal .. " sh -c 'tmux attach || tmux'"))
-hl.bind("SUPER + b", hl.dsp.exec_cmd("vivaldi"))
+hl.bind("SUPER + b", hl.dsp.exec_cmd("helium-browser"))
 hl.bind("SUPER + q", hl.dsp.window.close())
 hl.bind("SUPER + SHIFT + F", hl.dsp.exec_cmd(fileManager))
 hl.bind("SUPER + V", hl.dsp.layout("togglesplit"))
 hl.bind("SUPER + SHIFT + V", hl.dsp.window.float({ action = "toggle" }))
 hl.bind("SUPER + SPACE", hl.dsp.exec_cmd(menu))
 hl.bind("SUPER + P", hl.dsp.window.pseudo())
-hl.bind(
-	"SUPER + D",
-	hl.dsp.exec_cmd("bash ~/dotfiles/endeavouros/scripts/Documents/scripts/hypr-scripts/dev-layout.sh")
-)
+hl.bind("SUPER + D", hl.dsp.exec_cmd("$XDG_CONFIG_HOME/Scripts/dev-layout.sh"))
 hl.bind("SUPER + SHIFT + R", hl.dsp.exec_cmd("$XDG_CONFIG_HOME/Scripts/launch.sh"))
+
+-- Workspaces especiales
+hl.bind("SUPER + SHIFT + M", hl.dsp.window.move({ workspace = "special:M" }))
+hl.bind("SUPER + M", hl.dsp.workspace.toggle_special("M"))
+
+-- Navegación entre workspaces con flechas
+hl.bind("SUPER+Left", hl.dsp.focus({ workspace = "-1" }))
+hl.bind("SUPER+Right", hl.dsp.focus({ workspace = "+1" }))
 
 -- Navegación de foco (h/j/k/l estilo Vim)
 hl.bind("SUPER + h", hl.dsp.focus({ direction = "l" }))
@@ -324,3 +361,21 @@ hl.bind("XF86AudioNext", hl.dsp.exec_cmd("playerctl next"), { locked = true })
 hl.bind("XF86AudioPause", hl.dsp.exec_cmd("playerctl play-pause"), { locked = true })
 hl.bind("XF86AudioPlay", hl.dsp.exec_cmd("playerctl play-pause"), { locked = true })
 hl.bind("XF86AudioPrev", hl.dsp.exec_cmd("playerctl previous"), { locked = true })
+
+-- HELIUM BROWSER: Navegación entre pestañas con Ctrl+h,l
+hl.bind(
+	"CTRL+h",
+	hl.dsp.exec_cmd(
+		"bash -c 'hyprctl activewindow | grep -q \"class: helium\" && wtype -M ctrl -M shift -k Tab -m shift -m ctrl'"
+	)
+)
+
+hl.bind(
+	"CTRL+l",
+	hl.dsp.exec_cmd("bash -c 'hyprctl activewindow | grep -q \"class: helium\" && wtype -M ctrl -k Tab -m ctrl'")
+)
+
+hl.bind(
+	"CTRL+space",
+	hl.dsp.exec_cmd("bash -c 'hyprctl activewindow | grep -q \"class: helium\" && wtype -M ctrl -k l -m ctrl'")
+)

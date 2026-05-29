@@ -38,7 +38,7 @@ case "$section" in
   [[ -z "$selection" ]] && exit 0
 
   case "$selection" in
-  zsh) kitty nvim "$XDG_CONFIG_HOME/zsh/.zshrc" ;;
+  zsh) kitty nvim "$XDG_CONFIG_HOME/zsh" ;;
   hyprland) kitty nvim "$XDG_CONFIG_HOME/hypr/hyprland.lua" ;;
   rofi) kitty nvim "$XDG_CONFIG_HOME/rofi" ;;
   waybar) kitty nvim "$XDG_CONFIG_HOME/waybar" ;;
@@ -56,7 +56,7 @@ case "$section" in
 
 # ── Layouts (layout-menu.sh) ──────────────────────────────
 "Dev-Mode")
-  bash "$XDG_CONFIG_HOME/Scripts/hypr-scripts/dev-layout.sh"
+  bash "$XDG_CONFIG_HOME/Scripts/dev-layout.sh"
   ;;
 
 "SSH")
