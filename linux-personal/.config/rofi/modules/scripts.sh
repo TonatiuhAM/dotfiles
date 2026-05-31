@@ -15,7 +15,7 @@ THEME="$HOME/.config/rofi/themes/launcher.rasi"
 if [[ "$1" == "configs" ]]; then
   section="Configuraciones"
 else
-  section=$(printf "Configuraciones\nDev-Mode\nSSH" |
+  section=$(printf "Apps\nDev-Mode\nSSH" |
     rofi -dmenu \
       -p "" \
       -theme "$THEME" \
@@ -26,37 +26,13 @@ fi
 
 case "$section" in
 
-# ── Configuraciones (configs.sh) ──────────────────────────
-"Configuraciones")
-  selection=$(printf \
-    "zsh\nhyprland\nrofi\nwaybar\nswaync\nmatugen\nkitty\nkeyd\nnvim\ntmux\nyazi\nscripts\nmenus" |
-    rofi -dmenu \
-      -p "" \
-      -theme "$THEME" \
-      -i)
-
-  [[ -z "$selection" ]] && exit 0
-
-  case "$selection" in
-  zsh) kitty nvim "$XDG_CONFIG_HOME/zsh" ;;
-  hyprland) kitty nvim "$XDG_CONFIG_HOME/hypr/hyprland.lua" ;;
-  rofi) kitty nvim "$XDG_CONFIG_HOME/rofi" ;;
-  waybar) kitty nvim "$XDG_CONFIG_HOME/waybar" ;;
-  swaync) kitty nvim "$XDG_CONFIG_HOME/swaync" ;;
-  matugen) kitty nvim "$XDG_CONFIG_HOME/matugen" ;;
-  kitty) kitty nvim "$XDG_CONFIG_HOME/kitty" ;;
-  keyd) kitty nvim "$KEYD_CONF" ;;
-  nvim) kitty nvim "$XDG_CONFIG_HOME/nvim" ;;
-  tmux) kitty nvim "$XDG_CONFIG_HOME/tmux" ;;
-  yazi) kitty nvim "$XDG_CONFIG_HOME/yazi" ;;
-  scripts) kitty nvim "$XDG_CONFIG_HOME/Scripts" ;;
-  menus) kitty nvim "$APPS_DIR" ;;
-  esac
+# ── Layouts (layout-menu.sh) ──────────────────────────────
+"Apps")
+  exec bash "$XDG_CONFIG_HOME/Scripts/sysman.sh"
   ;;
 
-# ── Layouts (layout-menu.sh) ──────────────────────────────
 "Dev-Mode")
-  bash "$XDG_CONFIG_HOME/Scripts/dev-layout.sh"
+  exec bash "$XDG_CONFIG_HOME/Scripts/dev-layout.sh"
   ;;
 
 "SSH")

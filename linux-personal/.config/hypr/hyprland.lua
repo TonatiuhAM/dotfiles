@@ -9,7 +9,8 @@ local outline_variant = outline_variant -- tono apagado (borde inactivo)
 -- Variables
 local terminal = "kitty"
 local fileManager = "thunar"
-local menu = "pkill rofi || bash ~/.config/rofi/launcher.sh"
+-- local menu = "pkill rofi || bash ~/.config/rofi/launcher.sh"
+local menu = "$XDG_CONFIG_HOME/quickshell/Launcher/toggle_launcher.sh"
 
 -- ==============================================
 -- MONITOR
@@ -25,7 +26,6 @@ hl.monitor({
 -- AUTOSTART
 -- ==============================================
 hl.on("hyprland.start", function()
-	-- hl.exec_cmd("waybar")
 	hl.exec_cmd("swaync")
 	hl.exec_cmd("qs")
 	hl.exec_cmd("awww-daemon")
@@ -366,16 +366,20 @@ hl.bind("XF86AudioPrev", hl.dsp.exec_cmd("playerctl previous"), { locked = true 
 hl.bind(
 	"CTRL+h",
 	hl.dsp.exec_cmd(
-		"bash -c 'hyprctl activewindow | grep -q \"class: helium\" && wtype -M ctrl -M shift -k Tab -m shift -m ctrl'"
+		"bash -c 'if hyprctl activewindow | grep -q \"class: helium\"; then wtype -M ctrl -M shift -k Tab -m shift -m ctrl; else wtype -M ctrl -k h -m ctrl; fi'"
 	)
 )
 
 hl.bind(
 	"CTRL+l",
-	hl.dsp.exec_cmd("bash -c 'hyprctl activewindow | grep -q \"class: helium\" && wtype -M ctrl -k Tab -m ctrl'")
+	hl.dsp.exec_cmd(
+		"bash -c 'if hyprctl activewindow | grep -q \"class: helium\"; then wtype -M ctrl -k Tab -m ctrl; else wtype -M ctrl -k l -m ctrl; fi'"
+	)
 )
 
 hl.bind(
 	"CTRL+space",
-	hl.dsp.exec_cmd("bash -c 'hyprctl activewindow | grep -q \"class: helium\" && wtype -M ctrl -k l -m ctrl'")
+	hl.dsp.exec_cmd(
+		"bash -c 'if hyprctl activewindow | grep -q \"class: helium\"; then wtype -M ctrl -k l -m ctrl; else wtype -k space; fi'"
+	)
 )

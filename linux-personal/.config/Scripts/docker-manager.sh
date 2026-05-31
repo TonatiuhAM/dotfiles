@@ -128,6 +128,47 @@ run_cmd() {
   esac
 }
 
+# ── Espacio en disco ─────────────────────────────────────────
+cmd_df() {
+  echo ""
+  echo -e "${BOLD}${C}  Espacio usado por Docker:${RESET}"
+  echo -e "${DIM}  ─────────────────────────────────────────${RESET}"
+  echo ""
+  docker system df
+  echo ""
+}
+
+# ── Limpieza estándar ─────────────────────────────────────────
+cmd_prune() {
+  echo ""
+  echo -e "${Y}⚠  Elimina contenedores detenidos, redes y imágenes sin etiqueta.${RESET}"
+  echo -ne "  ${BOLD}¿Continuar? [s/N]:${RESET} "
+  read -r confirm
+  if [[ "$confirm" =~ ^[sS]$ ]]; then
+    echo ""
+    docker system prune
+  else
+    echo -e "  ${DIM}Cancelado.${RESET}"
+  fi
+  echo ""
+}
+
+# ── Limpieza profunda ─────────────────────────────────────────
+cmd_prune_all() {
+  echo ""
+  echo -e "${R}⚠  LIMPIEZA PROFUNDA: elimina TODAS las imágenes sin uso y volúmenes.${RESET}"
+  echo -e "${DIM}  Esto no se puede deshacer.${RESET}"
+  echo -ne "  ${BOLD}¿Continuar? [s/N]:${RESET} "
+  read -r confirm
+  if [[ "$confirm" =~ ^[sS]$ ]]; then
+    echo ""
+    docker system prune -a --volumes
+  else
+    echo -e "  ${DIM}Cancelado.${RESET}"
+  fi
+  echo ""
+}
+
 # ── Menú ─────────────────────────────────────────────────────
 show_menu() {
   clear
@@ -142,6 +183,9 @@ show_menu() {
   echo -e "  ${C}b${RESET}  ${DIM}·${RESET}  build       ${DIM}rebuild + up${RESET}"
   echo -e "  ${M}l${RESET}  ${DIM}·${RESET}  logs        ${DIM}ver logs en vivo${RESET}"
   echo -e "  ${W}ps${RESET} ${DIM}·${RESET}  status      ${DIM}lista de contenedores${RESET}"
+  echo -e "  ${C}df${RESET} ${DIM}·${RESET}  space       ${DIM}espacio usado por Docker${RESET}"
+  echo -e "  ${Y}p${RESET}  ${DIM}·${RESET}  prune       ${DIM}limpiar recursos sin uso${RESET}"
+  echo -e "  ${R}P${RESET}  ${DIM}·${RESET}  prune-all   ${DIM}limpieza profunda (imágenes + volúmenes)${RESET}"
   echo -e "  ${R}q${RESET}  ${DIM}·${RESET}  quit        ${DIM}salir${RESET}"
   echo ""
   echo -e "  ${DIM}Puedes agregar nombres de servicio después del comando:${RESET}"
@@ -175,6 +219,15 @@ while true; do
       ;;
     ps|status)
       cmd_ps
+      ;;
+    df|space)
+      cmd_df
+      ;;
+    p|prune)
+      cmd_prune
+      ;;
+    P|prune-all|pruneall)
+      cmd_prune_all
       ;;
     q|quit|exit)
       echo -e "  ${DIM}Hasta luego.${RESET}\n"

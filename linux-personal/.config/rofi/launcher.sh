@@ -56,7 +56,7 @@ build_list() {
   # Scripts / configs
   printf "  zsh\n  hyprland\n  rofi\n  waybar\n  swaync\n"
   printf "  matugen\n  kitty\n  keyd\n  nvim\n  tmux\n"
-  printf "  scripts\n  menus\n  yazi\n  Dev-Mode\n"
+  printf "  scripts\n  menus\n  yazi\n  Dev-Mode\n  Apps\n"
 
   # System
   printf "  Apagar\n  Reiniciar\n  Bloquear\n"
@@ -134,8 +134,11 @@ case "$clean" in
   exit 0
   ;;
 "Dev-Mode")
-  bash "$HOME/dotfiles/endeavouros/scripts/Documents/scripts/hypr-scripts/dev-layout.sh"
+  bash "$XDG_CONFIG_HOME/Scripts/dev-layout.sh"
   exit 0
+  ;;
+"Apps")
+  exec bash "$XDG_CONFIG_HOME/Scripts/sysman.sh"
   ;;
 esac
 
