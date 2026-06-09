@@ -71,11 +71,8 @@ alias lg='lazygit'
 alias ld='lazydocker'
 alias dk='$XDG_CONFIG_HOME/Scripts/docker-manager.sh'
 alias sunshine-start='$XDG_CONFIG_HOME/Scripts/sunshine-start.sh'
+alias apps="$XDG_CONFIG_HOME/Scripts/sysman.sh"
+alias claudeop='claude --dangerously-skip-permissions'
 
 # Reload del shell
 alias zshsource='exec zsh'
-
-# Actualizaciones del sistema con respaldo automático en Timeshift
-alias apps="$XDG_CONFIG_HOME/Scripts/sysman.sh"
-alias pacupdate='sudo timeshift --create --comments "pre-update" --tags D && sudo pacman -Syu'
-alias yayupdate='sudo timeshift --create --comments "pre-update" --tags D && yay -Syu'

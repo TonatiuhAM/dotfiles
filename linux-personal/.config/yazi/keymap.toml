@@ -19,11 +19,6 @@ run = "cd ~/Downloads/"
 desc = "Cd to Downloads"
 
 [[mgr.prepend_keymap]]
-on = [ "g", "s" ]
-run = "cd ~/Documents/scripts/"
-desc = "Cd to scripts"
-
-[[mgr.prepend_keymap]]
 on = [ "g", "w" ]
 run = "cd ~/Wallpapers/"
 desc = "Cd to Wallpapers"

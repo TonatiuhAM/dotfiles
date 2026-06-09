@@ -10,8 +10,21 @@ const scripts = [
     type: "script"
   },
   {
+    name: "Bluetooth",
+    icon: "",
+    command: ["kitty", "--title", "bluetui", "bluetui"],
+    type: "script"
+  },
+  {
+    name: "Volume Control",
+    icon: "󰕾",
+    command: ["kitty", "--title", "pulsemixer", "pulsemixer"],
+    type: "script"
+  },
+  {
     name: "Style Picker",
     icon: "󰸉",
+    keywords: ["wallpaper"],
     command: ["sh", "-c", "$XDG_CONFIG_HOME/Scripts/style-picker.sh"],
     type: "script"
   },
@@ -19,6 +32,12 @@ const scripts = [
     name: "Dev-Layout",
     icon: "󰵮",
     command: ["sh", "-c", "$XDG_CONFIG_HOME/Scripts/dev-layout.sh"],
+    type: "script"
+  },
+  {
+    name: "Curso-Layout",
+    icon: "󰵮",
+    command: ["sh", "-c", "$XDG_CONFIG_HOME/Scripts/cursos-layout.sh"],
     type: "script"
   },
   {
@@ -31,6 +50,13 @@ const scripts = [
     name: "Apps",
     icon: "",
     command: ["sh", "-c", "$XDG_CONFIG_HOME/Scripts/sysman.sh"],
+    type: "script"
+  },
+  {
+    name: "Ferdium",
+    icon: "",
+    keywords: ["whatsapp", "telegram", "discord", "slack", "messenger"],
+    command: ["sh", "-c", "gtk-launch ferdium"],
     type: "script"
   },
 ]
@@ -50,7 +76,7 @@ const systemCommands = [
     type: "system"
   },
   {
-    name: "Lock Screen",
+    name: "Bloquear",
     icon: "󰌾",
     command: ["hyprlock"],
     type: "system"

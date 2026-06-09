@@ -1,9 +1,10 @@
 #!/bin/bash
-# Receives a shell command string and runs it detached from the launcher process.
-# Variables like $XDG_CONFIG_HOME are expanded by the inner bash -c invocation.
+# Launches a shell command via Hyprland 0.55+ Lua dispatch API.
+# exec_cmd is forked directly by Hyprland, which associates the resulting
+# window with the active workspace at dispatch time — fixing workspace placement.
+# Lua long-string [[ ]] syntax accepts any content without quoting issues.
 export XDG_CONFIG_HOME="${XDG_CONFIG_HOME:-$HOME/.config}"
 export XDG_DATA_HOME="${XDG_DATA_HOME:-$HOME/.local/share}"
 export XDG_RUNTIME_DIR="${XDG_RUNTIME_DIR:-/run/user/$(id -u)}"
 
-nohup bash -c "$1" </dev/null >/dev/null 2>&1 &
-disown
+hyprctl dispatch "hl.dsp.exec_cmd([[$1]])"

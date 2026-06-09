@@ -203,6 +203,7 @@ hl.window_rule({
 	float = true,
 	center = true,
 	size = { 800, 600 },
+	workspace = "special:M",
 })
 
 hl.window_rule({
@@ -221,32 +222,25 @@ hl.window_rule({
 	size = { 700, 450 },
 })
 
--- CORRECCIÓN: hl.layer_rule() sintaxis corregida
-hl.layer_rule({
-	name = "rofi-no-anim",
-	match = { namespace = "^rofi$" },
-	no_anim = true,
-})
-
 -- Regla para poder tomar apuntes con nvim
 hl.window_rule({
 	match = {
 		class = "apuntes-cursos",
 	},
-	-- 1. Forzar a que la ventana sea flotante
 	float = true,
-
-	-- 2. Definir el tamaño predefinido (Ancho, Alto) para que sea un rectángulo
 	size = { 1300, 250 },
-
-	-- 3. Posicionar en el centro horizontal (X) y pegado abajo (Y)
-	-- Usamos expresiones:
-	-- X = (Ancho del monitor / 2) - (Ancho de la ventana / 2)
-	-- Y = Ancho del monitor - Alto de la ventana - un margen (ej. 30px)
 	move = {
-		"(monitor_w * 0.5) - (window_w * 0.5)",
-		"monitor_h - window_h - 20",
+		300,
+		800,
 	},
+})
+
+hl.window_rule({
+	name = "HyprEmoji",
+	match = { initial_title = "HyprEmoji" },
+	float = true,
+	size = { 500, 500 },
+	center = true,
 })
 
 -- ==============================================
@@ -255,21 +249,16 @@ hl.window_rule({
 
 -- Programas y utilidades
 hl.bind("SUPER + Tab", hl.dsp.window.cycle_next({}))
-hl.bind("SUPER + O", hl.dsp.exec_cmd("$XDG_CONFIG_HOME/Scripts/apuntes-cursos.sh"))
 hl.bind("F9", hl.dsp.exec_cmd("kill -USR2 $(pgrep handy)"))
 hl.bind("SUPER + ALT + S", hl.dsp.exec_cmd(terminal .. " --title pulsemixer pulsemixer"))
 hl.bind("SUPER + ALT + B", hl.dsp.exec_cmd(terminal .. " --title bluetui bluetui"))
 hl.bind("SUPER + SHIFT + S", hl.dsp.exec_cmd('grim -g "$(slurp)" - | wl-copy'))
-hl.bind(
-	"SUPER + SHIFT + E",
-	hl.dsp.exec_cmd("rofi -modi emoji -show emoji -emoji-mode copy -theme '~/.config/rofi/themes/launcher.rasi'")
-)
+hl.bind("SUPER + PERIOD", hl.dsp.exec_cmd("$XDG_CONFIG_HOME/Scripts/sw-hypremoji-copy.sh"))
 hl.bind("SUPER + SHIFT + N", hl.dsp.exec_cmd("$XDG_CONFIG_HOME/Scripts/quick-note.sh"))
 hl.bind("SUPER + F", hl.dsp.exec_cmd(terminal .. " --override font_size=13 -e env EDITOR=nvim yazi"))
 hl.bind("SUPER + Z", hl.dsp.window.fullscreen({ action = "toggle" }))
 hl.bind("SUPER + N", hl.dsp.exec_cmd("swaync-client -t"))
 hl.bind("SUPER + mouse:274", hl.dsp.exec_cmd("pypr zoom"), { mouse = true })
--- hl.bind("SUPER + comma", hl.dsp.exec_cmd("/home/tona/.config/rofi/modules/scripts.sh configs"))
 hl.bind("SUPER + comma", hl.dsp.exec_cmd("$XDG_CONFIG_HOME/Scripts/config-picker.sh"))
 
 --Recuperar mayor y menor que

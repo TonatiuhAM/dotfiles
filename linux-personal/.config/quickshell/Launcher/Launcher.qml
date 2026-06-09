@@ -80,10 +80,14 @@ PanelWindow {
         stdout: StdioCollector {
             onTextChanged: {
                 const lines = text.trim().split("\n").filter(l => l.length > 0)
+                const seen = {}   // deduplicate by app name (case-insensitive)
                 const apps = []
                 for (const line of lines) {
                     const p = line.split("\t")
                     if (p.length < 3) continue
+                    const key = p[0].toLowerCase()
+                    if (seen[key]) continue
+                    seen[key] = true
                     apps.push({
                         name: p[0],
                         icon: p[1],
@@ -116,8 +120,9 @@ PanelWindow {
         command: ["bash", root.execScript, root.execShellCmd]
     }
 
-    // Delay close() so the launched process inherits a valid Wayland context
-    // before the launcher releases exclusive keyboard focus.
+    // Delay close() so hyprctl dispatch exec fires first while the launcher is
+    // still open — Hyprland then knows which workspace is active and tags the
+    // spawned process to that workspace before the launcher releases focus.
     Timer {
         id: closeTimer
         interval: 50
@@ -165,25 +170,33 @@ PanelWindow {
     }
 
     // ─── Build filtered list ──────────────────────────────────────────────────
+    // matches() checks name + optional keywords array against the query
+    function matches(item, q) {
+        if (!q) return true
+        if (item.name.toLowerCase().includes(q)) return true
+        if (item.keywords && item.keywords.some(k => k.toLowerCase().includes(q))) return true
+        return false
+    }
+
     function rebuild() {
         const q = searchText.toLowerCase().trim()
 
         let list = []
         if (activeTab === 0) {
             for (const s of Data.scripts)
-                if (!q || s.name.toLowerCase().includes(q)) list.push(s)
+                if (matches(s, q)) list.push(s)
             for (const c of Data.systemCommands)
-                if (!q || c.name.toLowerCase().includes(q)) list.push(c)
+                if (matches(c, q)) list.push(c)
             if (appsLoaded)
                 for (const a of allApps)
-                    if (!q || a.name.toLowerCase().includes(q)) list.push(a)
+                    if (matches(a, q)) list.push(a)
         } else if (activeTab === 1) {
             if (appsLoaded)
-                list = allApps.filter(a => !q || a.name.toLowerCase().includes(q))
+                list = allApps.filter(a => matches(a, q))
         } else if (activeTab === 2) {
-            list = Data.scripts.filter(s => !q || s.name.toLowerCase().includes(q))
+            list = Data.scripts.filter(s => matches(s, q))
         } else if (activeTab === 3) {
-            list = Data.systemCommands.filter(c => !q || c.name.toLowerCase().includes(q))
+            list = Data.systemCommands.filter(c => matches(c, q))
         }
 
         filteredItems = list
@@ -218,10 +231,9 @@ PanelWindow {
         // Set the string property that drives the QML command binding
         root.execShellCmd = shellCmd
 
-        // Launch BEFORE closing so the child process inherits the live Wayland session
+        // Launch while the launcher is still open so Hyprland registers the
+        // dispatch against the current workspace, then close after a brief delay.
         execProc.exec(execProc.command)
-
-        // Close the launcher after a brief delay
         closeTimer.restart()
     }
 
@@ -234,7 +246,7 @@ PanelWindow {
     // ─── Panel ────────────────────────────────────────────────────────────────
     Rectangle {
         id: panel
-        width: 560
+        width: 680
         height: panelCol.implicitHeight
         anchors.centerIn: parent
 
@@ -252,16 +264,16 @@ PanelWindow {
             // ── Search bar ────────────────────────────────────────────────
             Item {
                 width: parent.width
-                height: 46
+                height: 58
 
                 RowLayout {
-                    anchors { fill: parent; leftMargin: 14; rightMargin: 14 }
-                    spacing: 10
+                    anchors { fill: parent; leftMargin: 18; rightMargin: 18 }
+                    spacing: 12
 
                     Text {
                         text: "󰍉"
                         color: Colors.md3.primary
-                        font.pixelSize: 16
+                        font.pixelSize: 20
                         font.family: "JetBrainsMono Nerd Font"
                     }
 
@@ -271,7 +283,7 @@ PanelWindow {
                         Layout.alignment: Qt.AlignVCenter
 
                         color: Colors.md3.on_surface
-                        font.pixelSize: 14
+                        font.pixelSize: 16
                         font.family: "JetBrainsMono Nerd Font"
                         selectionColor: Colors.md3.primary_container
                         selectedTextColor: Colors.md3.on_primary_container
@@ -316,7 +328,7 @@ PanelWindow {
                     Text {
                         text: ["General", "Apps", "Scripts", "System"][root.activeTab]
                         color: Colors.md3.primary
-                        font.pixelSize: 10
+                        font.pixelSize: 12
                         font.family: "JetBrainsMono Nerd Font"
                         opacity: 0.8
                     }
@@ -328,7 +340,7 @@ PanelWindow {
             // ── Tab bar ───────────────────────────────────────────────────
             Rectangle {
                 width: parent.width
-                height: 30
+                height: 38
                 color: Colors.md3.surface_container
 
                 RowLayout {
@@ -381,7 +393,7 @@ PanelWindow {
                                     color: root.activeTab === index
                                            ? Colors.md3.on_primary_container
                                            : Colors.md3.on_surface_variant
-                                    font.pixelSize: 13
+                                    font.pixelSize: 15
                                     font.family: "JetBrainsMono Nerd Font"
                                 }
                                 Text {
@@ -389,7 +401,7 @@ PanelWindow {
                                     color: root.activeTab === index
                                            ? Colors.md3.on_primary_container
                                            : Colors.md3.on_surface_variant
-                                    font.pixelSize: 10
+                                    font.pixelSize: 12
                                     font.family: "JetBrainsMono Nerd Font"
                                     font.weight: root.activeTab === index ? Font.Medium : Font.Normal
                                 }
@@ -405,7 +417,7 @@ PanelWindow {
             ListView {
                 id: resultList
                 width: parent.width
-                height: Math.min(count, 6) * 34
+                height: Math.min(count, 6) * 42
                 visible: count > 0
                 clip: true
                 model: root.filteredItems
@@ -442,7 +454,7 @@ PanelWindow {
 
             Item {
                 width: parent.width
-                height: 34
+                height: 42
                 visible: resultList.count === 0
 
                 Text {
@@ -451,7 +463,7 @@ PanelWindow {
                           ? "Cargando aplicaciones…"
                           : "Sin resultados"
                     color: Colors.md3.outline
-                    font.pixelSize: 12
+                    font.pixelSize: 14
                     font.family: "JetBrainsMono Nerd Font"
                 }
             }
@@ -459,24 +471,24 @@ PanelWindow {
             // ── Footer ────────────────────────────────────────────────────
             Rectangle {
                 width: parent.width
-                height: 22
+                height: 26
                 color: Colors.md3.surface_container
 
                 Text {
-                    anchors { right: parent.right; verticalCenter: parent.verticalCenter; rightMargin: 10 }
+                    anchors { right: parent.right; verticalCenter: parent.verticalCenter; rightMargin: 12 }
                     text: "↑↓ nav  Tab switch  ↵ run  Esc close"
                     color: Colors.md3.outline
-                    font.pixelSize: 9
+                    font.pixelSize: 11
                     font.family: "JetBrainsMono Nerd Font"
                 }
 
                 Text {
-                    anchors { left: parent.left; verticalCenter: parent.verticalCenter; leftMargin: 10 }
+                    anchors { left: parent.left; verticalCenter: parent.verticalCenter; leftMargin: 12 }
                     text: resultList.count > 0
                           ? (root.selectedIndex + 1) + " / " + resultList.count
                           : "0 / 0"
                     color: Colors.md3.outline
-                    font.pixelSize: 9
+                    font.pixelSize: 11
                     font.family: "JetBrainsMono Nerd Font"
                 }
             }

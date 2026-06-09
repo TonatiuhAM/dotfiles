@@ -18,6 +18,7 @@ PanelWindow {
         anchors.fill: parent
         spacing: 0
 
+        LauncherButton {}
         WorkspacesPill {}
         FocusedWindowPill {}
         SysInfoPill {}

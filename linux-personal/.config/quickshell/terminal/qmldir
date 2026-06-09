@@ -1,4 +1,5 @@
 singleton Colors 1.0 Colors.qml
+LauncherButton 1.0 LauncherButton.qml
 Bar 1.0 Bar.qml
 VolumeOSD 1.0 VolumeOSD.qml
 WorkspacesPill 1.0 WorkspacesPill.qml

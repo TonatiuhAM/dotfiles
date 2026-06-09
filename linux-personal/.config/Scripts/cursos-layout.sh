@@ -6,4 +6,5 @@ VAULT="/home/tona/Obsidian/the-vault/"
 kitty --class apuntes-cursos -e nvim "$VAULT" &
 
 # Abrir Obsidian
+hyprctl dispatch 'hl.dsp.workspace.toggle_special("M")'
 obsidian &
