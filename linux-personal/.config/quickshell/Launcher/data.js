@@ -67,13 +67,15 @@ const systemCommands = [
     name: "Apagar",
     icon: "󰐥",
     command: ["systemctl", "poweroff"],
-    type: "system"
+    type: "system",
+    requiresAuth: true
   },
   {
     name: "Reiniciar",
     icon: "󰜉",
     command: ["systemctl", "reboot"],
-    type: "system"
+    type: "system",
+    requiresAuth: true
   },
   {
     name: "Bloquear",

@@ -5,7 +5,7 @@
 export EDITOR='nvim'
 export TERM='kitty'
 export TERMINAL='kitty'
-export BROWSER='vivaldi'
+export BROWSER='helium-browser'
 
 # ===== Directorios base XDG =====
 export XDG_CONFIG_HOME="$HOME/.config"

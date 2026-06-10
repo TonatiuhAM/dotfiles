@@ -54,6 +54,13 @@ PanelWindow {
     property bool   appsLoaded: false
     property int    selectedIndex: -1
 
+    // ─── Auth state ───────────────────────────────────────────────────────────
+    property bool   showAuthDialog: false
+    property var    pendingAuthItem: null
+    property string authError: ""
+    property string authShellCmd: ""
+    property bool   authChecking: false
+
     // ─── App list loader ──────────────────────────────────────────────────────
     // Searches system packages + system flatpaks + user flatpaks.
     // Uses -L to follow symlinks (flatpak exports are often symlinks).
@@ -128,6 +135,28 @@ PanelWindow {
         interval: 50
         repeat: false
         onTriggered: root.close()
+    }
+
+    // ─── Auth verifier ─────────────────────────────────────────────────────────
+    Process {
+        id: authProc
+        command: ["bash", "-c", root.authShellCmd]
+        // exitCode is only available as a signal parameter, NOT as a property
+        onExited: (code, status) => {
+            root.authChecking = false
+            if (code === 0) {
+                const shellCmd = root.buildLaunchCmd(root.pendingAuthItem)
+                root.execShellCmd = shellCmd
+                root.showAuthDialog = false
+                root.pendingAuthItem = null
+                execProc.exec(execProc.command)
+                closeTimer.restart()
+            } else {
+                root.authError = "Contraseña incorrecta"
+                passwordInput.text = ""
+                Qt.callLater(() => passwordInput.forceActiveFocus())
+            }
+        }
     }
 
     // Build a shell command string that launcher_exec.sh will run via `bash -c`.
@@ -224,17 +253,40 @@ PanelWindow {
     // ─── Execute ──────────────────────────────────────────────────────────────
     function execute() {
         if (selectedIndex < 0 || selectedIndex >= filteredItems.length) return
+        const item = filteredItems[selectedIndex]
 
-        // Capture item and build command BEFORE any state changes
-        const shellCmd = buildLaunchCmd(filteredItems[selectedIndex])
+        if (item.requiresAuth) {
+            pendingAuthItem = item
+            authError = ""
+            showAuthDialog = true
+            Qt.callLater(() => {
+                passwordInput.text = ""
+                passwordInput.forceActiveFocus()
+            })
+            return
+        }
 
-        // Set the string property that drives the QML command binding
+        const shellCmd = buildLaunchCmd(item)
         root.execShellCmd = shellCmd
-
-        // Launch while the launcher is still open so Hyprland registers the
-        // dispatch against the current workspace, then close after a brief delay.
         execProc.exec(execProc.command)
         closeTimer.restart()
+    }
+
+    function confirmAuth() {
+        if (authChecking || !passwordInput.text || !pendingAuthItem) return
+        authError = ""
+        authChecking = true
+        // Verify password via sudo -S without caching (-k)
+        root.authShellCmd = "printf '%s\\n' " + sq(passwordInput.text) + " | sudo -S -k true 2>/dev/null"
+        authProc.exec(authProc.command)
+    }
+
+    function cancelAuth() {
+        showAuthDialog = false
+        pendingAuthItem = null
+        authError = ""
+        authChecking = false
+        Qt.callLater(() => searchInput.forceActiveFocus())
     }
 
     // ─── Backdrop ─────────────────────────────────────────────────────────────
@@ -247,7 +299,9 @@ PanelWindow {
     Rectangle {
         id: panel
         width: 680
-        height: panelCol.implicitHeight
+        height: root.showAuthDialog
+                ? Math.max(panelCol.implicitHeight, 300)
+                : panelCol.implicitHeight
         anchors.centerIn: parent
 
         color: Colors.md3.surface
@@ -256,6 +310,105 @@ PanelWindow {
         radius: 0
 
         MouseArea { anchors.fill: parent }  // swallow backdrop clicks
+
+        // ─── Password auth overlay ─────────────────────────────────────────
+        Rectangle {
+            visible: root.showAuthDialog
+            anchors.fill: parent
+            color: Colors.md3.surface
+            z: 10
+            radius: 0
+
+            MouseArea { anchors.fill: parent }  // block clicks through
+
+            Column {
+                anchors.centerIn: parent
+                spacing: 14
+
+                Text {
+                    anchors.horizontalCenter: parent.horizontalCenter
+                    text: root.pendingAuthItem ? root.pendingAuthItem.icon : ""
+                    color: Colors.md3.error
+                    font.pixelSize: 36
+                    font.family: "JetBrainsMono Nerd Font"
+                }
+
+                Text {
+                    anchors.horizontalCenter: parent.horizontalCenter
+                    text: root.pendingAuthItem ? root.pendingAuthItem.name : ""
+                    color: Colors.md3.on_surface
+                    font.pixelSize: 20
+                    font.family: "JetBrainsMono Nerd Font"
+                    font.weight: Font.Medium
+                }
+
+                Text {
+                    anchors.horizontalCenter: parent.horizontalCenter
+                    text: root.authChecking ? "Verificando…" : "Ingresa tu contraseña para continuar"
+                    color: root.authChecking ? Colors.md3.primary : Colors.md3.outline
+                    font.pixelSize: 13
+                    font.family: "JetBrainsMono Nerd Font"
+                }
+
+                Rectangle {
+                    width: 300
+                    height: 40
+                    anchors.horizontalCenter: parent.horizontalCenter
+                    color: Colors.md3.surface_container
+                    border.width: passwordInput.activeFocus ? 2 : 1
+                    border.color: passwordInput.activeFocus ? Colors.md3.primary : Colors.md3.outline_variant
+                    radius: 4
+
+                    TextInput {
+                        id: passwordInput
+                        anchors { fill: parent; leftMargin: 12; rightMargin: 12 }
+                        verticalAlignment: TextInput.AlignVCenter
+                        echoMode: TextInput.Password
+                        color: Colors.md3.on_surface
+                        font.pixelSize: 14
+                        font.family: "JetBrainsMono Nerd Font"
+                        enabled: !root.authChecking
+
+                        Text {
+                            anchors.fill: parent
+                            text: "Contraseña…"
+                            color: Colors.md3.outline
+                            font: parent.font
+                            visible: parent.text.length === 0 && !root.authChecking
+                            verticalAlignment: Text.AlignVCenter
+                        }
+
+                        Keys.onReturnPressed: (e) => { root.confirmAuth(); e.accepted = true }
+                        Keys.onEnterPressed:  (e) => { root.confirmAuth(); e.accepted = true }
+                        Keys.onEscapePressed: (e) => { root.cancelAuth();  e.accepted = true }
+                    }
+                }
+
+                // Placeholder de altura fija para el mensaje de error
+                Item {
+                    width: 300
+                    height: 18
+                    anchors.horizontalCenter: parent.horizontalCenter
+
+                    Text {
+                        anchors.centerIn: parent
+                        visible: root.authError !== ""
+                        text: root.authError
+                        color: Colors.md3.error
+                        font.pixelSize: 12
+                        font.family: "JetBrainsMono Nerd Font"
+                    }
+                }
+
+                Text {
+                    anchors.horizontalCenter: parent.horizontalCenter
+                    text: "↵ confirmar  Esc cancelar"
+                    color: Colors.md3.outline
+                    font.pixelSize: 11
+                    font.family: "JetBrainsMono Nerd Font"
+                }
+            }
+        }
 
         Column {
             id: panelCol

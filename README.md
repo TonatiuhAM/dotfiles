@@ -1,57 +1,81 @@
-# 🐧 Tona's Dotfiles
+# 🐧 Tona's Dotfiles 
 
 <div align="center">
-  <img src="https://img.shields.io/badge/OS-EndeavourOS-blueviolet?style=for-the-badge&logo=arch-linux&logoColor=white" />
-  <img src="https://img.shields.io/badge/WM-Hyprland-81c8be?style=for-the-badge&logo=hyprland&logoColor=white" />
-  <img src="https://img.shields.io/badge/Shell-ZSH-f15a24?style=for-the-badge&logo=zsh&logoColor=white" />
-  <img src="https://img.shields.io/badge/Editor-Neovim-57a143?style=for-the-badge&logo=neovim&logoColor=white" />
+  <img src="https://img.shields.io/badge/OS-EndeavourOS-blueviolet?style=flat-square&logo=arch-linux&logoColor=white" />
+  <img src="https://img.shields.io/badge/WM-Hyprland-81c8be?style=flat-square&logo=hyprland&logoColor=white" />
+  <img src="https://img.shields.io/badge/Editor-Neovim-57a143?style=flat-square&logo=neovim&logoColor=white" />
+  <img src="https://img.shields.io/badge/Shell-ZSH-f15a24?style=flat-square&logo=zsh&logoColor=white" />
 </div>
 
-<br />
 
-Este repositorio contiene mis archivos de configuración personal para mi flujo de trabajo diario. Recientemente migré de una **MacBook M2** a un entorno basado en **Arch Linux**, buscando minimalismo y control total sobre el sistema a través de herramientas CLI/TUI.
+# ✳️ Overview
 
----
+```text
+~/dotfiles -----------------------------------------------------------------------------------
+» tona --version
+
+tona-dotfiles v2.4.0 (Keyboard-driven, minimalist ecosystem)
+"La simplicidad es la máxima sofisticación."
+```
+
+```text
+
+~/dotfiles -----------------------------------------------------------------------------------
+» fastfetch --source ascii.txt
+
+⚡ CORE SYSTEMS
+├── OS       :: EndeavourOS (Arch Linux)
+├── WM       :: Hyprland (Wayland Tiling Compositor)
+└── Shell    :: ZSH (Zoxide + FZF + Autosuggestions)
+
+🪐 UI & NOTIFICATIONS
+├── Quickshell :: Flexible, QML-based desktop shell component toolkit
+├── SwayNC     :: Lightweight, Wayland-native notification daemon
+└── Matugen    :: Material You color generation CLI utility
+
+💻 APPLICATIONS
+├── Terminal :: Kitty (Fast, GPU-accelerated)
+├── Editor   :: Neovim (Custom Lua configuration, Lazy-powered)
+├── Multiplex:: tmux (Session management)
+├── File Mngr:: Yazi (Blazing fast terminal file manager)
+└── Git UI   :: Lazygit (Keyboard-driven git workflow)
+```
+
 
 ## 📸 Screenshots
 
-![Escritorio](assets/SS1.png)
 
-![Swaync y Rofi](assets/SS2.png)
+| Desktop | Tiling Manager |
+| --- | --- |
+| ![Escritorio](assets/escritorio.png)  | ![Tiling Manager](assets/tiling-manager.png)  |
+| **App Launcher & Notifications** | **Style Picker** |
+| ![Launcher y Noti](assets/launcher-notif.png)  | ![Style Picker](assets/style-picker.png)  |
 
----
 
-## 💻 Entornos Soportados
+# ⌨️ Usability
 
-Actualmente mantengo configuraciones para dos mundos:
 
-* **Main Rig (Arch Linux - EndeavourOS):** Mi setup principal enfocado en productividad y desarrollo con **Hyprland**.
-* **Legacy/Laptop (macOS):** Configuraciones optimizadas para mi MacBook M2, aprovechando la potencia del silicio de Apple pero manteniendo la consistencia de la terminal.
-* **Home Server (Ubuntu Server):** Configuración mínima para mi servidor donde corro Docker, Proxmox y mis servicios de automatización.
+```text
+~/dotfiles -----------------------------------------------------------------------------------
 
----
+» stow ./linux-personal
+- [!] CRITICAL WARNING / LEER ANTES DE EJECUTAR
+- Estos archivos están estrictamente personalizados para mi hardware y flujo de trabajo.
+- No ejecutes scripts a ciegas; revisa, comprende y adopta bajo tu propio riesgo.
+```
 
-## 🛠️ Componentes Clave
+# 🎓 More of Me
 
-| Categoría | Herramienta | Descripción |
-| :--- | :--- | :--- |
-| **Window Manager** | [Hyprland](https://hyprland.org/) | Tiling compositor dinámico basado en Wayland. |
-| **Terminal** | Kitty | Emuladores rápidos y con soporte para ligaduras. |
-| **Shell** | ZSH + Oh My Zsh | Con plugins como `syntax-highlighting` y `autosuggestions`. |
-| **Editor** | Neovim | Mi IDE personalizado con Lua (inspirado en NVChad/LazyVim). |
-| **Multiplexer** | Zellij | Para gestionar sesiones persistentes en local y servidor. |
-| **File Manager** | Yazi | Navegación de archivos rápida desde la terminal. |
-| **Git UI** | Lazygit | La mejor forma de manejar git sin salir de la CLI. |
+```md
+~/dotfiles -----------------------------------------------------------------------------------
+» curl -s https://tonatiuham.dev
 
----
+🧑‍💻 Tonatiuh
+├── Role   :: DevOps & Linux SysAdmin Enthusiast
+├── Stack  :: Python • Linux • TUI Workflow
+└── Domain :: https://tonatiuham.dev
+```
 
-> [!WARNING]  
-> Mis dotfiles están personalizados para mi flujo de trabajo. Revisa los archivos antes de ejecutarlos para evitar conflictos con tu hardware.
-
----
-
-<p align="center">
-  Configurado con ☕ por <b>Tonatiuh</b>
-  <br>
-  <a href="https://tonatiuham.dev">tonatiuham.dev</a>
-</p>
+<div align="center">
+  <span style="font-size: 1.1em;"><b><a href="https://tonatiuham.dev">tonatiuham.dev</a></b></span>
+</div>
