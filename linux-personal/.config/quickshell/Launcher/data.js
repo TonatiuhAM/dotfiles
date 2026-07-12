@@ -47,16 +47,24 @@ const scripts = [
     type: "script"
   },
   {
-    name: "Apps",
-    icon: "",
-    command: ["sh", "-c", "$XDG_CONFIG_HOME/Scripts/sysman.sh"],
-    type: "script"
-  },
-  {
     name: "Ferdium",
     icon: "",
     keywords: ["whatsapp", "telegram", "discord", "slack", "messenger"],
     command: ["sh", "-c", "gtk-launch ferdium"],
+    type: "script"
+  },
+  {
+    name: "Archivos",
+    icon: "",
+    keywords: ["Files"],
+    command: ["sh", "-c", "thunar"],
+    type: "script"
+  },
+  {
+    name: "Spotify",
+    icon: "",
+    keywords: ["Spotify", "spotify"],
+    command: ["kitty", "spotatui"],
     type: "script"
   },
 ]

@@ -62,7 +62,7 @@ function zvm_after_init() {
 
 # Alias generales
 alias vim='nvim'
-alias ls='lsd -lA'
+alias ll='lsd -lagh --group-dirs first --header'
 alias open='thunar . & disown'
 
 # Herramientas TUI y Scripts de administración
@@ -71,8 +71,12 @@ alias lg='lazygit'
 alias ld='lazydocker'
 alias dk='$XDG_CONFIG_HOME/Scripts/docker-manager.sh'
 alias sunshine-start='$XDG_CONFIG_HOME/Scripts/sunshine-start.sh'
+alias login-skip='$XDG_CONFIG_HOME/Scripts/login-skip.sh'
 alias apps="$XDG_CONFIG_HOME/Scripts/sysman.sh"
 alias claudeop='claude --dangerously-skip-permissions'
+
+# Variables de entorno para scripts y aplicaciones
+export desktop="$HOME/.local/share/applications"
 
 # Reload del shell
 alias zshsource='exec zsh'

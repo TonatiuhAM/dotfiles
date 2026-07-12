@@ -12,4 +12,14 @@ vim.keymap.set("n", "<leader>bl", "<Cmd>bnext<CR>", { desc = "Buffer siguiente (
 -- Moverse al buffer de la izquierda (anterior) con Leader + b + j
 vim.keymap.set("n", "<leader>bh", "<Cmd>bprevious<CR>", { desc = "Buffer anterior (izquierda)" })
 
-vim.keymap.set("n", "<leader>nt", ":!kitty --detach <CR>", { silent = true, desc = "Abrir Kitty en este directorio" })
+-- 1. Registrar la 'n' minúscula como grupo/submenú
+local wk = require("which-key")
+wk.add({
+  { "<leader>n", group = "+scripts/notif" },
+})
+
+-- 2. El "Doble Tap" para las notificaciones
+vim.keymap.set("n", "<leader>nn", "<cmd>Noice history<CR>", { desc = "Historial de Notificaciones" })
+
+-- 3. Tu comando original de Kitty adaptado al submenú
+vim.keymap.set("n", "<leader>nt", ":!kitty --detach<CR>", { silent = true, desc = "Abrir Kitty aquí" })

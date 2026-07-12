@@ -3,4 +3,4 @@
 -- Add any additional options here
 
 -- Set colorscheme to catppuccin
-vim.g.lazyvim_colorscheme = "catppuccin"
+vim.g.lazyvim_colorscheme = "tokyonight"

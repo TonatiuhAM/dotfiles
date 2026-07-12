@@ -7,7 +7,6 @@ return {
     { "nvim-lua/plenary.nvim", lazy = true },
   },
   keys = {
-    -- 👇 Cambiado de "<leader>-" a "<leader>e"
     {
       "<leader>e",
       mode = { "n", "v" },

@@ -11,6 +11,7 @@ local terminal = "kitty"
 local fileManager = "thunar"
 -- local menu = "pkill rofi || bash ~/.config/rofi/launcher.sh"
 local menu = "$XDG_CONFIG_HOME/quickshell/Launcher/toggle_launcher.sh"
+local layout = "scrolling" -- dwindle
 
 -- ==============================================
 -- MONITOR
@@ -58,12 +59,12 @@ hl.config({
 		},
 		resize_on_border = false,
 		allow_tearing = false,
-		layout = "dwindle",
+		layout = layout,
 	},
 
 	scrolling = {
 		fullscreen_on_one_column = true, -- Evita que una sola ventana rompa la proporción
-		column_width = 0.45, -- 45% + 45% = 90% (deja un 10% de Peek en el borde)
+		explicit_column_widths = "0.5, 1.0", -- 45% + 45% = 90% (deja un 10% de Peek en el borde)
 		focus_fit_method = 1, -- Modo "fit": desplaza lo mínimo para mantener los vistazos laterales
 		follow_focus = true,
 		direction = "right",
@@ -132,7 +133,7 @@ hl.animation({ leaf = "windowsMove", enabled = true, speed = 3, bezier = "wind",
 hl.animation({ leaf = "border", enabled = true, speed = 1, bezier = "liner" })
 hl.animation({ leaf = "borderangle", enabled = true, speed = 30, bezier = "liner", style = "loop" })
 hl.animation({ leaf = "fade", enabled = true, speed = 4, bezier = "default" })
-hl.animation({ leaf = "workspaces", enabled = true, speed = 3, bezier = "snap" })
+hl.animation({ leaf = "workspaces", enabled = true, speed = 3, bezier = "snap", style = "slidevert" })
 
 -- ==============================================
 -- GESTOS
@@ -222,25 +223,35 @@ hl.window_rule({
 	size = { 700, 450 },
 })
 
--- Regla para poder tomar apuntes con nvim
-hl.window_rule({
-	match = {
-		class = "apuntes-cursos",
-	},
-	float = true,
-	size = { 1300, 250 },
-	move = {
-		300,
-		800,
-	},
-})
-
 hl.window_rule({
 	name = "HyprEmoji",
 	match = { initial_title = "HyprEmoji" },
 	float = true,
 	size = { 500, 500 },
 	center = true,
+})
+
+hl.window_rule({
+	name = "LocalSend",
+	match = { class = "localsend" },
+	float = true,
+	size = { 500, 800 },
+	move = {
+		1300,
+		150,
+	},
+})
+
+-- Rustdesk
+hl.window_rule({
+	name = "RustDesk",
+	match = { class = "rustdesk" },
+	float = true,
+	size = { 500, 800 },
+	move = {
+		1300,
+		150,
+	},
 })
 
 -- ==============================================
@@ -256,10 +267,19 @@ hl.bind("SUPER + SHIFT + S", hl.dsp.exec_cmd('grim -g "$(slurp)" - | wl-copy'))
 hl.bind("SUPER + PERIOD", hl.dsp.exec_cmd("$XDG_CONFIG_HOME/Scripts/sw-hypremoji-copy.sh"))
 hl.bind("SUPER + SHIFT + N", hl.dsp.exec_cmd("$XDG_CONFIG_HOME/Scripts/quick-note.sh"))
 hl.bind("SUPER + F", hl.dsp.exec_cmd(terminal .. " --override font_size=13 -e env EDITOR=nvim yazi"))
-hl.bind("SUPER + Z", hl.dsp.window.fullscreen({ action = "toggle" }))
 hl.bind("SUPER + N", hl.dsp.exec_cmd("swaync-client -t"))
 hl.bind("SUPER + mouse:274", hl.dsp.exec_cmd("pypr zoom"), { mouse = true })
 hl.bind("SUPER + comma", hl.dsp.exec_cmd("$XDG_CONFIG_HOME/Scripts/config-picker.sh"))
+
+-- Zoom dinámico de acuerdo al layout actual
+hl.bind("SUPER + Z", function()
+	local current_layout = hl.get_config("general.layout")
+	if current_layout == "scrolling" then
+		hl.dispatch(hl.dsp.layout("colresize +conf"))
+	elseif current_layout == "dwindle" then
+		hl.dispatch(hl.dsp.window.fullscreen({ action = "toggle" }))
+	end
+end, { description = "Alterna ancho entre actual y máximo" })
 
 --Recuperar mayor y menor que
 hl.bind("CTRL + bar", hl.dsp.exec_cmd("wtype '>'"))

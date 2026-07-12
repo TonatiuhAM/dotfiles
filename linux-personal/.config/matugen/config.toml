@@ -13,19 +13,15 @@ input_path = '~/.config/matugen/templates/colors.lua.template'
 output_path = '~/.config/hypr/colors.lua'
 post_hook = 'hyprctl reload'
 
-# [templates.waybar]
-# input_path = '~/.config/matugen/templates/colors.css'
-# output_path = '~/.config/waybar/colors.css'
-# post_hook = 'pkill -SIGUSR2 waybar'
+[templates.nvim]
+input_path = '~/.config/matugen/templates/nvim-colors.json'
+output_path = '~/.config/matugen/generated/nvim-colors.json'
+post_hook = 'pkill -SIGUSR1 nvim'
 
 [templates.swaync]
 input_path = '~/.config/matugen/templates/colors.css'
 output_path = "~/.config/swaync/colors.css"
 post_hook = "swaync-client -rs"
-
-[templates.rofi]
-input_path = '~/.config/matugen/templates/rofi-colors.rasi'
-output_path = '~/.config/rofi/themes/matugen.rasi'
 
 [templates.yazi]
 input_path = '~/.config/matugen/templates/yazi-theme.toml'
