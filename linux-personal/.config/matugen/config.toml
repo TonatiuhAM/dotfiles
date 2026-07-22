@@ -57,3 +57,7 @@ output_path = '~/.config/matugen/generated/vivaldi.css'
 [templates.quickshell]
 input_path = '~/.config/matugen/templates/quickshell.json'
 output_path = '~/.local/state/quickshell/generated/colors.json'
+
+[templates.alacritty]
+input_path = '~/.config/matugen/templates/alacritty-colors.toml'
+output_path = '~/.config/alacritty/colors.toml'

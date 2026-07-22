@@ -7,7 +7,7 @@ local primary = primary -- color principal de la paleta (borde activo)
 local outline_variant = outline_variant -- tono apagado (borde inactivo)
 
 -- Variables
-local terminal = "kitty"
+local terminal = "alacritty"
 local fileManager = "thunar"
 -- local menu = "pkill rofi || bash ~/.config/rofi/launcher.sh"
 local menu = "$XDG_CONFIG_HOME/quickshell/Launcher/toggle_launcher.sh"
@@ -168,7 +168,7 @@ hl.window_rule({
 
 hl.window_rule({
 	name = "pulsemixer-float",
-	match = { initial_title = "pulsemixer" },
+	match = { class = "pulsemixer" },
 	float = true,
 	center = true,
 	size = { 800, 500 },
@@ -176,7 +176,7 @@ hl.window_rule({
 
 hl.window_rule({
 	name = "impala-float",
-	match = { initial_title = "impala" },
+	match = { class = "impala" },
 	float = true,
 	center = true,
 	size = { 1000, 1000 },
@@ -184,7 +184,7 @@ hl.window_rule({
 
 hl.window_rule({
 	name = "bluetui-float",
-	match = { initial_title = "bluetui" },
+	match = { class = "bluetui" },
 	float = true,
 	center = true,
 	size = { 800, 500 },
@@ -261,12 +261,12 @@ hl.window_rule({
 -- Programas y utilidades
 hl.bind("SUPER + Tab", hl.dsp.window.cycle_next({}))
 hl.bind("F9", hl.dsp.exec_cmd("kill -USR2 $(pgrep handy)"))
-hl.bind("SUPER + ALT + S", hl.dsp.exec_cmd(terminal .. " --title pulsemixer pulsemixer"))
-hl.bind("SUPER + ALT + B", hl.dsp.exec_cmd(terminal .. " --title bluetui bluetui"))
+hl.bind("SUPER + ALT + S", hl.dsp.exec_cmd(terminal .. " --class pulsemixer -e pulsemixer"))
+hl.bind("SUPER + ALT + B", hl.dsp.exec_cmd(terminal .. " --class bluetui -e bluetui"))
 hl.bind("SUPER + SHIFT + S", hl.dsp.exec_cmd('grim -g "$(slurp)" - | wl-copy'))
 hl.bind("SUPER + PERIOD", hl.dsp.exec_cmd("$XDG_CONFIG_HOME/Scripts/sw-hypremoji-copy.sh"))
 hl.bind("SUPER + SHIFT + N", hl.dsp.exec_cmd("$XDG_CONFIG_HOME/Scripts/quick-note.sh"))
-hl.bind("SUPER + F", hl.dsp.exec_cmd(terminal .. " --override font_size=13 -e env EDITOR=nvim yazi"))
+hl.bind("SUPER + F", hl.dsp.exec_cmd(terminal .. " -o 'font.size'=13 -e yazi")) -- FALTA EDITOR NVIM?
 hl.bind("SUPER + N", hl.dsp.exec_cmd("swaync-client -t"))
 hl.bind("SUPER + mouse:274", hl.dsp.exec_cmd("pypr zoom"), { mouse = true })
 hl.bind("SUPER + comma", hl.dsp.exec_cmd("$XDG_CONFIG_HOME/Scripts/config-picker.sh"))
@@ -287,7 +287,7 @@ hl.bind("CTRL + SHIFT + bar", hl.dsp.exec_cmd("wtype '<'"))
 
 -- Básicos
 hl.bind("SUPER + Return", hl.dsp.exec_cmd(terminal))
-hl.bind("SUPER + SHIFT + Return", hl.dsp.exec_cmd(terminal .. " sh -c 'tmux attach || tmux'"))
+hl.bind("SUPER + SHIFT + Return", hl.dsp.exec_cmd(terminal .. " -e sh -c 'tmux attach || tmux'"))
 hl.bind("SUPER + b", hl.dsp.exec_cmd("helium-browser"))
 hl.bind("SUPER + q", hl.dsp.window.close())
 hl.bind("SUPER + SHIFT + F", hl.dsp.exec_cmd(fileManager))

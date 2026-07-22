@@ -4,6 +4,8 @@
 # ║                                                             ║
 # ║  fzf + chafa dentro de kitty flotante                       ║
 # ║  Requiere: fzf, chafa, kitty, matugen, notify-send          ║
+# ║  (usa Kitty a propósito: Alacritty no soporta gráficos      ║
+# ║  en terminal, necesarios para el preview de chafa)          ║
 # ╚══════════════════════════════════════════════════════════════╝
 
 WALL_DIR="$HOME/Wallpapers"

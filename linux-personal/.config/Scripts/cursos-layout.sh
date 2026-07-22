@@ -2,8 +2,8 @@
 
 VAULT="/home/tona/Obsidian/the-vault/"
 
-# Abrir kitty flotante con nvim
-kitty --class apuntes-cursos -e nvim "$VAULT" &
+# Abrir alacritty flotante con nvim
+alacritty --class apuntes-cursos -e nvim "$VAULT" &
 
 # Abrir Obsidian
 hyprctl dispatch 'hl.dsp.workspace.toggle_special("M")'

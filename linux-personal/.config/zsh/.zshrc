@@ -73,7 +73,8 @@ alias dk='$XDG_CONFIG_HOME/Scripts/docker-manager.sh'
 alias sunshine-start='$XDG_CONFIG_HOME/Scripts/sunshine-start.sh'
 alias login-skip='$XDG_CONFIG_HOME/Scripts/login-skip.sh'
 alias apps="$XDG_CONFIG_HOME/Scripts/sysman.sh"
-alias claudeop='claude --dangerously-skip-permissions'
+alias claudeop='touch ~/.config/claude/notify-on && claude --dangerously-skip-permissions'
+alias cc-notif-off='rm -f ~/.config/claude/notify-on'
 
 # Variables de entorno para scripts y aplicaciones
 export desktop="$HOME/.local/share/applications"

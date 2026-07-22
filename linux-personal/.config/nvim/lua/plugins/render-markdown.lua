@@ -1,5 +1,6 @@
 return {
   "MeanderingProgrammer/render-markdown.nvim",
+  enabled = true,
   dependencies = { "nvim-treesitter/nvim-treesitter", "nvim-mini/mini.nvim" }, -- if you use the mini.nvim suite
   ---@module 'render-markdown'
   ---@type render.md.UserConfig
@@ -15,15 +16,15 @@ return {
         enabled = true,
         highlight = "RenderMarkdownHeadingSign",
       },
-      icons = { "󰲡 ", "󰲣 ", "󰲥 ", "󰲧 ", "󰲩 ", "󰲫 " },
-      position = "overlay",
+      icons = { "󰼏 ", "󰎨 " },
+      position = "inline",
       signs = { "󰫎 " },
       width = "full",
       left_margin = 0,
       left_pad = 0,
       right_pad = 0,
       min_width = 0,
-      border = true,
+      border = false,
       border_virtual = false,
       border_prefix = false,
       above = "▄",

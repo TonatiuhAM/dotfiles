@@ -4,10 +4,9 @@ VAULT="the-vault"
 NOTE="Sticky%20Notes.md"
 TMPFILE=$(mktemp /tmp/quick-note-XXXXXX.md)
 
-# Abrir kitty flotante con nvim editando el archivo temporal
-kitty --override font_size=13 \
-  --override initial_window_width=600 \
-  --override initial_window_height=400 \
+# Abrir alacritty flotante con nvim editando el archivo temporal
+# (el tamaño de la ventana lo controla la regla de Hyprland para la clase "quick-note")
+alacritty -o font.size=13 \
   --class quick-note \
   -e nvim "$TMPFILE"
 

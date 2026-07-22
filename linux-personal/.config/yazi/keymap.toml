@@ -22,3 +22,12 @@ desc = "Cd to Downloads"
 on = [ "g", "w" ]
 run = "cd ~/Wallpapers/"
 desc = "Cd to Wallpapers"
+
+[[mgr.prepend_keymap]]
+on   = "<Enter>"
+run  = "plugin smart-enter"
+desc = "Enter the child directory, or open the file"
+
+[[mgr.prepend_keymap]]
+on  = "<C-n>"
+run = "shell -- dragon -x -i -T %h"

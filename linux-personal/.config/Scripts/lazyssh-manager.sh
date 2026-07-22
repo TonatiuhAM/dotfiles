@@ -3,4 +3,4 @@
 # ║  ssh.sh  —  Submódulo: SSH                                  ║
 # ╚══════════════════════════════════════════════════════════════╝
 
-setsid kitty lazyssh </dev/null &>/dev/null &
+setsid alacritty -e lazyssh </dev/null &>/dev/null &

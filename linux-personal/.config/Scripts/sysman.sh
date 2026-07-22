@@ -3,11 +3,11 @@
 #  sysman — Gestor Interactivo de Paquetes (Nativo, AUR, Brew, Flatpak)
 # ============================================================
 
-# ── Auto-relanzamiento en ventana dedicada de Kitty ──────────
+# ── Auto-relanzamiento en ventana dedicada de Alacritty ──────
 # Si no estamos dentro de una ventana con el identificador de clase "Repositorios"
-# y el comando kitty está disponible, relanzamos el script de forma aislada.
+# y el comando alacritty está disponible, relanzamos el script de forma aislada.
 if [[ "$1" != "--child" && ! -t 0 ]]; then
-  setsid kitty --class Repositorios -o font_size=16 "$0" --child </dev/null &>/dev/null &
+  setsid alacritty --class Repositorios -o font.size=16 -e "$0" --child </dev/null &>/dev/null &
   exit 0
 fi
 

@@ -4,7 +4,7 @@
 # ===== Programas por defecto =====
 export EDITOR='nvim'
 export TERM='kitty'
-export TERMINAL='kitty'
+export TERMINAL='alacritty'
 export BROWSER='helium-browser'
 
 # ===== Directorios base XDG =====
