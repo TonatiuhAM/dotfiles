@@ -81,3 +81,8 @@ export desktop="$HOME/.local/share/applications"
 
 # Reload del shell
 alias zshsource='exec zsh'
+
+
+
+# Desactiva el fondo resaltado para directorios world-writable (ow) y sticky world-writable (tw)
+export LS_COLORS="$(dircolors -p | grep -v -E '^OW|^TW' | dircolors - | sed -e 's/LS_COLORS=//' -e 's/;$//')"

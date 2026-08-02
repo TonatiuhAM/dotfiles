@@ -37,6 +37,7 @@ hl.on("hyprland.start", function()
 	hl.exec_cmd("~/.local/bin/Handy_0.8.3_amd64.AppImage")
 	hl.exec_cmd("hypridle")
 	hl.exec_cmd("systemctl --user import-environment WAYLAND_DISPLAY XDG_CURRENT_DESKTOP")
+	hl.exec_cmd("obsidian")
 end)
 
 -- ==============================================
@@ -270,6 +271,7 @@ hl.bind("SUPER + F", hl.dsp.exec_cmd(terminal .. " -o 'font.size'=13 -e yazi")) 
 hl.bind("SUPER + N", hl.dsp.exec_cmd("swaync-client -t"))
 hl.bind("SUPER + mouse:274", hl.dsp.exec_cmd("pypr zoom"), { mouse = true })
 hl.bind("SUPER + comma", hl.dsp.exec_cmd("$XDG_CONFIG_HOME/Scripts/config-picker.sh"))
+hl.bind("SUPER + ALT + N", hl.dsp.exec_cmd(terminal .. " -e nvim ~/Obsidian/the-vault/bullet-journal.md"))
 
 -- Zoom dinámico de acuerdo al layout actual
 hl.bind("SUPER + Z", function()

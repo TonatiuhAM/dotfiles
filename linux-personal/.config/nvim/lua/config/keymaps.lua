@@ -25,7 +25,10 @@ wk.add({
 vim.keymap.set("n", "<leader>nn", "<cmd>Noice history<CR>", { desc = "Historial de Notificaciones" })
 
 -- 3. Tu comando original de Kitty adaptado al submenú
-vim.keymap.set("n", "<leader>nt", ":silent !setsid -f alacritty &<CR>", { silent = true, desc = "Abrir Alacritty aquí" })
+vim.keymap.set("n", "<leader>nt", function()
+  local dir = vim.fn.expand("%:p:h")
+  vim.fn.jobstart({ "setsid", "-f", "alacritty", "--working-directory", dir }, { detach = true })
+end, { silent = true, desc = "Abrir Alacritty aquí" })
 
 -- ELIMINARE <leader>w
 vim.keymap.set("n", "<leader>-", "<C-W>s", { desc = "Split Window Below", remap = false })
