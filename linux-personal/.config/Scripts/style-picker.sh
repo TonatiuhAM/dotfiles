@@ -19,6 +19,11 @@ if [[ "$1" != "--interactive" ]]; then
         -e bash "$SCRIPT" --interactive
 fi
 
+# ── PATH ────────────────────────────────────────────────────────
+# bash no-login/no-interactive no carga ~/.config/zsh/.zprofile,
+# donde vive CARGO_HOME (matugen se instaló vía cargo).
+export PATH="$HOME/.local/share/cargo/bin:$PATH"
+
 # ── Dependencias ───────────────────────────────────────────────
 for dep in fzf chafa matugen notify-send; do
     command -v "$dep" &>/dev/null || {

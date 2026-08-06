@@ -60,12 +60,12 @@ Rectangle {
 
     Process {
         id: pulsemixerProc
-        command: ["kitty", "--title", "pulsemixer", "pulsemixer"]
+        command: ["kitty", "--class", "wiremix", "wiremix"]
     }
 
     Process {
         id: impalaProc
-        command: ["kitty", "--title", "impala", "impala"]
+        command: ["kitty", "--class", "nmtui", "nmtui"]
     }
 
     Process {

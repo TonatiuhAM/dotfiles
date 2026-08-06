@@ -4,13 +4,10 @@ show_hidden = true
 
 [opener]
 open_pdf = [
-  { run = "okular %s", orphan = true, for = "unix"},
+  { run = "papers %s", orphan = true, for = "unix"},
 ]
 open_image = [
-  { run = "swayimg %s", orphan = true, for = "unix" },
-]
-open_xournal = [
-  { run = "xournalpp %s", orphan = true, for = "unix"},
+  { run = "loupe %s", orphan = true, for = "unix" },
 ]
 
 office = [
@@ -22,7 +19,6 @@ prepend_rules = [
   { url = "*.pdf", use = "open_pdf" },
   { url = "*.png", use = "open_image" },
   { url = "*.jpg", use = "open_image" },
-  { url = "*.xopp", use = "open_xournal" },
   { url = "*.docx", use = "office" },
   { url  = "*.doc",  use = "office" },
   { url = "*.xlsx", use = "office" },

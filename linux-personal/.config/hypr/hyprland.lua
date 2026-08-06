@@ -11,7 +11,7 @@ local terminal = "alacritty"
 local fileManager = "thunar"
 -- local menu = "pkill rofi || bash ~/.config/rofi/launcher.sh"
 local menu = "$XDG_CONFIG_HOME/quickshell/Launcher/toggle_launcher.sh"
-local layout = "scrolling" -- dwindle
+local layout = "dwindle" -- scrolling
 
 -- ==============================================
 -- MONITOR
@@ -27,25 +27,66 @@ hl.monitor({
 -- AUTOSTART
 -- ==============================================
 hl.on("hyprland.start", function()
-	hl.exec_cmd("swaync")
-	hl.exec_cmd("qs")
-	hl.exec_cmd("awww-daemon")
-	hl.exec_cmd("dbus-update-activation-environment --systemd WAYLAND_DISPLAY XDG_CURRENT_DESKTOP")
+	-- Iniciadores de hyrpland necesario
+	-- [UWSM TEST 2026-08-06] Comentado: UWSM ya hace esto automáticamente
+	-- (wayland-wm-env@.service / wayland-wm@.service). Descomentar si se
+	-- vuelve a la sesión Hyprland sin UWSM. Ver ~/downloads/uwsm-migration-2026-08-06.md
+	-- hl.exec_cmd("systemctl --user start hyprland-session.target") -- Iniciar los servicios del sistema
+	-- hl.exec_cmd("dbus-update-activation-environment --systemd WAYLAND_DISPLAY XDG_CURRENT_DESKTOP")
+	-- hl.exec_cmd("systemctl --user import-environment WAYLAND_DISPLAY XDG_CURRENT_DESKTOP")
 	hl.exec_cmd("gnome-keyring-daemon --start --components=secrets")
-	hl.exec_cmd("pypr")
-	hl.exec_cmd("/usr/lib/polkit-gnome/polkit-gnome-authentication-agent-1")
-	hl.exec_cmd("~/.local/bin/Handy_0.8.3_amd64.AppImage")
+
+	-- Iniciadores de aplicaciones
+	hl.exec_cmd("awww-daemon")
+	hl.exec_cmd("qs")
+	hl.exec_cmd("swaync")
 	hl.exec_cmd("hypridle")
-	hl.exec_cmd("systemctl --user import-environment WAYLAND_DISPLAY XDG_CURRENT_DESKTOP")
-	hl.exec_cmd("obsidian")
+	hl.exec_cmd("tailscale systray")
+	hl.exec_cmd("flatpak run md.obsidian.Obsidian")
+	hl.exec_cmd("zapzap")
+	hl.exec_cmd("~/.local/bin/Handy_0.8.3_amd64.AppImage")
 end)
 
 -- ==============================================
 -- VARIABLES DE ENTORNO
 -- ==============================================
+hl.env("XCURSOR_THEME", "Adwaita")
 hl.env("XCURSOR_SIZE", "24")
-hl.env("HYPRCURSOR_SIZE", "24")
 
+-- Programas por defecto
+hl.env("EDITOR", "nvim")
+hl.env("TERM", "kitty")
+hl.env("TERMINAL", "alacritty")
+hl.env("BROWSER", "helium")
+
+-- Directorios base XDG
+hl.env("XDG_CONFIG_HOME", "/home/tona/.config")
+hl.env("XDG_CACHE_HOME", "/home/tona/.cache")
+hl.env("XDG_DATA_HOME", "/home/tona/.local/share")
+hl.env("XDG_STATE_HOME", "/home/tona/.local/state")
+
+-- Lenguajes y entornos de desarrollo
+hl.env("CARGO_HOME", "/home/tona/.local/share/cargo")
+hl.env("RUSTUP_HOME", "/home/tona/.local/share/rustup")
+hl.env("BUN_INSTALL", "/home/tona/.local/share/bun")
+hl.env("NPM_CONFIG_USERCONFIG", "/home/tona/.config/npm/npmrc")
+
+-- Terminal, shell y herramientas
+hl.env("ZDOTDIR", "/home/tona/.config/zsh")
+hl.env("ZSH", "/home/tona/.local/share/oh-my-zsh")
+hl.env("HISTFILE", "/home/tona/.local/share/zsh/history")
+hl.env("CLAUDE_CONFIG_DIR", "/home/tona/.config/claude")
+hl.env("TMUX_CONF", "/home/tona/.config/tmux/tmux.conf")
+hl.env("GNUPGHOME", "/home/tona/.local/share/gnupg")
+hl.env("WGETRC", "/home/tona/.config/wgetrc")
+
+-- NVIDIA / CUDA
+hl.env("__GL_SHADER_CACHE_PATH", "/home/tona/.cache/nvidia")
+
+-- Otros
+hl.env("KEYD_CONF", "/etc/keyd/default.conf")
+hl.env("SDDM_CONF", "/usr/lib/sddm/sddm.conf.d/default.conf")
+hl.env("APPS_DIR", "/home/tona/.local/share/applications/")
 -- ==============================================
 -- CONFIGURACIÓN PRINCIPAL
 -- ==============================================
@@ -116,6 +157,11 @@ hl.config({
 			natural_scroll = false,
 		},
 	},
+
+	cursor = {
+		no_hardware_cursors = true,
+		enable_hyprcursor = false,
+	},
 })
 
 -- ==============================================
@@ -168,16 +214,16 @@ hl.window_rule({
 })
 
 hl.window_rule({
-	name = "pulsemixer-float",
-	match = { class = "pulsemixer" },
+	name = "wiremix-float",
+	match = { class = "wiremix" },
 	float = true,
 	center = true,
 	size = { 800, 500 },
 })
 
 hl.window_rule({
-	name = "impala-float",
-	match = { class = "impala" },
+	name = "nmtui-float",
+	match = { class = "nmtui" },
 	float = true,
 	center = true,
 	size = { 1000, 1000 },
@@ -200,15 +246,6 @@ hl.window_rule({
 })
 
 hl.window_rule({
-	name = "quick-note",
-	match = { class = "quick-note" },
-	float = true,
-	center = true,
-	size = { 800, 600 },
-	workspace = "special:M",
-})
-
-hl.window_rule({
 	name = "btop",
 	match = { class = "btop" },
 	float = true,
@@ -225,8 +262,8 @@ hl.window_rule({
 })
 
 hl.window_rule({
-	name = "HyprEmoji",
-	match = { initial_title = "HyprEmoji" },
+	name = "Emojis",
+	match = { initial_title = "Smile" },
 	float = true,
 	size = { 500, 500 },
 	center = true,
@@ -262,16 +299,16 @@ hl.window_rule({
 -- Programas y utilidades
 hl.bind("SUPER + Tab", hl.dsp.window.cycle_next({}))
 hl.bind("F9", hl.dsp.exec_cmd("kill -USR2 $(pgrep handy)"))
-hl.bind("SUPER + ALT + S", hl.dsp.exec_cmd(terminal .. " --class pulsemixer -e pulsemixer"))
+hl.bind("SUPER + ALT + S", hl.dsp.exec_cmd(terminal .. " --class wiremix -e wiremix"))
 hl.bind("SUPER + ALT + B", hl.dsp.exec_cmd(terminal .. " --class bluetui -e bluetui"))
 hl.bind("SUPER + SHIFT + S", hl.dsp.exec_cmd('grim -g "$(slurp)" - | wl-copy'))
-hl.bind("SUPER + PERIOD", hl.dsp.exec_cmd("$XDG_CONFIG_HOME/Scripts/sw-hypremoji-copy.sh"))
+hl.bind("SUPER + period", hl.dsp.exec_cmd("flatpak run it.mijorus.smile"))
 hl.bind("SUPER + SHIFT + N", hl.dsp.exec_cmd("$XDG_CONFIG_HOME/Scripts/quick-note.sh"))
 hl.bind("SUPER + F", hl.dsp.exec_cmd(terminal .. " -o 'font.size'=13 -e yazi")) -- FALTA EDITOR NVIM?
 hl.bind("SUPER + N", hl.dsp.exec_cmd("swaync-client -t"))
 hl.bind("SUPER + mouse:274", hl.dsp.exec_cmd("pypr zoom"), { mouse = true })
 hl.bind("SUPER + comma", hl.dsp.exec_cmd("$XDG_CONFIG_HOME/Scripts/config-picker.sh"))
-hl.bind("SUPER + ALT + N", hl.dsp.exec_cmd(terminal .. " -e nvim ~/Obsidian/the-vault/bullet-journal.md"))
+hl.bind("SUPER + ALT + N", hl.dsp.exec_cmd(terminal .. " -e nvim ~/documents/Obsidian/the-vault/bullet-journal.md"))
 
 -- Zoom dinámico de acuerdo al layout actual
 hl.bind("SUPER + Z", function()
@@ -279,7 +316,7 @@ hl.bind("SUPER + Z", function()
 	if current_layout == "scrolling" then
 		hl.dispatch(hl.dsp.layout("colresize +conf"))
 	elseif current_layout == "dwindle" then
-		hl.dispatch(hl.dsp.window.fullscreen({ action = "toggle" }))
+		hl.dispatch(hl.dsp.window.fullscreen({ mode = "maximized", action = "toggle" }))
 	end
 end, { description = "Alterna ancho entre actual y máximo" })
 
@@ -290,7 +327,7 @@ hl.bind("CTRL + SHIFT + bar", hl.dsp.exec_cmd("wtype '<'"))
 -- Básicos
 hl.bind("SUPER + Return", hl.dsp.exec_cmd(terminal))
 hl.bind("SUPER + SHIFT + Return", hl.dsp.exec_cmd(terminal .. " -e sh -c 'tmux attach || tmux'"))
-hl.bind("SUPER + b", hl.dsp.exec_cmd("helium-browser"))
+hl.bind("SUPER + b", hl.dsp.exec_cmd("helium"))
 hl.bind("SUPER + q", hl.dsp.window.close())
 hl.bind("SUPER + SHIFT + F", hl.dsp.exec_cmd(fileManager))
 hl.bind("SUPER + V", hl.dsp.layout("togglesplit"))

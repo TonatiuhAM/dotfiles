@@ -3,11 +3,11 @@ return {
   opts = {
     wiki_dirs = {
       -- neowiki.nvim supports both absolute and tilde-expanded paths
-      { name = "Obsidian", path = "/home/tona/Obsidian/the-vault/" },
-      { name = "Inbox", path = "/home/tona/Obsidian/the-vault/10-inbox/" },
-      { name = "Notas", path = "/home/tona/Obsidian/the-vault/20-notas/" },
-      { name = "Cursos", path = "/home/tona/Obsidian/the-vault/30-cursos/" },
-      { name = "Hoarder", path = "/home/tona/Obsidian/the-vault/40-hoarded/" },
+      { name = "Obsidian", path = "/home/tona/documents/Obsidian/the-vault/" },
+      { name = "Inbox", path = "/home/tona/documents/Obsidian/the-vault/10-inbox/" },
+      { name = "Notas", path = "/home/tona/documents/Obsidian/the-vault/20-notas/" },
+      { name = "Cursos", path = "/home/tona/documents/Obsidian/the-vault/30-cursos/" },
+      { name = "Hoarder", path = "/home/tona/documents/Obsidian/the-vault/40-hoarded/" },
     },
   },
   keys = {

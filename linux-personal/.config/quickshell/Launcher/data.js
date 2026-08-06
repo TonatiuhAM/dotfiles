@@ -16,12 +16,6 @@ const scripts = [
     type: "script"
   },
   {
-    name: "Volume Control",
-    icon: "󰕾",
-    command: ["kitty", "--title", "pulsemixer", "pulsemixer"],
-    type: "script"
-  },
-  {
     name: "Style Picker",
     icon: "󰸉",
     keywords: ["wallpaper"],
@@ -29,28 +23,9 @@ const scripts = [
     type: "script"
   },
   {
-    name: "Dev-Layout",
+    name: "Developement",
     icon: "󰵮",
     command: ["sh", "-c", "$XDG_CONFIG_HOME/Scripts/dev-layout.sh"],
-    type: "script"
-  },
-  {
-    name: "Curso-Layout",
-    icon: "󰵮",
-    command: ["sh", "-c", "$XDG_CONFIG_HOME/Scripts/cursos-layout.sh"],
-    type: "script"
-  },
-  {
-    name: "SSH",
-    icon: "",
-    command: ["sh", "-c", "$XDG_CONFIG_HOME/Scripts/lazyssh-manager.sh"],
-    type: "script"
-  },
-  {
-    name: "Ferdium",
-    icon: "",
-    keywords: ["whatsapp", "telegram", "discord", "slack", "messenger"],
-    command: ["sh", "-c", "gtk-launch ferdium"],
     type: "script"
   },
   {

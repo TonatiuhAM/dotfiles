@@ -39,6 +39,9 @@ Rectangle {
 
                 IconImage {
                     implicitSize: 18
+                    // SystemTrayItem.icon is already a fully-resolved image source
+                    // (image://icon/... or image://qspixmap/...) — do not re-wrap
+                    // with Quickshell.iconPath(), which expects a bare theme icon name.
                     source: modelData.icon
                     mipmap: true
                 }
