@@ -1,5 +1,0 @@
-[pyprland]
-plugins = ["magnify"]
-
-[magnify]
-factor = 3.0        # Nivel de aumento

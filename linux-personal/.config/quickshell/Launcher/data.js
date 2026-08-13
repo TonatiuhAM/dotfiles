@@ -30,16 +30,9 @@ const scripts = [
   },
   {
     name: "Archivos",
-    icon: "",
+    icon: "",
     keywords: ["Files"],
     command: ["sh", "-c", "thunar"],
-    type: "script"
-  },
-  {
-    name: "Spotify",
-    icon: "",
-    keywords: ["Spotify", "spotify"],
-    command: ["kitty", "spotatui"],
     type: "script"
   },
 ]
@@ -54,8 +47,9 @@ const systemCommands = [
     requiresAuth: true
   },
   {
-    name: "Reiniciar",
+    name: "Reboot",
     icon: "󰜉",
+    keywords: ["reiniciar", "reboot"],
     command: ["systemctl", "reboot"],
     type: "system",
     requiresAuth: true

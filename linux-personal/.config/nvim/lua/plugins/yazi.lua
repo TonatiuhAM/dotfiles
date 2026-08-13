@@ -1,6 +1,7 @@
 ---@type LazySpec
 return {
   "mikavilpas/yazi.nvim",
+  enabled = true,
   version = "*", -- use the latest stable version
   event = "VeryLazy",
   dependencies = {

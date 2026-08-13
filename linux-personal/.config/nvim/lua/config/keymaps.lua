@@ -2,8 +2,10 @@
 -- Default keymaps that are always set: https://github.com/LazyVim/LazyVim/blob/main/lua/lazyvim/config/keymaps.lua
 -- Add any additional keymaps here
 
+-- vim.keymap.set("n", "<leader>e", "<cmd>Oil --float<cr>", { desc = "Abrir Oil (File Manager)" })
+
 vim.keymap.set("n", "<leader>wn", function()
-  vim.cmd("edit " .. vim.fn.fnameescape("~/Obsidian/the-vault/bullet-journal.md"))
+  vim.cmd("edit " .. vim.fn.fnameescape("~/documents/Obsidian/the-vault/bullet-journal.md"))
 end, { desc = "Abrir Bullet Journal" })
 
 -- Solución para la indentación en modo visual con teclados no-US
