@@ -1,0 +1,121 @@
+import QtQuick
+import Quickshell
+import "../components"
+import "../config"
+import "../osd"
+import "../popups"
+import "../services"
+
+PanelWindow {
+    id: root
+
+    anchors {
+        top: true
+        left: true
+        right: true
+    }
+    implicitHeight: Settings.barHeight
+    exclusiveZone: Settings.barHeight
+    aboveWindows: true
+    focusable: false
+    color: Theme.transparent
+
+    Rectangle {
+        anchors.fill: parent
+        color: Theme.barBackground
+
+        Rectangle {
+            anchors.left: parent.left
+            anchors.right: parent.right
+            anchors.bottom: parent.bottom
+            height: 1
+            color: Theme.bg3
+        }
+    }
+
+    Row {
+        id: leftModules
+        anchors.left: parent.left
+        anchors.top: parent.top
+        anchors.bottom: parent.bottom
+
+        LauncherButton { }
+        Workspaces { }
+        ActiveWindow { screenInfo: root.screen }
+    }
+
+    MediaIndicator {
+        id: centeredMedia
+        anchors.horizontalCenter: parent.horizontalCenter
+        anchors.top: parent.top
+        anchors.bottom: parent.bottom
+        screenName: root.screen.name
+    }
+
+    Row {
+        id: rightModules
+        anchors.right: parent.right
+        anchors.top: parent.top
+        anchors.bottom: parent.bottom
+
+        Separator { vertical: true; height: parent.height }
+        NetworkIndicator { id: networkIndicator; screenName: root.screen.name }
+        AudioIndicator { id: audioIndicator; screenName: root.screen.name }
+        MemoryIndicator {
+            id: memoryIndicator
+            screenName: root.screen.name
+            memoryPopup: memoryPopup
+        }
+        BatteryIndicator { id: batteryIndicator; screenName: root.screen.name }
+        Separator { vertical: true; height: parent.height; visible: tray.visible }
+        Tray { id: tray; barWindow: root }
+        Separator { vertical: true; height: parent.height }
+        Clock { id: clockIndicator; screenName: root.screen.name }
+        Separator { vertical: true; height: parent.height }
+        PowerButton { id: powerIndicator; screenName: root.screen.name }
+    }
+
+    MemoryPopup {
+        id: memoryPopup
+        anchorItem: memoryIndicator
+    }
+
+    MediaPopup {
+        anchorItem: centeredMedia
+        screenName: root.screen.name
+    }
+
+    AudioPopup {
+        anchorItem: audioIndicator
+        screenName: root.screen.name
+    }
+
+    VolumeOSD {
+        anchorItem: audioIndicator
+    }
+
+    NetworkPopup {
+        anchorItem: networkIndicator
+        screenName: root.screen.name
+    }
+
+    BluetoothPopup {
+        anchorItem: batteryIndicator
+        screenName: root.screen.name
+    }
+
+    ControlCenter {
+        anchorItem: batteryIndicator
+        screenName: root.screen.name
+    }
+
+    CalendarPopup {
+        anchorItem: clockIndicator
+        screenName: root.screen.name
+    }
+
+    PowerMenu {
+        anchorItem: powerIndicator
+        screenName: root.screen.name
+    }
+}

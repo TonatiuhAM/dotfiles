@@ -54,14 +54,86 @@ tona-dotfiles v2.4.0 (Keyboard-driven, minimalist ecosystem)
 
 # ⌨️ Usability
 
-
 ```text
 ~/dotfiles -----------------------------------------------------------------------------------
+» man dotfiles
 
-» stow ./linux-personal
-- [!] CRITICAL WARNING / LEER ANTES DE EJECUTAR
-- Estos archivos están estrictamente personalizados para mi hardware y flujo de trabajo.
-- No ejecutes scripts a ciegas; revisa, comprende y adopta bajo tu propio riesgo.
+DOTFILES(1)                     Manual del Usuario                    DOTFILES(1)
+
+NAME
+       dotfiles - gestión de configuraciones vía GNU Stow
+
+SYNOPSIS
+       stow -d <carpeta-de-paquetes> -t <destino> <paquete> [paquete ...]
+
+DESCRIPTION
+       Cada carpeta de primer nivel dentro de linux/ (o macos-personal/) es un
+       paquete de Stow independiente, con su propia ruta relativa a $HOME ya
+       incluida adentro (linux/hypr/.config/hypr/hyprland.lua -> ~/.config/
+       hypr/hyprland.lua). Instala, quita o prueba cada app por separado sin
+       arrastrar las demás.
+
+REQUIREMENTS
+       stow   sudo pacman -S stow   /   sudo dnf install stow   /   brew install stow
+
+OPTIONS
+       -d, --dir=DIR
+              Carpeta donde viven los paquetes (linux o macos-personal).
+
+       -t, --target=DIR
+              Carpeta destino donde se crean los symlinks (normalmente ~).
+
+       -n, --no, --simulate
+              No toca nada, solo imprime qué haría. Úsalo siempre antes de
+              aplicar algo nuevo.
+
+       -v, -vv, -vvv
+              Verbosidad creciente: qué archivos enlaza o desenlaza.
+
+       -S, --stow
+              Instala (crea symlinks). Es el modo por default.
+
+       -D, --delete
+              Desinstala: borra los symlinks del paquete sin tocar el repo.
+
+       -R, --restow
+              Equivale a -D seguido de -S. Útil tras agregar o quitar
+              archivos dentro de un paquete.
+
+       --adopt
+              PELIGROSO. Absorbe archivos ya existentes en $HOME hacia el
+              repo, sobrescribiendo lo que ya tenías versionado. Revisa
+              "git diff" de inmediato si lo usas.
+
+EXAMPLES
+       stow -nv -d linux -t ~ hypr
+              Simula (no aplica nada) e imprime cada symlink que crearía.
+
+       stow -d linux -t ~ hypr quickshell
+              Instala varios paquetes de un jalón.
+
+       stow -R -d linux -t ~ kitty
+              Re-enlaza "kitty" después de editar qué archivos tiene el
+              paquete.
+
+       stow -D -d linux -t ~ waybar
+              Quita los symlinks de "waybar" sin tocar el repo.
+
+       for app in linux/*/; do stow -d linux -t ~ "${app#linux/}"; done
+              Instala todo de un jalón. No es el flujo recomendado: el punto
+              de tener paquetes por app es justo no instalar lo que no usas.
+
+SEE ALSO
+       macos-personal/ usa el mismo patrón, solo cambia -d:
+
+              stow -nv -d macos-personal -t ~ nvim kitty tmux
+
+WARNINGS
+       Estos archivos están estrictamente personalizados para mi hardware y
+       flujo de trabajo. No ejecutes nada a ciegas: simula primero con -n,
+       revisa qué haría, y adopta bajo tu propio riesgo.
+
+DOTFILES(1)                                                            DOTFILES(1)
 ```
 
 # 🎓 More of Me
