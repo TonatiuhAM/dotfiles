@@ -71,7 +71,7 @@ hl.window_rule({
 
 hl.window_rule({
 	name = "emojis",
-	match = { initial_title = "smile" },
+	match = { initial_title = "Smile" },
 	float = true,
 	size = { 500, 500 },
 	center = true,

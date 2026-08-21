@@ -11,7 +11,6 @@ require("colors")
 
 -- Traer variables locales
 local primary = primary
-local outline_variant = outline_variant
 
 -- CONFIGURACIÓN PRINCIPAL
 hl.config({
@@ -25,7 +24,7 @@ hl.config({
 		},
 		resize_on_border = false,
 		allow_tearing = false,
-		layout = "dwindle",
+		layout = "master",
 	},
 
 	scrolling = {
@@ -43,7 +42,10 @@ hl.config({
 	},
 
 	master = {
-		new_status = "master",
+		allow_small_split = true,
+		new_status = "slave",
+		mfact = 0.55,
+		orientation = "left",
 	},
 
 	decoration = {

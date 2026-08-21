@@ -30,48 +30,20 @@ return {
       mapping = vim.tbl_extend("force", opts.mapping or {}, {
         ["<C-b>"] = cmp.mapping.scroll_docs(-4),
         ["<C-f>"] = cmp.mapping.scroll_docs(4),
+
+        -- Navegación entre sygerencias
+        ["<C-y>"] = cmp.mapping.confirm({ select = true }),
         ["<C-n>"] = cmp.mapping.select_next_item({ behavior = cmp.SelectBehavior.Insert }),
         ["<C-p>"] = cmp.mapping.select_prev_item({ behavior = cmp.SelectBehavior.Insert }),
+
+        -- Cerra ek menú o forzar apuertura
+        ["<C-e>"] = cmp.mapping.abort(),
         ["<C-Space>"] = cmp.mapping.complete(),
 
-        -- Deshabilitar Enter para aceptar sugerencias
+        -- Deshabilitar Enter, Tab y Shift Tab
         ["<CR>"] = cmp.config.disable,
-
-        -- Usar Ctrl+Tab para aceptar sugerencias
-        ["<C-Tab>"] = cmp.mapping(function(fallback)
-          if cmp.visible() then
-            cmp.confirm({ select = true })
-          else
-            fallback()
-          end
-        end, { "i", "s" }),
-
-        -- Tab solo para navegación y snippets
-        ["<Tab>"] = cmp.mapping(function(fallback)
-          if cmp.visible() then
-            cmp.select_next_item()
-          elseif vim.snippet.active({ direction = 1 }) then
-            vim.schedule(function()
-              vim.snippet.jump(1)
-            end)
-          elseif has_words_before() then
-            cmp.complete()
-          else
-            fallback()
-          end
-        end, { "i", "s" }),
-
-        ["<S-Tab>"] = cmp.mapping(function(fallback)
-          if cmp.visible() then
-            cmp.select_prev_item()
-          elseif vim.snippet.active({ direction = -1 }) then
-            vim.schedule(function()
-              vim.snippet.jump(-1)
-            end)
-          else
-            fallback()
-          end
-        end, { "i", "s" }),
+        ["<Tab>"] = cmp.config.disable,
+        ["<S-Tab>"] = cmp.config.disable,
       }),
       sources = cmp.config.sources({
         { name = "lazydev" },

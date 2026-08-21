@@ -9,7 +9,7 @@ ModuleButton {
 
     required property string screenName
 
-    implicitWidth: 62
+    implicitWidth: 78
     baseColor: Theme.bg1
     horizontalPadding: 9
 
@@ -19,7 +19,7 @@ ModuleButton {
     }
 
     StyledText {
-        text: Qt.formatDateTime(clock.date, "HH:mm")
+        text: Qt.formatDateTime(clock.date, "hh:mm AP")
         color: Theme.fg1
     }
 

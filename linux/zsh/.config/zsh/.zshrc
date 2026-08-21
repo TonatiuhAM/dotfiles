@@ -8,6 +8,9 @@ setopt AUTOCD
 setopt NOBEEP
 setopt NUMERIC_GLOB_SORT
 
+# Asegurar que Alt + . inserte el último argumento
+bindkey '\e.' insert-last-word
+bindkey '^[.' insert-last-word
 
 # =======================================================================================
 # Homebrew y PATH
@@ -93,7 +96,7 @@ export desktop="$HOME/.local/share/applications"
 
 # Reload del shell
 alias zshsource='exec zsh'
-
+# alias nvim-kickstart='NVIM_APPNAME="nvim-kickstart" nvim'
 
 
 # Desactiva el fondo resaltado para directorios world-writable (ow) y sticky world-writable (tw)

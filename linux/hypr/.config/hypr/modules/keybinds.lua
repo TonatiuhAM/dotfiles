@@ -29,6 +29,8 @@ hl.bind("SUPER + Z", function()
 		hl.dispatch(hl.dsp.layout("colresize +conf"))
 	elseif current_layout == "dwindle" then
 		hl.dispatch(hl.dsp.window.fullscreen({ mode = "maximized", action = "toggle" }))
+	elseif current_layout == "master" then
+		hl.dispatch(hl.dsp.window.fullscreen({ mode = "maximized", action = "toggle" }))
 	end
 end, { description = "Alterna ancho entre actual y máximo" })
 

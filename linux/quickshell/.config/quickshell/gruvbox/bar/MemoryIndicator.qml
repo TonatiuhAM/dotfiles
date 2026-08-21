@@ -30,7 +30,7 @@ ModuleButton {
         if (mouse.button === Qt.LeftButton) {
             if (memoryPopup)
                 memoryPopup.hide();
-            Quickshell.execDetached(["kitty", "-e", "btop"]);
+            Quickshell.execDetached(["alacritty", "--class", "btop", "-e", "btop"]);
         }
     }
 }

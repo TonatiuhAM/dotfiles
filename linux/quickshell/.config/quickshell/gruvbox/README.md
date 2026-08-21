@@ -10,7 +10,7 @@ A self-contained bar for Quickshell 0.3.0 / Hyprland, using the Gruvbox bar's la
 - JetBrainsMono Nerd Font (used for both text and icon glyphs)
 - NetworkManager, BlueZ, PipeWire/WirePlumber, UPower
 - An MPRIS-compatible player for the media module
-- `../Launcher` (this repo's Quickshell-based launcher, toggled via its FIFO script), `brightnessctl`, `pavucontrol`, `kitty`, `btop`, `loginctl`, `systemctl`, `hyprctl`
+- `../Launcher` (this repo's Quickshell-based launcher, toggled via its FIFO script), `brightnessctl`, `pavucontrol`, `alacritty`, `btop`, `loginctl`, `systemctl`, `hyprctl`
 
 ## Using it
 
@@ -61,7 +61,7 @@ Pointer actions:
 - media: left-click popup, middle/right-click play-pause, wheel previous/next
 - network: left-click popup
 - audio: left-click popup, middle-click mute, right-click `pavucontrol`, wheel volume
-- memory: left-click `kitty -e btop`
+- memory: left-click `alacritty --class btop -e btop`
 - battery: left-click Control Center (includes Bluetooth, volume, brightness)
 - clock: left-click calendar
 - power: left-click power menu
