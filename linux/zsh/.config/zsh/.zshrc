@@ -77,6 +77,7 @@ function zvm_after_init() {
 
 # Alias generales
 alias vim='nvim'
+alias v='nvim'
 alias ll='lsd -lagh --group-dirs first --header'
 alias open='thunar . & disown'
 

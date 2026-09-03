@@ -1,5 +1,0 @@
-layout {
-    pane command="echo" {
-        args "Hello, World!"
-    }
-}

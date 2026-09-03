@@ -27,11 +27,6 @@ vim.keymap.set("i", "<C-v>", "<C-r>+", { desc = "Pegar del portapapeles del sist
 vim.keymap.set("x", "<Tab>", ">gv", { desc = "Indent selection right" })
 vim.keymap.set("x", "<S-Tab>", "<gv", { desc = "Indent selection left" })
 
--- Moverse al buffer de la derecha (siguiente) con Leader + b + k
-vim.keymap.set("n", "<leader>bl", "<Cmd>bnext<CR>", { desc = "Buffer siguiente (derecha)" })
--- Moverse al buffer de la izquierda (anterior) con Leader + b + j
-vim.keymap.set("n", "<leader>bh", "<Cmd>bprevious<CR>", { desc = "Buffer anterior (izquierda)" })
-
 -- ===================================
 -- SUBMENU "N"
 -- ===================================

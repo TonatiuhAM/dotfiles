@@ -5,11 +5,6 @@
       "src": "https://github.com/L3MON4D3/LuaSnip",
       "version": "2.0.0 - 3.0.0"
     },
-    "avante.nvim": {
-      "rev": "d1fa2c8bdb810eb8600031efec4df602459f4c97",
-      "src": "https://github.com/yetone/avante.nvim",
-      "version": "'main'"
-    },
     "blink-copilot": {
       "rev": "7ad8209b2f880a2840c94cdcd80ab4dc511d4f39",
       "src": "https://github.com/fang2hou/blink-copilot"
@@ -42,10 +37,6 @@
     "guess-indent.nvim": {
       "rev": "84a4987ff36798c2fc1169cbaff67960aed9776f",
       "src": "https://github.com/NMAC427/guess-indent.nvim"
-    },
-    "img-clip.nvim": {
-      "rev": "b6ddfb97b5600d99afe3452d707444afda658aca",
-      "src": "https://github.com/HakonHarnes/img-clip.nvim"
     },
     "indent-blankline.nvim": {
       "rev": "d28a3f70721c79e3c5f6693057ae929f3d9c0a03",
@@ -83,21 +74,17 @@
       "rev": "e58ad4b0c9e9376096b9704f98fc00d4c9448870",
       "src": "https://github.com/nvim-mini/mini.nvim"
     },
+    "neoscroll.nvim": {
+      "rev": "c8d29979cb0cb3a2437a8e0ae683fd82f340d3b8",
+      "src": "https://github.com/karb94/neoscroll.nvim"
+    },
     "neowiki.nvim": {
       "rev": "85dddf6057b07d4d6772b2f90e754a18e958a865",
       "src": "https://github.com/echaya/neowiki.nvim"
     },
-    "nui.nvim": {
-      "rev": "10fc361835c856ba4233ef5ea135b919bf3dce97",
-      "src": "https://github.com/MunifTanjim/nui.nvim"
-    },
     "nvim-autopairs": {
       "rev": "7b9923abad60b903ece7c52940e1321d39eccc79",
       "src": "https://github.com/windwp/nvim-autopairs"
-    },
-    "nvim-cmp": {
-      "rev": "2ffe79f1f021def8dd1fcd81deb16f1bb0d989f3",
-      "src": "https://github.com/hrsh7th/nvim-cmp"
     },
     "nvim-colorizer.lua": {
       "rev": "72a05f62c52241bc7441c820eb53946f92b2e6a4",
@@ -129,12 +116,11 @@
     },
     "nvim-treesitter": {
       "rev": "074aa4422bf029908338e855d0c0f71470a971bb",
-      "src": "https://github.com/nvim-treesitter/nvim-treesitter",
-      "version": "'main'"
+      "src": "https://github.com/nvim-treesitter/nvim-treesitter"
     },
-    "nvim-web-devicons": {
-      "rev": "2ae6958df7ced50baac5035cec0c15799eedfbf7",
-      "src": "https://github.com/nvim-tree/nvim-web-devicons"
+    "oil.nvim": {
+      "rev": "b73018b75affd13fa38e2fc94ef753b465f770d7",
+      "src": "https://github.com/stevearc/oil.nvim"
     },
     "plenary.nvim": {
       "rev": "74b06c6c75e4eeb3108ec01852001636d85a932b",
