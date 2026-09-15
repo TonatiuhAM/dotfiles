@@ -42,16 +42,12 @@ output_path = '~/.config/gtk-4.0/colors.css'
 
 [templates.btop]
 input_path = '~/.config/matugen/templates/btop.theme'
-output_path = '~/.config/btop/themes/matugen.theme'
+output_path = '~/.config/btop/themes/current.theme'
 post_hook = 'pkill -USR2 btop || true'
 
 [templates.prismlauncher]
 input_path = '~/.config/matugen/templates/prismlauncher.json'
 output_path = '~/.local/share/PrismLauncher/themes/Matugen/theme.json'
-
-[templates.vivaldi]
-input_path = '~/.config/matugen/templates/vivaldi.css'
-output_path = '~/.config/matugen/generated/vivaldi.css' 
 
 [config]
 [templates.quickshell]
@@ -61,3 +57,7 @@ output_path = '~/.local/state/quickshell/generated/colors.json'
 [templates.alacritty]
 input_path = '~/.config/matugen/templates/alacritty-colors.toml'
 output_path = '~/.config/alacritty/colors.toml'
+
+[templates.rofi]
+input_path = '~/.config/matugen/templates/rofi-colors.rasi'
+output_path = '~/.config/rofi/themes/current.rasi'

@@ -30,6 +30,12 @@ require('blink.cmp').setup {
   },
 
   snippets = { preset = 'luasnip' },
-  fuzzy = { implementation = 'lua' }, -- alternativa: 'prefer_rust_with_warning'
+  fuzzy = { implementation = 'prefer_rust_with_warning' }, -- alternativa: 'lua'
   signature = { enabled = true },
+
+  -- Cmdline (":") desactivado: choca con vim._core.ui2 (tiny-cmdline.lua) y se
+  -- queda en "Loading...". El autocompletado del cmdline lo cubre mini.cmdline
+  -- (plugins/mini-cmdline.lua), que trabaja sobre el wildmenu nativo en vez de
+  -- pasar por la fuente async 'cmdline' de blink.
+  cmdline = { enabled = false },
 }

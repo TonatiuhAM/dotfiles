@@ -1,0 +1,19 @@
+/* Traducción de Catppuccin Macchiato a las variables de acento que usa
+   adw-gtk3 / libadwaita, con el mismo mapeo MD3 que el resto del setup. */
+@define-color accent_color #c6a0f6; /* mauve */
+@define-color accent_fg_color #181926; /* crust */
+@define-color accent_bg_color #c6a0f6; /* mauve */
+@define-color window_bg_color #181926; /* crust */
+@define-color window_fg_color #cad3f5; /* text */
+@define-color headerbar_bg_color #181926;
+@define-color headerbar_fg_color #cad3f5;
+@define-color popover_bg_color #181926;
+@define-color popover_fg_color #cad3f5;
+@define-color view_bg_color #24273a; /* base */
+@define-color view_fg_color #cad3f5;
+@define-color card_bg_color #24273a;
+@define-color card_fg_color #cad3f5;
+@define-color sidebar_bg_color @window_bg_color;
+@define-color sidebar_fg_color @window_fg_color;
+@define-color sidebar_border_color @window_bg_color;
+@define-color sidebar_backdrop_color @window_bg_color;

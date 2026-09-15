@@ -5,7 +5,7 @@
    Colores: importados de matugen
    ════════════════════════════════════════════════════════════ */
 
-@import "/home/tona/.config/rofi/themes/matugen.rasi"
+@import "/home/tona/.config/rofi/themes/current.rasi"
 
 * {
     bg:         @surface-container;

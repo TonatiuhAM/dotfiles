@@ -41,7 +41,7 @@ hl.bind("CTRL + SHIFT + bar", hl.dsp.exec_cmd("wtype '<'"))
 -- Básicos
 hl.bind("SUPER + Return", hl.dsp.exec_cmd(var.terminal))
 hl.bind("SUPER + SHIFT + Return", hl.dsp.exec_cmd(var.terminal .. " -e sh -c 'tmux attach || tmux'"))
-hl.bind("SUPER + b", hl.dsp.exec_cmd("helium"))
+hl.bind("SUPER + b", hl.dsp.exec_cmd("vivaldi"))
 hl.bind("SUPER + q", hl.dsp.window.close())
 hl.bind("SUPER + SHIFT + F", hl.dsp.exec_cmd(var.fileManager))
 hl.bind("SUPER + V", hl.dsp.layout("togglesplit"))

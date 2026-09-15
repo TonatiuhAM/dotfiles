@@ -1,0 +1,59 @@
+/* ════════════════════════════════════════════════════════════
+   catppuccin-macchiato.rasi
+   Traducción de la paleta oficial Catppuccin Macchiato a los
+   mismos tokens estilo Material You (MD3) que generaba matugen,
+   para que launcher.rasi / style-picker.rasi no necesiten cambios.
+   Paleta oficial: https://github.com/catppuccin/catppuccin
+   ════════════════════════════════════════════════════════════ */
+* {
+    primary:                     #c6a0f6; /* mauve */
+    primary-fixed:                #c6a0f6;
+    primary-fixed-dim:            #c6a0f6;
+    on-primary:                   #181926; /* crust */
+    on-primary-fixed:             #181926;
+    on-primary-fixed-variant:     #363a4f; /* surface0 */
+    primary-container:            #363a4f;
+    on-primary-container:         #c6a0f6;
+
+    secondary:                    #8aadf4; /* blue */
+    secondary-fixed:              #8aadf4;
+    secondary-fixed-dim:          #8aadf4;
+    on-secondary:                 #181926;
+    on-secondary-fixed:           #181926;
+    on-secondary-fixed-variant:   #363a4f;
+    secondary-container:          #363a4f;
+    on-secondary-container:       #8aadf4;
+
+    tertiary:                     #8bd5ca; /* teal */
+    tertiary-fixed:               #8bd5ca;
+    tertiary-fixed-dim:           #8bd5ca;
+    on-tertiary:                  #181926;
+    on-tertiary-fixed:            #181926;
+    on-tertiary-fixed-variant:    #363a4f;
+    tertiary-container:           #363a4f;
+    on-tertiary-container:        #8bd5ca;
+
+    error:                        #ed8796; /* red */
+    on-error:                     #181926;
+    error-container:              #363a4f;
+    on-error-container:           #ed8796;
+
+    surface:                      #24273a; /* base */
+    on-surface:                   #cad3f5; /* text */
+    on-surface-variant:           #a5adcb; /* subtext0 */
+    outline:                      #8087a2; /* overlay1 */
+    outline-variant:              #5b6078; /* surface2 */
+    shadow:                       #000000;
+    scrim:                        #000000;
+    inverse-surface:              #cad3f5;
+    inverse-on-surface:           #24273a;
+    inverse-primary:              #c6a0f6;
+
+    surface-dim:                  #181926; /* crust */
+    surface-bright:               #5b6078; /* surface2 */
+    surface-container-lowest:     #181926; /* crust */
+    surface-container-low:        #1e2030; /* mantle */
+    surface-container:            #24273a; /* base */
+    surface-container-high:       #363a4f; /* surface0 */
+    surface-container-highest:    #494d64; /* surface1 */
+}

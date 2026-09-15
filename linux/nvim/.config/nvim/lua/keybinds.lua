@@ -29,7 +29,9 @@ vim.keymap.set('n', 'N', 'Nzzzv')
 vim.keymap.set('n', '<leader>fR', [[:%s/\<<C-r><C-w>\>/<C-r><C-w>/gI<Left><Left><Left>]], { desc = '[F]ind and [r]eplace' })
 vim.keymap.set('i', 'jk', '<Esc>', { noremap = true, silent = true })
 
-vim.keymap.set('n', '<C-p>', ':Telescope find_files hidden=true<CR>', { desc = 'Buscar archivos' })
+vim.keymap.set('n', '<C-p>', function()
+  Snacks.picker.smart { hidden = true }
+end, { desc = 'Buscar archivos (buffers > recientes > todos)' })
 
 vim.keymap.set('x', '<Tab>', '>gv', { desc = 'Indent selection right' }) -- fix para teclados no-US
 vim.keymap.set('x', '<S-Tab>', '<gv', { desc = 'Indent selection left' })
@@ -45,6 +47,13 @@ vim.keymap.set('n', '<leader>nt', function()
   local dir = vim.fn.expand '%:p:h'
   vim.fn.jobstart({ 'setsid', '-f', 'alacritty', '--working-directory', dir }, { detach = true })
 end, { silent = true, desc = 'Abrir Alacritty aquí' })
+
+
+-- vim.keymap.set("n", "<leader>bl", ":bnext<CR>", { desc = "Buffer siguiente" })
+-- vim.keymap.set("n", "<leader>bh", ":bprevious<CR>", { desc = "Buffer anterior" })
+vim.keymap.set("n", "<S-l>", ":bnext<CR>", { desc = "Buffer siguiente" })
+vim.keymap.set("n", "<S-h>", ":bprevious<CR>", { desc = "Buffer anterior" })
+vim.keymap.set("n", "<leader>bd", ":bdelete<CR>", { desc = "Buffer delete" })
 
 -- [[ Telescope ]]
 local builtin = require 'telescope.builtin'
@@ -67,6 +76,10 @@ vim.keymap.set('n', '<leader>f/', function()
 end, { desc = '[F]ind [/] in Open Files' })
 
 vim.keymap.set('n', '<leader>fn', function() builtin.find_files { cwd = vim.fn.stdpath 'config', follow = true } end, { desc = '[F]ind [N]eovim files' })
+
+vim.keymap.set({ 'n', 'v'}, "<leader>fm", function()
+  require("telescope.builtin").keymaps({ default_text = "MarkdownPlus" })
+end, { desc = "Buscar keymaps de markdown-plus" })
 
 -- Pickers LSP: si cambias de picker plugin, aquí es donde se actualiza.
 vim.api.nvim_create_autocmd('LspAttach', {
@@ -113,7 +126,7 @@ vim.keymap.set('n', '<F5>', function() require('dap').continue() end, { desc = '
 vim.keymap.set('n', '<F1>', function() require('dap').step_into() end, { desc = 'Debug: Step Into' })
 vim.keymap.set('n', '<F2>', function() require('dap').step_over() end, { desc = 'Debug: Step Over' })
 vim.keymap.set('n', '<F3>', function() require('dap').step_out() end, { desc = 'Debug: Step Out' })
-vim.keymap.set('n', '<leader>b', function() require('dap').toggle_breakpoint() end, { desc = 'Debug: Toggle Breakpoint' })
+-- vim.keymap.set('n', '<leader>b', function() require('dap').toggle_breakpoint() end, { desc = 'Debug: Toggle Breakpoint' })
 vim.keymap.set('n', '<leader>B', function() require('dap').set_breakpoint(vim.fn.input 'Breakpoint condition: ') end, { desc = 'Debug: Set Breakpoint' })
 vim.keymap.set('n', '<F7>', function() require('dapui').toggle() end, { desc = 'Debug: See last session result.' }) -- ve el output tras una excepción no manejada
 

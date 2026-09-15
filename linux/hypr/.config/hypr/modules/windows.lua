@@ -96,6 +96,13 @@ hl.window_rule({
 	},
 })
 
+hl.window_rule({
+	name = "Cisco Packet Tracer",
+	match = { class = "PacketTracer" },
+	float = true,
+	center = true,
+
+})
 -- Rustdesk
 -- hl.window_rule({
 -- 	name = "RustDesk",

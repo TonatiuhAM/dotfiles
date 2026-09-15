@@ -14,6 +14,7 @@ require 'lsp'
 require 'git'
 require 'dap-setup' -- (no "dap": choca con el módulo del propio plugin)
 require 'plugins' -- plugins sin dependencia de orden (lua/plugins/*.lua)
+vim.cmd.colorscheme(require 'current_theme') -- ver lua/current_theme.lua
 require 'keybinds'
 
 -- The line beneath this is called `modeline`. See `:help modeline`

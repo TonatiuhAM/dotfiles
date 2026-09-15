@@ -33,48 +33,92 @@ done
 [[ -d "$WALL_DIR" ]] || {
     notify-send -u critical "Style Picker" "❌ No existe: $WALL_DIR"; exit 1; }
 
-# ── Lista wallpapers ───────────────────────────────────────────
-mapfile -t wallpapers < <(
-    find "$WALL_DIR" -maxdepth 1 -type f \
-        \( -iname "*.jpg" -o -iname "*.jpeg" \
-        -o -iname "*.png" -o -iname "*.webp" \) \
-        -printf "%f\n" | sort
-)
+# ── Selector fzf navegable (entra a subcarpetas con Enter) ─────
+# Estructura esperada: $WALL_DIR/<Tema>/wallpaper.png (Catppuccin,
+# Nord, Everforest, Matugen...), pero también funciona con imágenes
+# sueltas directo en $WALL_DIR.
+current_dir="$WALL_DIR"
 
-[[ ${#wallpapers[@]} -eq 0 ]] && {
-    notify-send -u critical "Style Picker" "❌ Sin imágenes en: $WALL_DIR"; exit 1; }
+while true; do
+    mapfile -t entries < <(
+        {
+            [[ "$current_dir" != "$WALL_DIR" ]] && printf '..\n'
+            find "$current_dir" -maxdepth 1 -mindepth 1 -type d -printf '%f/\n' 2>/dev/null | sort
+            find "$current_dir" -maxdepth 1 -type f \
+                \( -iname "*.jpg" -o -iname "*.jpeg" \
+                -o -iname "*.png" -o -iname "*.webp" \) \
+                -printf '%f\n' 2>/dev/null | sort
+        }
+    )
 
-# ── Selector fzf + preview chafa ──────────────────────────────
-selected=$(printf '%s\n' "${wallpapers[@]}" \
-    | fzf \
-        --prompt="󰏘  Wallpaper: " \
-        --preview "chafa --size=\${FZF_PREVIEW_COLUMNS}x\${FZF_PREVIEW_LINES} $WALL_DIR/{}" \
-        --preview-window=right:65%:wrap \
-        --height=100% \
-        --border=none \
-        --no-info \
-        --cycle)
+    [[ ${#entries[@]} -eq 0 ]] && {
+        notify-send -u critical "Style Picker" "❌ Vacío: $current_dir"; exit 1; }
 
-[[ -z "$selected" ]] && exit 0
+    rel="${current_dir#$WALL_DIR}"
+    rel="${rel#/}"
 
-wall_path="$WALL_DIR/$selected"
+    export CUR_DIR="$current_dir"
+    selected=$(printf '%s\n' "${entries[@]}" \
+        | fzf \
+            --prompt="󰏘  ${rel:-Wallpapers} > " \
+            --preview '
+                entry={}
+                entry_path="$CUR_DIR/$entry"
+                if [[ "$entry" == ".." ]]; then
+                    echo "⬅  Subir un nivel"
+                elif [[ -d "$entry_path" ]]; then
+                    echo "📁 $entry"; echo
+                    ls -1 "$entry_path" 2>/dev/null
+                else
+                    chafa --size=${FZF_PREVIEW_COLUMNS}x${FZF_PREVIEW_LINES} "$entry_path"
+                fi
+            ' \
+            --preview-window=right:65%:wrap \
+            --height=100% \
+            --border=none \
+            --no-info \
+            --cycle)
+
+    [[ -z "$selected" ]] && exit 0
+
+    if [[ "$selected" == ".." ]]; then
+        current_dir="$(dirname "$current_dir")"
+        continue
+    fi
+
+    if [[ "$selected" == */ ]]; then
+        current_dir="$current_dir/${selected%/}"
+        continue
+    fi
+
+    wall_path="$current_dir/$selected"
+    break
+done
+
 [[ ! -f "$wall_path" ]] && {
     notify-send -u critical "Style Picker" "❌ No encontrado: $selected"
     exit 1
 }
 
-# ── Aplica wallpaper + matugen ────────────────────────────────
+# ── Aplica wallpaper (+ matugen, deshabilitado temporalmente) ──
 notify-send -u normal "Theme Changer" "🎨 Aplicando...\n<b>${selected%.*}</b>"
 
 awww img "$wall_path" --transition-type center 2>/dev/null
 
-matugen image "$wall_path" \
-    --source-color-index 0 \
-    --type scheme-tonal-spot \
-    --mode dark
+# TODO(cerebro): matugen queda como 4º modo de tema (dinámico), pero
+# mientras no exista el selector que detecte la carpeta del wallpaper,
+# correrlo aquí siempre pisaría Catppuccin/Nord/Everforest en varios
+# programas (kitty, alacritty, hyprland, quickshell, GTK, btop, rofi).
+# Deshabilitado hasta conectar esa lógica.
+# matugen image "$wall_path" \
+#     --source-color-index 0 \
+#     --type scheme-tonal-spot \
+#     --mode dark
+#
+# if [[ $? -eq 0 ]]; then
+#     notify-send -u low "Theme Changer" "✅ Tema aplicado\n<b>${selected%.*}</b>"
+# else
+#     notify-send -u critical "Theme Changer" "❌ Error al aplicar\n${selected%.*}"
+# fi
 
-if [[ $? -eq 0 ]]; then
-    notify-send -u low "Theme Changer" "✅ Tema aplicado\n<b>${selected%.*}</b>"
-else
-    notify-send -u critical "Theme Changer" "❌ Error al aplicar\n${selected%.*}"
-fi
+notify-send -u low "Theme Changer" "🖼️ Wallpaper aplicado\n<b>${selected%.*}</b>"

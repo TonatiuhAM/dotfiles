@@ -89,6 +89,18 @@ local function set_markdown_bold()
   vim.api.nvim_set_hl(0, '@markup.strong.markdown_inline', highlight_opts)
   vim.api.nvim_set_hl(0, 'markdownBold', highlight_opts)
   vim.api.nvim_set_hl(0, 'htmlBold', highlight_opts)
+
+  -- Catppuccin linkea @markup.heading.{1..6}.markdown a sus grupos "rainbow"
+  -- (solo color), que son más específicos que @markup.heading.markdown (bold)
+  -- y por eso ganan sin heredar el bold. Se reafirma aquí sin tocar su color.
+  for level = 1, 6 do
+    local group = '@markup.heading.' .. level .. '.markdown'
+    local ok, hl = pcall(vim.api.nvim_get_hl, 0, { name = group, link = false })
+    if ok then
+      hl.bold = true
+      vim.api.nvim_set_hl(0, group, hl)
+    end
+  end
 end
 set_markdown_bold()
 vim.api.nvim_create_autocmd('ColorScheme', {

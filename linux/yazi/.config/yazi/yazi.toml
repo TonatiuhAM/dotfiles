@@ -2,6 +2,11 @@
 sort_dir_first = true
 show_hidden = true
 
+[flavor]
+# "" = deja que theme.toml (escrito por matugen en modo dinámico) mande.
+# nombre de una carpeta en flavors/ = fuerza esa paleta estática.
+dark = "catppuccin-macchiato"
+
 [opener]
 open_pdf = [
   { run = "papers %s", orphan = true, for = "unix"},
@@ -14,6 +19,10 @@ office = [
   { run = "onlyoffice-desktopeditors %s", orphan = true},
 ]
 
+packet = [
+  { run = "packettracer $s", oprhan = true},
+]
+
 [open]
 prepend_rules = [
   { url = "*.pdf", use = "open_pdf" },
@@ -24,5 +33,6 @@ prepend_rules = [
   { url = "*.xlsx", use = "office" },
   { url = "*.xls",  use = "office" },
   { url = "*.pptx", use = "office" },
-  { url = "*.ppt",  use = "office" }
+  { url = "*.ppt",  use = "office" },
+  { url = "*.pkt",  use = "packet" },
 ]

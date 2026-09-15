@@ -86,6 +86,7 @@ alias lssh='lazyssh'
 alias lg='lazygit'
 alias ld='lazydocker'
 alias dk='$XDG_CONFIG_HOME/Scripts/docker-manager.sh'
+alias t='$XDG_CONFIG_HOME/Scripts/tmux-sessionizer.sh'
 alias sunshine-start='$XDG_CONFIG_HOME/Scripts/sunshine-start.sh'
 alias login-skip='$XDG_CONFIG_HOME/Scripts/login-skip.sh'
 alias apps="$XDG_CONFIG_HOME/Scripts/sysman.sh"

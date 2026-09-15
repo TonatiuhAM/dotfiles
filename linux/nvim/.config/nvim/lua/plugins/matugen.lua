@@ -39,4 +39,5 @@ vim.api.nvim_create_autocmd('User', {
   callback = apply_statusline_colors,
 })
 
-vim.cmd.colorscheme('matugen')
+-- No se activa aquí: lo decide `current_theme.lua` (ver init.lua),
+-- para poder alternar con catppuccin sin pelear por quién carga último.

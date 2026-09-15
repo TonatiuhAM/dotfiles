@@ -3,7 +3,7 @@
    Ruta: ~/.config/rofi/themes/style-picker.rasi
    ════════════════════════════════════════════════════════════ */
 
-@import "/home/tona/.config/rofi/themes/matugen.rasi"
+@import "/home/tona/.config/rofi/themes/current.rasi"
 
 * {
     bg:         @surface-container;
