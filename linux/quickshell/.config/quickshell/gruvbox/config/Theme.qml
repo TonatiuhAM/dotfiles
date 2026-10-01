@@ -7,8 +7,8 @@ Singleton {
     readonly property string fontFamily: "JetBrainsMono Nerd Font"
     readonly property string iconFontFamily: "JetBrainsMono Nerd Font"
 
-    // Surfaces, darkest to brightest — sourced live from the generated Material You
-    // palette (~/.local/state/quickshell/generated/colors.json) instead of static hex.
+    // Surfaces, darkest to brightest — sourced from the Catppuccin Mocha palette
+    // file (themes/catppuccin-mocha.json).
     readonly property color bg0: SystemColors.md3.surface_container_lowest
     readonly property color bg1: SystemColors.md3.surface_container
     readonly property color bg3: SystemColors.md3.outline_variant
@@ -28,7 +28,7 @@ Singleton {
     // complementary tertiary tone; alerts use the system error color.
     readonly property color red: SystemColors.md3.error
     readonly property color orange: SystemColors.md3.error
-    readonly property color yellow: SystemColors.md3.secondary
+    readonly property color yellow: SystemColors.md3.primary
     readonly property color green: SystemColors.md3.primary
     readonly property color aqua: SystemColors.md3.tertiary
     readonly property color blue: SystemColors.md3.secondary

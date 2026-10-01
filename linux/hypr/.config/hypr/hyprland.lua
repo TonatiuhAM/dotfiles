@@ -7,10 +7,8 @@ require("modules/windows")
 require("modules/animations")
 require("modules/monitor")
 require("modules/gestures")
-require("colors")
 
--- Traer variables locales
-local primary = primary
+local colors = require('themes.catppuccin-mocha')
 
 -- CONFIGURACIÓN PRINCIPAL
 hl.config({
@@ -19,7 +17,7 @@ hl.config({
 		gaps_out = { top = 5, right = 5, bottom = 5, left = 5 },
 		border_size = 2,
 		col = {
-			active_border = primary,
+			active_border = colors.teal,
 			inactive_border = "rgba(00000000)",
 		},
 		resize_on_border = false,
@@ -76,7 +74,9 @@ hl.config({
 	},
 
 	input = {
-		kb_layout = "latam",
+		kb_layout = "us",
+		kb_variant = "altgr-intl",
+		kb_options = "altwin:swap_lalt_lwin",
 		follow_mouse = 1,
 		sensitivity = -0.8,
 		touchpad = {

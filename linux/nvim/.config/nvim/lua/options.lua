@@ -13,6 +13,7 @@ vim.g.have_nerd_font = true
 
 -- [[ Opciones generales ]]
 vim.o.wrap = false
+vim.o.winborder = "rounded"
 
 vim.api.nvim_create_autocmd("FileType", {
   pattern = { "markdown", "md" },
@@ -128,5 +129,53 @@ vim.api.nvim_create_autocmd('BufEnter', {
     if vim.bo[ctx.buf].buftype ~= '' or ctx.file == '' then return end
     local root = vim.fs.root(ctx.buf, root_markers)
     if root and root ~= vim.fn.getcwd() then vim.fn.chdir(root) end
+  end,
+})
+
+-- Big files: desactiva features costosas por buffer.
+local bigfile_group = vim.api.nvim_create_augroup('BigFileDisable', { clear = true })
+
+vim.api.nvim_create_autocmd('BufReadPre', {
+  group = bigfile_group,
+  callback = function(args)
+    local max_size = 1.5 * 1024 * 1024 -- 1.5 MB
+    local file = args.file
+    if not file or file == '' then return end
+
+    local ok, stat = pcall(vim.uv.fs_stat, file)
+    if not (ok and stat and stat.size > max_size) then return end
+
+    vim.b[args.buf].bigfile = true
+
+    -- Opciones locales al buffer/ventana
+    vim.bo[args.buf].swapfile = false
+    vim.bo[args.buf].undolevels = -1
+    vim.bo[args.buf].wrap = false
+
+    if vim.api.nvim_get_current_buf() == args.buf then
+      vim.wo.foldmethod = 'manual'
+      vim.cmd 'syntax off'
+    else
+      vim.api.nvim_create_autocmd('BufEnter', {
+        group = bigfile_group,
+        buffer = args.buf,
+        once = true,
+        callback = function()
+          vim.wo.foldmethod = 'manual'
+          vim.cmd 'syntax off'
+        end,
+      })
+    end
+
+    -- Treesitter solo en este buffer
+    vim.api.nvim_create_autocmd('BufEnter', {
+      group = bigfile_group,
+      buffer = args.buf,
+      once = true,
+      callback = function()
+        local ok_ts, parser = pcall(vim.treesitter.get_parser, args.buf)
+        if ok_ts and parser then pcall(vim.treesitter.stop, args.buf) end
+      end,
+    })
   end,
 })

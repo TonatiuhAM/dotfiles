@@ -12,7 +12,7 @@ require('oil').setup {
     ['q'] = { 'actions.close', mode = 'n' },
     ['<Esc>'] = { 'actions.close', mode = 'n' },
     ['.'] = 'actions.toggle_hidden',
-    ['p'] = 'actions.preview',
+    ['P'] = 'actions.preview',
   },
   float = {
     border = 'double',

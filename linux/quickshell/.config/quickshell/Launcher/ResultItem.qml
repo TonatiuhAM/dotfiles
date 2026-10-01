@@ -1,7 +1,6 @@
 import QtQuick
 import QtQuick.Layouts
 import Quickshell.Widgets
-import "../terminal"
 
 Rectangle {
     id: root
@@ -11,17 +10,18 @@ Rectangle {
     required property bool   isSelected
     required property bool   isApp
     required property string itemIconName
+    required property var    colors
 
     signal activated()
 
     implicitHeight: 42
-    color: isSelected ? Colors.md3.primary_container : "transparent"
+    color: isSelected ? colors.primary_container : "transparent"
 
     MouseArea {
         anchors.fill: parent
         hoverEnabled: true
         onClicked: root.activated()
-        onEntered: if (!root.isSelected) root.color = Qt.alpha(Colors.md3.primary_container, 0.3)
+        onEntered: if (!root.isSelected) root.color = Qt.alpha(colors.primary_container, 0.3)
         onExited:  if (!root.isSelected) root.color = "transparent"
     }
 
@@ -56,8 +56,8 @@ Rectangle {
             Text {
                 text: itemIcon
                 color: root.isSelected
-                       ? Colors.md3.on_primary_container
-                       : Colors.md3.on_surface_variant
+                       ? colors.on_primary_container
+                       : colors.on_surface_variant
                 font.pixelSize: 17
                 font.family: "JetBrainsMono Nerd Font"
                 verticalAlignment: Text.AlignVCenter
@@ -68,8 +68,8 @@ Rectangle {
         Text {
             text: itemName
             color: root.isSelected
-                   ? Colors.md3.on_primary_container
-                   : Colors.md3.on_surface
+                   ? colors.on_primary_container
+                   : colors.on_surface
             font.pixelSize: 15
             font.family: "JetBrainsMono Nerd Font"
             font.weight: root.isSelected ? Font.Medium : Font.Normal

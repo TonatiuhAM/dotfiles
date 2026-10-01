@@ -23,39 +23,23 @@ Rectangle {
             id: specialWorkspaceButton
 
             readonly property string specialName: "M"
-            readonly property bool exists: Hyprland.workspaces.values.some(ws => ws.name === "special:" + specialName)
-            property bool shown: false
+            readonly property var workspace: Hyprland.workspaces.values.find(ws => ws.name === "special:" + specialName) ?? null
+            readonly property bool exists: workspace !== null
+            readonly property bool active: workspace !== null && workspace.active
 
             visible: exists
             width: exists ? 25 : 0
             height: workspaceRow.height
-            color: pointer.pressed ? Theme.bg4 : pointer.containsMouse || shown ? Theme.statusline2 : Theme.transparent
+            color: pointer.pressed ? Theme.bg4 : pointer.containsMouse || active ? Theme.statusline2 : Theme.transparent
 
             Behavior on color {
                 ColorAnimation { duration: Settings.animationFast; easing.type: Easing.OutCubic }
             }
 
-            Component.onCompleted: {
-                const monitor = Hyprland.focusedMonitor;
-                if (monitor && monitor.lastIpcObject && monitor.lastIpcObject.specialWorkspace)
-                    shown = monitor.lastIpcObject.specialWorkspace.name === "special:" + specialName;
-            }
-
-            Connections {
-                target: Hyprland
-
-                function onRawEvent(event) {
-                    if (event.name !== "activespecial")
-                        return;
-                    const workspaceName = event.data.split(",")[0];
-                    specialWorkspaceButton.shown = workspaceName === "special:" + specialWorkspaceButton.specialName;
-                }
-            }
-
             StyledText {
                 anchors.centerIn: parent
                 text: specialWorkspaceButton.specialName
-                color: specialWorkspaceButton.shown ? Theme.fg1 : Theme.fg0
+                color: specialWorkspaceButton.active ? Theme.fg1 : Theme.fg0
                 font.pixelSize: Settings.smallFontSize + 1
             }
 
@@ -67,7 +51,7 @@ Rectangle {
                 anchors.bottom: parent.bottom
                 anchors.bottomMargin: 2
                 height: 2
-                color: specialWorkspaceButton.shown ? Theme.green : Theme.transparent
+                color: specialWorkspaceButton.active ? Theme.green : Theme.transparent
             }
 
             MouseArea {
@@ -75,7 +59,7 @@ Rectangle {
                 anchors.fill: parent
                 hoverEnabled: true
                 cursorShape: Qt.PointingHandCursor
-                onClicked: Hyprland.dispatch("togglespecialworkspace " + specialWorkspaceButton.specialName)
+                onClicked: Hyprland.dispatch("hl.dsp.workspace.toggle_special(\"" + specialWorkspaceButton.specialName + "\")")
             }
         }
 

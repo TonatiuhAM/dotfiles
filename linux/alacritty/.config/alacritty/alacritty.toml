@@ -1,5 +1,5 @@
 [general]
-import = [ "colors.toml" ]
+import = [ "themes/catppuccin-mocha.toml" ]
 live_config_reload = true
 
 [font]

@@ -5,7 +5,6 @@ import Quickshell.Widgets
 import QtQuick
 import QtQuick.Layouts
 import QtQuick.Controls
-import "../terminal"
 import "data.js" as Data
 
 PanelWindow {
@@ -20,6 +19,72 @@ PanelWindow {
 
     color: "transparent"
     visible: false
+
+    readonly property var colors: paletteAdapter.md3
+
+    FileView {
+        path: Quickshell.env("HOME") + "/.config/quickshell/themes/catppuccin-mocha.json"
+        watchChanges: true
+        onFileChanged: reload()
+
+        JsonAdapter {
+            id: paletteAdapter
+
+            readonly property Md3 md3: Md3 {}
+        }
+    }
+
+    component Md3: JsonObject {
+        property string background: "#1e1e2e"
+        property string error: "#f38ba8"
+        property string error_container: "#313244"
+        property string inverse_on_surface: "#1e1e2e"
+        property string inverse_primary: "#94e2d5"
+        property string inverse_surface: "#cdd6f4"
+        property string on_background: "#cdd6f4"
+        property string on_error: "#11111b"
+        property string on_error_container: "#f38ba8"
+        property string on_primary: "#11111b"
+        property string on_primary_container: "#94e2d5"
+        property string on_primary_fixed: "#11111b"
+        property string on_primary_fixed_variant: "#313244"
+        property string on_secondary: "#11111b"
+        property string on_secondary_container: "#89dceb"
+        property string on_secondary_fixed: "#11111b"
+        property string on_secondary_fixed_variant: "#313244"
+        property string on_surface: "#cdd6f4"
+        property string on_surface_variant: "#a6adc8"
+        property string on_tertiary: "#11111b"
+        property string on_tertiary_container: "#cba6f7"
+        property string on_tertiary_fixed: "#11111b"
+        property string on_tertiary_fixed_variant: "#313244"
+        property string outline: "#7f849c"
+        property string outline_variant: "#585b70"
+        property string primary: "#94e2d5"
+        property string primary_container: "#313244"
+        property string primary_fixed: "#94e2d5"
+        property string primary_fixed_dim: "#94e2d5"
+        property string scrim: "#000000"
+        property string secondary: "#89dceb"
+        property string secondary_container: "#313244"
+        property string secondary_fixed: "#89dceb"
+        property string secondary_fixed_dim: "#89dceb"
+        property string shadow: "#000000"
+        property string surface: "#1e1e2e"
+        property string surface_bright: "#585b70"
+        property string surface_container: "#1e1e2e"
+        property string surface_container_high: "#313244"
+        property string surface_container_highest: "#45475a"
+        property string surface_container_low: "#181825"
+        property string surface_container_lowest: "#11111b"
+        property string surface_dim: "#11111b"
+        property string surface_tint: "#94e2d5"
+        property string surface_variant: "#45475a"
+        property string tertiary: "#cba6f7"
+        property string tertiary_container: "#313244"
+        property string tertiary_fixed: "#cba6f7"
+        property string tertiary_fixed_dim: "#cba6f7"
+    }
 
     // ─── IPC via FIFO ─────────────────────────────────────────────────────────
     // Creates the pipe once, then a second Process loops: block → signal → toggle → repeat.
@@ -304,9 +369,9 @@ PanelWindow {
                 : panelCol.implicitHeight
         anchors.centerIn: parent
 
-        color: Colors.md3.surface
+        color: root.colors.surface
         border.width: 1
-        border.color: Colors.md3.outline_variant
+        border.color: root.colors.outline_variant
         radius: 0
 
         MouseArea { anchors.fill: parent }  // swallow backdrop clicks
@@ -315,7 +380,7 @@ PanelWindow {
         Rectangle {
             visible: root.showAuthDialog
             anchors.fill: parent
-            color: Colors.md3.surface
+            color: root.colors.surface
             z: 10
             radius: 0
 
@@ -328,7 +393,7 @@ PanelWindow {
                 Text {
                     anchors.horizontalCenter: parent.horizontalCenter
                     text: root.pendingAuthItem ? root.pendingAuthItem.icon : ""
-                    color: Colors.md3.error
+                    color: root.colors.error
                     font.pixelSize: 36
                     font.family: "JetBrainsMono Nerd Font"
                 }
@@ -336,7 +401,7 @@ PanelWindow {
                 Text {
                     anchors.horizontalCenter: parent.horizontalCenter
                     text: root.pendingAuthItem ? root.pendingAuthItem.name : ""
-                    color: Colors.md3.on_surface
+                    color: root.colors.on_surface
                     font.pixelSize: 20
                     font.family: "JetBrainsMono Nerd Font"
                     font.weight: Font.Medium
@@ -345,7 +410,7 @@ PanelWindow {
                 Text {
                     anchors.horizontalCenter: parent.horizontalCenter
                     text: root.authChecking ? "Verificando…" : "Ingresa tu contraseña para continuar"
-                    color: root.authChecking ? Colors.md3.primary : Colors.md3.outline
+                    color: root.authChecking ? root.colors.primary : root.colors.outline
                     font.pixelSize: 13
                     font.family: "JetBrainsMono Nerd Font"
                 }
@@ -354,9 +419,9 @@ PanelWindow {
                     width: 300
                     height: 40
                     anchors.horizontalCenter: parent.horizontalCenter
-                    color: Colors.md3.surface_container
+                    color: root.colors.surface_container
                     border.width: passwordInput.activeFocus ? 2 : 1
-                    border.color: passwordInput.activeFocus ? Colors.md3.primary : Colors.md3.outline_variant
+                    border.color: passwordInput.activeFocus ? root.colors.primary : root.colors.outline_variant
                     radius: 4
 
                     TextInput {
@@ -364,7 +429,7 @@ PanelWindow {
                         anchors { fill: parent; leftMargin: 12; rightMargin: 12 }
                         verticalAlignment: TextInput.AlignVCenter
                         echoMode: TextInput.Password
-                        color: Colors.md3.on_surface
+                        color: root.colors.on_surface
                         font.pixelSize: 14
                         font.family: "JetBrainsMono Nerd Font"
                         enabled: !root.authChecking
@@ -372,7 +437,7 @@ PanelWindow {
                         Text {
                             anchors.fill: parent
                             text: "Contraseña…"
-                            color: Colors.md3.outline
+                            color: root.colors.outline
                             font: parent.font
                             visible: parent.text.length === 0 && !root.authChecking
                             verticalAlignment: Text.AlignVCenter
@@ -394,7 +459,7 @@ PanelWindow {
                         anchors.centerIn: parent
                         visible: root.authError !== ""
                         text: root.authError
-                        color: Colors.md3.error
+                        color: root.colors.error
                         font.pixelSize: 12
                         font.family: "JetBrainsMono Nerd Font"
                     }
@@ -403,7 +468,7 @@ PanelWindow {
                 Text {
                     anchors.horizontalCenter: parent.horizontalCenter
                     text: "↵ confirmar  Esc cancelar"
-                    color: Colors.md3.outline
+                    color: root.colors.outline
                     font.pixelSize: 11
                     font.family: "JetBrainsMono Nerd Font"
                 }
@@ -425,7 +490,7 @@ PanelWindow {
 
                     Text {
                         text: "󰍉"
-                        color: Colors.md3.primary
+                        color: root.colors.primary
                         font.pixelSize: 20
                         font.family: "JetBrainsMono Nerd Font"
                     }
@@ -435,23 +500,23 @@ PanelWindow {
                         Layout.fillWidth: true
                         Layout.alignment: Qt.AlignVCenter
 
-                        color: Colors.md3.on_surface
+                        color: root.colors.on_surface
                         font.pixelSize: 16
                         font.family: "JetBrainsMono Nerd Font"
-                        selectionColor: Colors.md3.primary_container
-                        selectedTextColor: Colors.md3.on_primary_container
+                        selectionColor: root.colors.primary_container
+                        selectedTextColor: root.colors.on_primary_container
                         cursorVisible: activeFocus
                         verticalAlignment: TextInput.AlignVCenter
 
                         cursorDelegate: Rectangle {
                             width: 2
-                            color: Colors.md3.primary
+                            color: root.colors.primary
                         }
 
                         Text {
                             anchors.fill: parent
                             text: "Go..."
-                            color: Colors.md3.outline
+                            color: root.colors.outline
                             font: searchInput.font
                             visible: searchInput.text.length === 0
                             verticalAlignment: Text.AlignVCenter
@@ -480,7 +545,7 @@ PanelWindow {
 
                     Text {
                         text: ["General", "Apps", "Scripts", "System"][root.activeTab]
-                        color: Colors.md3.primary
+                        color: root.colors.primary
                         font.pixelSize: 12
                         font.family: "JetBrainsMono Nerd Font"
                         opacity: 0.8
@@ -488,13 +553,13 @@ PanelWindow {
                 }
             }
 
-            Rectangle { width: parent.width; height: 1; color: Colors.md3.outline_variant; opacity: 0.5 }
+            Rectangle { width: parent.width; height: 1; color: root.colors.outline_variant; opacity: 0.5 }
 
             // ── Tab bar ───────────────────────────────────────────────────
             Rectangle {
                 width: parent.width
                 height: 38
-                color: Colors.md3.surface_container
+                color: root.colors.surface_container
 
                 RowLayout {
                     anchors.fill: parent
@@ -517,14 +582,14 @@ PanelWindow {
                             Rectangle {
                                 anchors.fill: parent
                                 color: root.activeTab === index
-                                       ? Colors.md3.primary_container
+                                       ? root.colors.primary_container
                                        : "transparent"
                             }
 
                             Rectangle {
                                 anchors { bottom: parent.bottom; left: parent.left; right: parent.right }
                                 height: 2
-                                color: Colors.md3.primary
+                                color: root.colors.primary
                                 visible: root.activeTab === index
                             }
 
@@ -544,16 +609,16 @@ PanelWindow {
                                 Text {
                                     text: modelData.icon
                                     color: root.activeTab === index
-                                           ? Colors.md3.on_primary_container
-                                           : Colors.md3.on_surface_variant
+                                           ? root.colors.on_primary_container
+                                           : root.colors.on_surface_variant
                                     font.pixelSize: 15
                                     font.family: "JetBrainsMono Nerd Font"
                                 }
                                 Text {
                                     text: modelData.label
                                     color: root.activeTab === index
-                                           ? Colors.md3.on_primary_container
-                                           : Colors.md3.on_surface_variant
+                                           ? root.colors.on_primary_container
+                                           : root.colors.on_surface_variant
                                     font.pixelSize: 12
                                     font.family: "JetBrainsMono Nerd Font"
                                     font.weight: root.activeTab === index ? Font.Medium : Font.Normal
@@ -564,7 +629,7 @@ PanelWindow {
                 }
             }
 
-            Rectangle { width: parent.width; height: 1; color: Colors.md3.outline_variant; opacity: 0.4 }
+            Rectangle { width: parent.width; height: 1; color: root.colors.outline_variant; opacity: 0.4 }
 
             // ── Results ───────────────────────────────────────────────────
             ListView {
@@ -583,7 +648,7 @@ PanelWindow {
                     width: 4
                     contentItem: Rectangle {
                         radius: 2
-                        color: Colors.md3.outline_variant
+                        color: root.colors.outline_variant
                     }
                 }
 
@@ -597,6 +662,7 @@ PanelWindow {
                     itemIconName: modelData.type === "app" ? (modelData.icon ?? "") : ""
                     isApp:        modelData.type === "app"
                     isSelected:   root.selectedIndex === index
+                    colors:       root.colors
 
                     onActivated: {
                         root.selectedIndex = index
@@ -615,7 +681,7 @@ PanelWindow {
                     text: (root.activeTab === 1 && !root.appsLoaded)
                           ? "Cargando aplicaciones…"
                           : "Sin resultados"
-                    color: Colors.md3.outline
+                    color: root.colors.outline
                     font.pixelSize: 14
                     font.family: "JetBrainsMono Nerd Font"
                 }
@@ -625,12 +691,12 @@ PanelWindow {
             Rectangle {
                 width: parent.width
                 height: 26
-                color: Colors.md3.surface_container
+                color: root.colors.surface_container
 
                 Text {
                     anchors { right: parent.right; verticalCenter: parent.verticalCenter; rightMargin: 12 }
                     text: "↑↓ nav  Tab switch  ↵ run  Esc close"
-                    color: Colors.md3.outline
+                    color: root.colors.outline
                     font.pixelSize: 11
                     font.family: "JetBrainsMono Nerd Font"
                 }
@@ -640,7 +706,7 @@ PanelWindow {
                     text: resultList.count > 0
                           ? (root.selectedIndex + 1) + " / " + resultList.count
                           : "0 / 0"
-                    color: Colors.md3.outline
+                    color: root.colors.outline
                     font.pixelSize: 11
                     font.family: "JetBrainsMono Nerd Font"
                 }

@@ -3,7 +3,7 @@ vim.pack.add({
 })
 
 require('catppuccin').setup({
-  flavour = 'macchiato',
+  flavour = 'mocha',
 })
 
 -- No se activa aquí: lo decide `current_theme.lua` (ver init.lua).

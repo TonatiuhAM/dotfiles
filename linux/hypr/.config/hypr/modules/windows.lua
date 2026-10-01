@@ -98,11 +98,23 @@ hl.window_rule({
 
 hl.window_rule({
 	name = "Cisco Packet Tracer",
-	match = { class = "PacketTracer" },
+	match = { class = "PakctetTracer" },
 	float = true,
 	center = true,
-
 })
+
+hl.window_rule({
+	name = " WhatsApp a Workspace M",
+	match = { title = "WhatsApp Web"},
+	workspace = "special:M",
+})
+
+hl.window_rule({
+	name = "Spotify a Workspace M",
+	match = { initial_title = "Spotify"},
+	workspace = "special:M",
+})
+
 -- Rustdesk
 -- hl.window_rule({
 -- 	name = "RustDesk",

@@ -3,9 +3,6 @@
 -- configuración de servidores. Atajos LSP en keybinds.lua.
 -- ============================================================
 
-vim.pack.add { 'https://github.com/j-hui/fidget.nvim' }
-require('fidget').setup {}
-
 -- Document-highlight al reposar el cursor (lo único de LspAttach que NO es keymap;
 -- los keymaps de LspAttach viven en un autocomando independiente en keybinds.lua).
 vim.api.nvim_create_autocmd('LspAttach', {

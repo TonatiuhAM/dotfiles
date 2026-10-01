@@ -1,8 +1,28 @@
-# 1. Ejecutar el comando visual (Fastfetch) al abrir la terminal
-fastfetch
+# =======================================================================================
+# 1. Instant Prompt de Powerlevel10k
+# =======================================================================================
+typeset -g POWERLEVEL9K_INSTANT_PROMPT=off
+
+# DEBE ir estrictamente en la primera línea ejecutable, antes de cualquier salida a stdout/stderr.
+if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]; then
+  source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
+fi
 
 # =======================================================================================
-# Comportamiento del Shell
+# 2. Entorno, PATH y Homebrew
+# =======================================================================================
+if [ -x /home/linuxbrew/.linuxbrew/bin/brew ]; then
+    eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
+fi
+
+export PATH="$CARGO_HOME/bin:$BUN_INSTALL/bin:$HOME/.opencode/bin:$HOME/bin:$HOME/.local/bin:/opt/cuda/bin:$PATH"
+
+# Variables de entorno adicionales para scripts y herramientas
+export desktop="$HOME/.local/share/applications"
+export RIPGREP_CONFIG_PATH="$HOME/.config/ripgrep/config"
+
+# =======================================================================================
+# 3. Comportamiento del Shell y Teclado
 # =======================================================================================
 setopt AUTOCD
 setopt NOBEEP
@@ -13,43 +33,38 @@ bindkey '\e.' insert-last-word
 bindkey '^[.' insert-last-word
 
 # =======================================================================================
-# Homebrew y PATH
+# 4. Oh My Zsh, Tema y Plugins
 # =======================================================================================
-if [ -x /home/linuxbrew/.linuxbrew/bin/brew ]; then
-    eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
-fi
-export PATH="$CARGO_HOME/bin:$BUN_INSTALL/bin:$HOME/.opencode/bin:$HOME/bin:$HOME/.local/bin:/opt/cuda/bin:$PATH"
-
-
-# 2. Instant Prompt de P10K (Siempre arriba)
-if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]; then
-  source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
-fi
-
-# 3. Configuración de Oh My Zsh y Tema
+export ZSH="${ZSH:-$HOME/.local/share/oh-my-zsh}"
 ZSH_THEME="powerlevel10k/powerlevel10k"
+
+# Orden óptimo: complementos base primero, vi-mode penúltimo y el resaltador estrictamente al final
 plugins=(
     git
     zsh-autosuggestions
-    zsh-syntax-highlighting
     zsh-vi-mode
+    fast-syntax-highlighting
 )
-#
-# Red de seguridad si la variable no llegó desde el entorno
-export ZSH="${ZSH:-$HOME/.local/share/oh-my-zsh}"
-source $ZSH/oh-my-zsh.sh
 
-# 4. Inicialización de herramientas interactivas
-eval "$(zoxide init zsh)"
-
-# Cargar P10K desde su nueva ubicación XDG
-[[ ! -f "$ZDOTDIR/.p10k.zsh" ]] || source "$ZDOTDIR/.p10k.zsh"
-
-# Completions de Bun (con su nueva ruta XDG)
-[ -s "$BUN_INSTALL/_bun" ] && source "$BUN_INSTALL/_bun"
+source "$ZSH/oh-my-zsh.sh"
 
 # =======================================================================================
-# 5. Funciones y Alias
+# 5. Inicialización de Integraciones y Temas
+# =======================================================================================
+# Archivo de configuración de Powerlevel10k
+[[ ! -f "$ZDOTDIR/.p10k.zsh" ]] || source "$ZDOTDIR/.p10k.zsh"
+
+# Salto inteligente de directorios con zoxide
+eval "$(zoxide init zsh)"
+
+# Autocompletado de Bun
+[ -s "$BUN_INSTALL/_bun" ] && source "$BUN_INSTALL/_bun"
+
+# Desactiva el fondo resaltado para directorios world-writable (ow) y sticky world-writable (tw)
+export LS_COLORS="$(dircolors -p | grep -v -E '^OW|^TW' | dircolors - | sed -e 's/LS_COLORS=//' -e 's/;$//')"
+
+# =======================================================================================
+# 6. Funciones y Hooks de ZLE
 # =======================================================================================
 function y() {
     local tmp="$(mktemp -t "yazi-cwd.XXXXXX")" cwd
@@ -65,41 +80,36 @@ function _yazi_zle() {
 }
 zle -N _yazi_zle
 
-# zsh-vi-mode resetea los keybindings después de .zshrc — se usa su hook para no perder Ctrl+F
 autoload -Uz edit-command-line
 zle -N edit-command-line
 
+# zsh-vi-mode resetea los keybindings después de inicializarse; este hook preserva los atajos
 function zvm_after_init() {
     bindkey '^f' _yazi_zle
     bindkey '^e' edit-command-line
     bindkey -M vicmd '^e' edit-command-line
 }
 
-# Alias generales
+# =======================================================================================
+# 7. Alias
+# =======================================================================================
 alias vim='nvim'
 alias v='nvim'
 alias ll='lsd -lagh --group-dirs first --header'
-alias open='thunar . & disown'
 
-# Herramientas TUI y Scripts de administración
+# Herramientas TUI y scripts
+alias t='$XDG_CONFIG_HOME/Scripts/tmux-sessionizer.sh'
 alias lssh='lazyssh'
 alias lg='lazygit'
 alias ld='lazydocker'
 alias dk='$XDG_CONFIG_HOME/Scripts/docker-manager.sh'
-alias t='$XDG_CONFIG_HOME/Scripts/tmux-sessionizer.sh'
-alias sunshine-start='$XDG_CONFIG_HOME/Scripts/sunshine-start.sh'
 alias login-skip='$XDG_CONFIG_HOME/Scripts/login-skip.sh'
-alias apps="$XDG_CONFIG_HOME/Scripts/sysman.sh"
 alias claudeop='touch ~/.config/claude/notify-on && claude --dangerously-skip-permissions'
-alias cc-notif-off='rm -f ~/.config/claude/notify-on'
 
-# Variables de entorno para scripts y aplicaciones
-export desktop="$HOME/.local/share/applications"
-
-# Reload del shell
+# Recarga rápida de shell
 alias zshsource='exec zsh'
-# alias nvim-kickstart='NVIM_APPNAME="nvim-kickstart" nvim'
 
-
-# Desactiva el fondo resaltado para directorios world-writable (ow) y sticky world-writable (tw)
-export LS_COLORS="$(dircolors -p | grep -v -E '^OW|^TW' | dircolors - | sed -e 's/LS_COLORS=//' -e 's/;$//')"
+# =======================================================================================
+# 8. Comando de bienvenida interactivo (siempre al puro final)
+# =======================================================================================
+fastfetch
