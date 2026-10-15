@@ -82,18 +82,25 @@ vim.api.nvim_create_autocmd('TextYankPost', {
   callback = function() vim.hl.on_yank() end,
 })
 
--- Negrita en markdown: matugen no define estos grupos, así que se fijan aquí y se
--- reaplican en cada cambio de colorscheme.
-local function set_markdown_bold()
-  local highlight_opts = { fg = '#FFD700', bold = true }
-  vim.api.nvim_set_hl(0, '@markup.strong', highlight_opts)
-  vim.api.nvim_set_hl(0, '@markup.strong.markdown_inline', highlight_opts)
-  vim.api.nvim_set_hl(0, 'markdownBold', highlight_opts)
-  vim.api.nvim_set_hl(0, 'htmlBold', highlight_opts)
+local function set_markdown_styles()
+  -- Negrita en markdown
+  local bold_opts = { fg = '#f38ba8', bold = true }
+  vim.api.nvim_set_hl(0, '@markup.strong', bold_opts)
+  vim.api.nvim_set_hl(0, '@markup.strong.markdown_inline', bold_opts)
+  vim.api.nvim_set_hl(0, 'markdownBold', bold_opts)
+  vim.api.nvim_set_hl(0, 'htmlBold', bold_opts)
 
-  -- Catppuccin linkea @markup.heading.{1..6}.markdown a sus grupos "rainbow"
-  -- (solo color), que son más específicos que @markup.heading.markdown (bold)
-  -- y por eso ganan sin heredar el bold. Se reafirma aquí sin tocar su color.
+  -- Resaltado estilo marca-textos para ==subrayado== (render-markdown.nvim)
+  local highlight_mark = {
+    bg = '#89b4fa',
+    fg = '#1e1e2e', -- Color de texto oscuro para que contraste bien con el fondo
+    bold = true,
+  }
+
+  -- Sobrescribimos el grupo de render-markdown rompiendo el enlace por defecto
+  vim.api.nvim_set_hl(0, 'RenderMarkdownInlineHighlight', highlight_mark)
+
+  -- Encabezados
   for level = 1, 6 do
     local group = '@markup.heading.' .. level .. '.markdown'
     local ok, hl = pcall(vim.api.nvim_get_hl, 0, { name = group, link = false })
@@ -103,10 +110,12 @@ local function set_markdown_bold()
     end
   end
 end
-set_markdown_bold()
+
+set_markdown_styles()
+
 vim.api.nvim_create_autocmd('ColorScheme', {
-  group = vim.api.nvim_create_augroup('CustomMarkdownBold', { clear = true }),
-  callback = set_markdown_bold,
+  group = vim.api.nvim_create_augroup('CustomMarkdownStyles', { clear = true }),
+  callback = set_markdown_styles,
 })
 
 vim.api.nvim_create_autocmd('BufReadPost', {

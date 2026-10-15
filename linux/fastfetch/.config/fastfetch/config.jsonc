@@ -1,21 +1,28 @@
 {
-  "$schema": "https://github.com/fastfetch-cli/fastfetch/raw/dev/doc/json_schema_help.json",
   "logo": {
-    "source": "~/.config/fastfetch/img/catppuccin.txt",
-    "type": "auto",
+    "source": "~/.config/fastfetch/img/bonsai.txt",
+    "type": "file",
+    "width": 17,
+    "height": 4,
     "color": {
-      "1": "white"
+      "1": "green",
+      "2": "yellow",
+    },
+    "padding": {
+      "top": 0,
+      "left": 1,
+      "right": 4
     }
-  },
-  "padding": {
-    "top": 0,
-    "left": 1
   },
   "display": {
     "separator": "  ",
     "color": {
-      "keys": "red",
-      "title": "yellow"
+      "title": "red",
+      "keys": "blue",
+      "output": "white",
+    },
+    "key": {
+      "width": 10
     }
   },
   "modules": [
@@ -25,23 +32,19 @@
     },
     {
       "type": "os",
-      "key": " OS",
-      "keyColor": "white"
+      "key": "OS",
     },
     {
       "type": "disk",
-      "key": "󰋊 Disk",
-      "keyColor": "white"
+      "key": "Disk",
     },
     {
       "type": "packages",
-      "key": "󰏖 Packages",
-      "keyColor": "white"
+      "key": "Packages",
     },
     {
       "type": "command",
-      "key": "󰃰 Opened",
-      "keyColor": "white",
+      "key": "Opened",
       "text": "date '+%I:%M:%S %p  %d-%m-%Y'"
     }
   ]

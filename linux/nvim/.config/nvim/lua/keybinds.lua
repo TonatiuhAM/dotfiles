@@ -65,8 +65,8 @@ vim.keymap.set('n', '<leader><Space>', function()
 end, { silent = true, desc = 'Nueva window tmux en directorio del archivo' })
 
 -- Buffers
-vim.keymap.set("n", "<S-l>", ":bnext<CR>", { desc = "Buffer siguiente" })
-vim.keymap.set("n", "<S-h>", ":bprevious<CR>", { desc = "Buffer anterior" })
+vim.keymap.set("n", "<S-k>", ":bnext<CR>", { desc = "Buffer siguiente" })
+vim.keymap.set("n", "<S-j>", ":bprevious<CR>", { desc = "Buffer anterior" })
 vim.keymap.set("n", "<C-b>d", ":bdelete<CR>", { desc = "Delete Buffer" })
 vim.keymap.set("n", "<C-b>n", ":enew<CR>", { desc = "New empty buffer" })
 

@@ -113,3 +113,4 @@ alias zshsource='exec zsh'
 # 8. Comando de bienvenida interactivo (siempre al puro final)
 # =======================================================================================
 fastfetch
+source ~/.config/fzf/catppuccin-fzf-mocha.sh
