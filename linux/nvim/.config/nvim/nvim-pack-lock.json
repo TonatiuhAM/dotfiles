@@ -38,6 +38,10 @@
       "rev": "f1e186e44d3b7f9ae918008e2c28ce37c6023d2d",
       "src": "https://github.com/lukas-reineke/indent-blankline.nvim"
     },
+    "kitty-scrollback.nvim": {
+      "rev": "4994c85e0f291598d0748488653c83cb698fd281",
+      "src": "https://github.com/mikesmithgh/kitty-scrollback.nvim"
+    },
     "markdown-plus.nvim": {
       "rev": "adb063144700fa4c3d2cdf3997f48e34f74d5dd2",
       "src": "https://github.com/yousefhadder/markdown-plus.nvim"

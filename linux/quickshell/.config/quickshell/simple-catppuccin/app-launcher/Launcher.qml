@@ -1,0 +1,716 @@
+import Quickshell
+import Quickshell.Io
+import Quickshell.Wayland
+import Quickshell.Widgets
+import QtQuick
+import QtQuick.Layouts
+import QtQuick.Controls
+import "data.js" as Data
+
+PanelWindow {
+    id: root
+
+    anchors { top: true; bottom: true; left: true; right: true }
+    exclusiveZone: -1
+
+    WlrLayershell.layer: WlrLayer.Overlay
+    WlrLayershell.keyboardFocus: WlrKeyboardFocus.Exclusive
+    WlrLayershell.namespace: "quickshell-launcher"
+
+    color: "transparent"
+    visible: false
+
+    readonly property var colors: paletteAdapter.md3
+
+    FileView {
+        path: Quickshell.env("HOME") + "/.config/quickshell/themes/catppuccin-mocha.json"
+        watchChanges: true
+        onFileChanged: reload()
+
+        JsonAdapter {
+            id: paletteAdapter
+
+            readonly property Md3 md3: Md3 {}
+        }
+    }
+
+    component Md3: JsonObject {
+        property string background: "#1e1e2e"
+        property string error: "#f38ba8"
+        property string error_container: "#313244"
+        property string inverse_on_surface: "#1e1e2e"
+        property string inverse_primary: "#94e2d5"
+        property string inverse_surface: "#cdd6f4"
+        property string on_background: "#cdd6f4"
+        property string on_error: "#11111b"
+        property string on_error_container: "#f38ba8"
+        property string on_primary: "#11111b"
+        property string on_primary_container: "#94e2d5"
+        property string on_primary_fixed: "#11111b"
+        property string on_primary_fixed_variant: "#313244"
+        property string on_secondary: "#11111b"
+        property string on_secondary_container: "#89dceb"
+        property string on_secondary_fixed: "#11111b"
+        property string on_secondary_fixed_variant: "#313244"
+        property string on_surface: "#cdd6f4"
+        property string on_surface_variant: "#a6adc8"
+        property string on_tertiary: "#11111b"
+        property string on_tertiary_container: "#cba6f7"
+        property string on_tertiary_fixed: "#11111b"
+        property string on_tertiary_fixed_variant: "#313244"
+        property string outline: "#7f849c"
+        property string outline_variant: "#585b70"
+        property string primary: "#94e2d5"
+        property string primary_container: "#313244"
+        property string primary_fixed: "#94e2d5"
+        property string primary_fixed_dim: "#94e2d5"
+        property string scrim: "#000000"
+        property string secondary: "#89dceb"
+        property string secondary_container: "#313244"
+        property string secondary_fixed: "#89dceb"
+        property string secondary_fixed_dim: "#89dceb"
+        property string shadow: "#000000"
+        property string surface: "#1e1e2e"
+        property string surface_bright: "#585b70"
+        property string surface_container: "#1e1e2e"
+        property string surface_container_high: "#313244"
+        property string surface_container_highest: "#45475a"
+        property string surface_container_low: "#181825"
+        property string surface_container_lowest: "#11111b"
+        property string surface_dim: "#11111b"
+        property string surface_tint: "#94e2d5"
+        property string surface_variant: "#45475a"
+        property string tertiary: "#cba6f7"
+        property string tertiary_container: "#313244"
+        property string tertiary_fixed: "#cba6f7"
+        property string tertiary_fixed_dim: "#cba6f7"
+    }
+
+    // ─── IPC via FIFO ─────────────────────────────────────────────────────────
+    // Creates the pipe once, then a second Process loops: block → signal → toggle → repeat.
+    // This gives <5ms response vs inotify file-watching.
+
+    Process {
+        id: pipeSetup
+        // Re-create FIFO clean each time Quickshell starts
+        command: ["sh", "-c", "rm -f /tmp/qs_launcher_pipe; mkfifo /tmp/qs_launcher_pipe"]
+        onRunningChanged: if (!running) pipeWaiter.exec(pipeWaiter.command)
+        Component.onCompleted: exec(command)
+    }
+
+    Process {
+        id: pipeWaiter
+        // Blocks until Hyprland bind does: echo t > /tmp/qs_launcher_pipe
+        command: ["sh", "-c", "read x < /tmp/qs_launcher_pipe"]
+        onRunningChanged: {
+            if (!running) {
+                root.visible ? root.close() : root.open()
+                // Re-arm for next keypress
+                Qt.callLater(() => exec(command))
+            }
+        }
+    }
+
+    // ─── State ───────────────────────────────────────────────────────────────
+    property int    activeTab: 0
+    property string searchText: ""
+    property var    filteredItems: []
+    property var    allApps: []
+    property bool   appsLoaded: false
+    property int    selectedIndex: -1
+
+    // ─── Auth state ───────────────────────────────────────────────────────────
+    property bool   showAuthDialog: false
+    property var    pendingAuthItem: null
+    property string authError: ""
+    property string authShellCmd: ""
+    property bool   authChecking: false
+
+    // ─── App list loader ──────────────────────────────────────────────────────
+    // Searches system packages + system flatpaks + user flatpaks.
+    // Uses -L to follow symlinks (flatpak exports are often symlinks).
+    Process {
+        id: appListProc
+        command: ["bash", "-c",
+            "find -L" +
+            " /usr/share/applications" +
+            " /var/lib/flatpak/exports/share/applications" +
+            " ~/.local/share/applications" +
+            " ~/.local/share/flatpak/exports/share/applications" +
+            " -maxdepth 1 -name '*.desktop' 2>/dev/null |" +
+            " while IFS= read -r f; do" +
+            "   name=$(grep -m1 '^Name='      \"$f\" | cut -d= -f2-);" +
+            "   icon=$(grep -m1 '^Icon='      \"$f\" | cut -d= -f2-);" +
+            "   nd=$(grep   -m1 '^NoDisplay=' \"$f\" | cut -d= -f2- | tr '[:upper:]' '[:lower:]');" +
+            "   hid=$(grep  -m1 '^Hidden='    \"$f\" | cut -d= -f2- | tr '[:upper:]' '[:lower:]');" +
+            "   [ \"$nd\"  = 'true' ] && continue;" +
+            "   [ \"$hid\" = 'true' ] && continue;" +
+            "   [ -z \"$name\" ]      && continue;" +
+            "   printf '%s\\t%s\\t%s\\n' \"$name\" \"$icon\" \"$f\";" +
+            " done | sort -f -t$'\\t' -k1,1"
+        ]
+        stdout: StdioCollector {
+            onTextChanged: {
+                const lines = text.trim().split("\n").filter(l => l.length > 0)
+                const seen = {}   // deduplicate by app name (case-insensitive)
+                const apps = []
+                for (const line of lines) {
+                    const p = line.split("\t")
+                    if (p.length < 3) continue
+                    const key = p[0].toLowerCase()
+                    if (seen[key]) continue
+                    seen[key] = true
+                    apps.push({
+                        name: p[0],
+                        icon: p[1],
+                        desktopFile: p[2],
+                        type: "app",
+                        itemIcon: ""
+                    })
+                }
+                root.allApps = apps
+                root.appsLoaded = true
+                root.rebuild()
+            }
+        }
+    }
+
+    // ─── Executor ────────────────────────────────────────────────────────────
+    // Wrapper script path — computed once at startup
+    readonly property string execScript:
+        Quickshell.env("HOME") + "/.config/quickshell/simple-catppuccin/app-launcher/launcher_exec.sh"
+
+    // Shell command string that drives the execProc binding below.
+    // We avoid dynamic JS-array assignment to list<string> because Quickshell
+    // may silently discard it; a QML binding is always a valid list<string>.
+    property string execShellCmd: ""
+
+    Process {
+        id: execProc
+        // command is a QML binding — evaluated lazily when exec() reads it.
+        // Changing root.execShellCmd marks it dirty; the next read sees new value.
+        command: ["bash", root.execScript, root.execShellCmd]
+    }
+
+    // Delay close() so hyprctl dispatch exec fires first while the launcher is
+    // still open — Hyprland then knows which workspace is active and tags the
+    // spawned process to that workspace before the launcher releases focus.
+    Timer {
+        id: closeTimer
+        interval: 50
+        repeat: false
+        onTriggered: root.close()
+    }
+
+    // ─── Auth verifier ─────────────────────────────────────────────────────────
+    Process {
+        id: authProc
+        command: ["bash", "-c", root.authShellCmd]
+        // exitCode is only available as a signal parameter, NOT as a property
+        onExited: (code, status) => {
+            root.authChecking = false
+            if (code === 0) {
+                const shellCmd = root.buildLaunchCmd(root.pendingAuthItem)
+                root.execShellCmd = shellCmd
+                root.showAuthDialog = false
+                root.pendingAuthItem = null
+                execProc.exec(execProc.command)
+                closeTimer.restart()
+            } else {
+                root.authError = "Contraseña incorrecta"
+                passwordInput.text = ""
+                Qt.callLater(() => passwordInput.forceActiveFocus())
+            }
+        }
+    }
+
+    // Build a shell command string that launcher_exec.sh will run via `bash -c`.
+    // Single-quotes each argument for safety; for ["sh/bash","-c","CMD"] patterns
+    // the inner CMD is passed verbatim so $VAR references expand correctly.
+    function buildLaunchCmd(item) {
+        if (item.type === "app") {
+            return "gio launch " + sq(item.desktopFile)
+        }
+        const cmd = item.command
+        // ["sh","-c","CMD"] or ["bash","-c","CMD"] → pass CMD directly
+        if (cmd.length >= 3 && (cmd[0] === "sh" || cmd[0] === "bash") && cmd[1] === "-c") {
+            return cmd[2]
+        }
+        // Direct commands: ["systemctl","poweroff"] → 'systemctl' 'poweroff'
+        return cmd.map(a => sq(a)).join(" ")
+    }
+
+    function sq(s) { return "'" + s.replace(/'/g, "'\\''") + "'" }
+
+    // ─── Open / close ─────────────────────────────────────────────────────────
+    function open() {
+        activeTab = 0
+        searchText = ""
+        selectedIndex = -1
+        rebuild()
+        visible = true
+        Qt.callLater(() => {
+            searchInput.text = ""
+            searchInput.forceActiveFocus()
+        })
+        if (!appsLoaded) appListProc.exec(appListProc.command)
+    }
+
+    function close() {
+        visible = false
+        searchInput.text = ""
+        searchText = ""
+        selectedIndex = -1
+    }
+
+    // ─── Build filtered list ──────────────────────────────────────────────────
+    // matches() checks name + optional keywords array against the query
+    function matches(item, q) {
+        if (!q) return true
+        if (item.name.toLowerCase().includes(q)) return true
+        if (item.keywords && item.keywords.some(k => k.toLowerCase().includes(q))) return true
+        return false
+    }
+
+    function rebuild() {
+        const q = searchText.toLowerCase().trim()
+
+        let list = []
+        if (activeTab === 0) {
+            for (const s of Data.scripts)
+                if (matches(s, q)) list.push(s)
+            for (const c of Data.systemCommands)
+                if (matches(c, q)) list.push(c)
+            if (appsLoaded)
+                for (const a of allApps)
+                    if (matches(a, q)) list.push(a)
+        } else if (activeTab === 1) {
+            if (appsLoaded)
+                list = allApps.filter(a => matches(a, q))
+        } else if (activeTab === 2) {
+            list = Data.scripts.filter(s => matches(s, q))
+        } else if (activeTab === 3) {
+            list = Data.systemCommands.filter(c => matches(c, q))
+        }
+
+        filteredItems = list
+        selectedIndex = list.length > 0 ? 0 : -1
+    }
+
+    // ─── Navigation ───────────────────────────────────────────────────────────
+    function selectPrev() {
+        if (filteredItems.length === 0) return
+        selectedIndex = selectedIndex > 0 ? selectedIndex - 1 : filteredItems.length - 1
+        resultList.positionViewAtIndex(selectedIndex, ListView.Contain)
+    }
+
+    function selectNext() {
+        if (filteredItems.length === 0) return
+        selectedIndex = selectedIndex < filteredItems.length - 1 ? selectedIndex + 1 : 0
+        resultList.positionViewAtIndex(selectedIndex, ListView.Contain)
+    }
+
+    function switchTab(delta) {
+        activeTab = ((activeTab + delta) % 4 + 4) % 4
+        rebuild()
+    }
+
+    // ─── Execute ──────────────────────────────────────────────────────────────
+    function execute() {
+        if (selectedIndex < 0 || selectedIndex >= filteredItems.length) return
+        const item = filteredItems[selectedIndex]
+
+        if (item.requiresAuth) {
+            pendingAuthItem = item
+            authError = ""
+            showAuthDialog = true
+            Qt.callLater(() => {
+                passwordInput.text = ""
+                passwordInput.forceActiveFocus()
+            })
+            return
+        }
+
+        const shellCmd = buildLaunchCmd(item)
+        root.execShellCmd = shellCmd
+        execProc.exec(execProc.command)
+        closeTimer.restart()
+    }
+
+    function confirmAuth() {
+        if (authChecking || !passwordInput.text || !pendingAuthItem) return
+        authError = ""
+        authChecking = true
+        // Verify password via sudo -S without caching (-k)
+        root.authShellCmd = "printf '%s\\n' " + sq(passwordInput.text) + " | sudo -S -k true 2>/dev/null"
+        authProc.exec(authProc.command)
+    }
+
+    function cancelAuth() {
+        showAuthDialog = false
+        pendingAuthItem = null
+        authError = ""
+        authChecking = false
+        Qt.callLater(() => searchInput.forceActiveFocus())
+    }
+
+    // ─── Backdrop ─────────────────────────────────────────────────────────────
+    MouseArea {
+        anchors.fill: parent
+        onClicked: root.close()
+    }
+
+    // ─── Panel ────────────────────────────────────────────────────────────────
+    Rectangle {
+        id: panel
+        width: 680
+        height: root.showAuthDialog
+                ? Math.max(panelCol.implicitHeight, 300)
+                : panelCol.implicitHeight
+        anchors.centerIn: parent
+
+        color: root.colors.surface
+        border.width: 1
+        border.color: root.colors.outline_variant
+        radius: 0
+
+        MouseArea { anchors.fill: parent }  // swallow backdrop clicks
+
+        // ─── Password auth overlay ─────────────────────────────────────────
+        Rectangle {
+            visible: root.showAuthDialog
+            anchors.fill: parent
+            color: root.colors.surface
+            z: 10
+            radius: 0
+
+            MouseArea { anchors.fill: parent }  // block clicks through
+
+            Column {
+                anchors.centerIn: parent
+                spacing: 14
+
+                Text {
+                    anchors.horizontalCenter: parent.horizontalCenter
+                    text: root.pendingAuthItem ? root.pendingAuthItem.icon : ""
+                    color: root.colors.error
+                    font.pixelSize: 36
+                    font.family: "JetBrainsMono Nerd Font"
+                }
+
+                Text {
+                    anchors.horizontalCenter: parent.horizontalCenter
+                    text: root.pendingAuthItem ? root.pendingAuthItem.name : ""
+                    color: root.colors.on_surface
+                    font.pixelSize: 20
+                    font.family: "JetBrainsMono Nerd Font"
+                    font.weight: Font.Medium
+                }
+
+                Text {
+                    anchors.horizontalCenter: parent.horizontalCenter
+                    text: root.authChecking ? "Verificando…" : "Ingresa tu contraseña para continuar"
+                    color: root.authChecking ? root.colors.primary : root.colors.outline
+                    font.pixelSize: 13
+                    font.family: "JetBrainsMono Nerd Font"
+                }
+
+                Rectangle {
+                    width: 300
+                    height: 40
+                    anchors.horizontalCenter: parent.horizontalCenter
+                    color: root.colors.surface_container
+                    border.width: passwordInput.activeFocus ? 2 : 1
+                    border.color: passwordInput.activeFocus ? root.colors.primary : root.colors.outline_variant
+                    radius: 4
+
+                    TextInput {
+                        id: passwordInput
+                        anchors { fill: parent; leftMargin: 12; rightMargin: 12 }
+                        verticalAlignment: TextInput.AlignVCenter
+                        echoMode: TextInput.Password
+                        color: root.colors.on_surface
+                        font.pixelSize: 14
+                        font.family: "JetBrainsMono Nerd Font"
+                        enabled: !root.authChecking
+
+                        Text {
+                            anchors.fill: parent
+                            text: "Contraseña…"
+                            color: root.colors.outline
+                            font: parent.font
+                            visible: parent.text.length === 0 && !root.authChecking
+                            verticalAlignment: Text.AlignVCenter
+                        }
+
+                        Keys.onReturnPressed: (e) => { root.confirmAuth(); e.accepted = true }
+                        Keys.onEnterPressed:  (e) => { root.confirmAuth(); e.accepted = true }
+                        Keys.onEscapePressed: (e) => { root.cancelAuth();  e.accepted = true }
+                    }
+                }
+
+                // Placeholder de altura fija para el mensaje de error
+                Item {
+                    width: 300
+                    height: 18
+                    anchors.horizontalCenter: parent.horizontalCenter
+
+                    Text {
+                        anchors.centerIn: parent
+                        visible: root.authError !== ""
+                        text: root.authError
+                        color: root.colors.error
+                        font.pixelSize: 12
+                        font.family: "JetBrainsMono Nerd Font"
+                    }
+                }
+
+                Text {
+                    anchors.horizontalCenter: parent.horizontalCenter
+                    text: "↵ confirmar  Esc cancelar"
+                    color: root.colors.outline
+                    font.pixelSize: 11
+                    font.family: "JetBrainsMono Nerd Font"
+                }
+            }
+        }
+
+        Column {
+            id: panelCol
+            width: parent.width
+
+            // ── Search bar ────────────────────────────────────────────────
+            Item {
+                width: parent.width
+                height: 58
+
+                RowLayout {
+                    anchors { fill: parent; leftMargin: 18; rightMargin: 18 }
+                    spacing: 12
+
+                    Text {
+                        text: "󰍉"
+                        color: root.colors.primary
+                        font.pixelSize: 20
+                        font.family: "JetBrainsMono Nerd Font"
+                    }
+
+                    TextInput {
+                        id: searchInput
+                        Layout.fillWidth: true
+                        Layout.alignment: Qt.AlignVCenter
+
+                        color: root.colors.on_surface
+                        font.pixelSize: 16
+                        font.family: "JetBrainsMono Nerd Font"
+                        selectionColor: root.colors.primary_container
+                        selectedTextColor: root.colors.on_primary_container
+                        cursorVisible: activeFocus
+                        verticalAlignment: TextInput.AlignVCenter
+
+                        cursorDelegate: Rectangle {
+                            width: 2
+                            color: root.colors.primary
+                        }
+
+                        Text {
+                            anchors.fill: parent
+                            text: "Go..."
+                            color: root.colors.outline
+                            font: searchInput.font
+                            visible: searchInput.text.length === 0
+                            verticalAlignment: Text.AlignVCenter
+                        }
+
+                        onTextChanged: {
+                            root.searchText = text
+                            root.rebuild()
+                        }
+
+                        Keys.onUpPressed:      (e) => { root.selectPrev(); e.accepted = true }
+                        Keys.onDownPressed:    (e) => { root.selectNext(); e.accepted = true }
+                        Keys.onReturnPressed:  (e) => { root.execute();    e.accepted = true }
+                        Keys.onEnterPressed:   (e) => { root.execute();    e.accepted = true }
+                        Keys.onEscapePressed:  (e) => { root.close();      e.accepted = true }
+                        Keys.onTabPressed:     (e) => { root.switchTab(1); e.accepted = true }
+                        Keys.onBacktabPressed: (e) => { root.switchTab(-1); e.accepted = true }
+
+                        Keys.onPressed: (e) => {
+                            if (e.modifiers & Qt.ControlModifier) {
+                                if (e.key === Qt.Key_Left)  { root.switchTab(-1); e.accepted = true }
+                                if (e.key === Qt.Key_Right) { root.switchTab(1);  e.accepted = true }
+                            }
+                        }
+                    }
+
+                    Text {
+                        text: ["General", "Apps", "Scripts", "System"][root.activeTab]
+                        color: root.colors.primary
+                        font.pixelSize: 12
+                        font.family: "JetBrainsMono Nerd Font"
+                        opacity: 0.8
+                    }
+                }
+            }
+
+            Rectangle { width: parent.width; height: 1; color: root.colors.outline_variant; opacity: 0.5 }
+
+            // ── Tab bar ───────────────────────────────────────────────────
+            Rectangle {
+                width: parent.width
+                height: 38
+                color: root.colors.surface_container
+
+                RowLayout {
+                    anchors.fill: parent
+                    spacing: 0
+
+                    Repeater {
+                        model: [
+                            { label: "General", icon: "󱗼" },
+                            { label: "Apps",    icon: "󰣆" },
+                            { label: "Scripts", icon: "󰅩" },
+                            { label: "System",  icon: "󰒓" }
+                        ]
+
+                        delegate: Item {
+                            required property int index
+                            required property var modelData
+                            Layout.fillWidth: true
+                            Layout.fillHeight: true
+
+                            Rectangle {
+                                anchors.fill: parent
+                                color: root.activeTab === index
+                                       ? root.colors.primary_container
+                                       : "transparent"
+                            }
+
+                            Rectangle {
+                                anchors { bottom: parent.bottom; left: parent.left; right: parent.right }
+                                height: 2
+                                color: root.colors.primary
+                                visible: root.activeTab === index
+                            }
+
+                            MouseArea {
+                                anchors.fill: parent
+                                onClicked: {
+                                    root.activeTab = index
+                                    root.rebuild()
+                                    searchInput.forceActiveFocus()
+                                }
+                            }
+
+                            RowLayout {
+                                anchors.centerIn: parent
+                                spacing: 5
+
+                                Text {
+                                    text: modelData.icon
+                                    color: root.activeTab === index
+                                           ? root.colors.on_primary_container
+                                           : root.colors.on_surface_variant
+                                    font.pixelSize: 15
+                                    font.family: "JetBrainsMono Nerd Font"
+                                }
+                                Text {
+                                    text: modelData.label
+                                    color: root.activeTab === index
+                                           ? root.colors.on_primary_container
+                                           : root.colors.on_surface_variant
+                                    font.pixelSize: 12
+                                    font.family: "JetBrainsMono Nerd Font"
+                                    font.weight: root.activeTab === index ? Font.Medium : Font.Normal
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            Rectangle { width: parent.width; height: 1; color: root.colors.outline_variant; opacity: 0.4 }
+
+            // ── Results ───────────────────────────────────────────────────
+            ListView {
+                id: resultList
+                width: parent.width
+                height: Math.min(count, 6) * 42
+                visible: count > 0
+                clip: true
+                model: root.filteredItems
+                spacing: 0
+                currentIndex: root.selectedIndex
+                keyNavigationEnabled: false
+
+                ScrollBar.vertical: ScrollBar {
+                    policy: resultList.count > 6 ? ScrollBar.AlwaysOn : ScrollBar.AlwaysOff
+                    width: 4
+                    contentItem: Rectangle {
+                        radius: 2
+                        color: root.colors.outline_variant
+                    }
+                }
+
+                delegate: ResultItem {
+                    required property int index
+                    required property var modelData
+
+                    width: resultList.width - (resultList.count > 6 ? 4 : 0)
+                    itemName:     modelData.name
+                    itemIcon:     modelData.icon ?? ""
+                    itemIconName: modelData.type === "app" ? (modelData.icon ?? "") : ""
+                    isApp:        modelData.type === "app"
+                    isSelected:   root.selectedIndex === index
+                    colors:       root.colors
+
+                    onActivated: {
+                        root.selectedIndex = index
+                        root.execute()
+                    }
+                }
+            }
+
+            Item {
+                width: parent.width
+                height: 42
+                visible: resultList.count === 0
+
+                Text {
+                    anchors.centerIn: parent
+                    text: (root.activeTab === 1 && !root.appsLoaded)
+                          ? "Cargando aplicaciones…"
+                          : "Sin resultados"
+                    color: root.colors.outline
+                    font.pixelSize: 14
+                    font.family: "JetBrainsMono Nerd Font"
+                }
+            }
+
+            // ── Footer ────────────────────────────────────────────────────
+            Rectangle {
+                width: parent.width
+                height: 26
+                color: root.colors.surface_container
+
+                Text {
+                    anchors { right: parent.right; verticalCenter: parent.verticalCenter; rightMargin: 12 }
+                    text: "↑↓ nav  Tab switch  ↵ run  Esc close"
+                    color: root.colors.outline
+                    font.pixelSize: 11
+                    font.family: "JetBrainsMono Nerd Font"
+                }
+
+                Text {
+                    anchors { left: parent.left; verticalCenter: parent.verticalCenter; leftMargin: 12 }
+                    text: resultList.count > 0
+                          ? (root.selectedIndex + 1) + " / " + resultList.count
+                          : "0 / 0"
+                    color: root.colors.outline
+                    font.pixelSize: 11
+                    font.family: "JetBrainsMono Nerd Font"
+                }
+            }
+        }
+    }
+}

@@ -7,20 +7,24 @@ local var = require("modules/vars")
 -- Programas y utilidades
 hl.bind("SUPER + Tab", hl.dsp.window.cycle_next({}))
 hl.bind("F9", hl.dsp.exec_cmd("kill -USR2 $(pgrep handy)"))
-hl.bind("SUPER + ALT + S", hl.dsp.exec_cmd(var.terminal .. " --class wiremix -e wiremix"))
-hl.bind("SUPER + ALT + B", hl.dsp.exec_cmd(var.terminal .. " --class bluetui -e bluetui"))
+-- hl.bind("SUPER + ALT + S", hl.dsp.exec_cmd(var.terminal .. " --class wiremix wiremix"))
+-- hl.bind("SUPER + ALT + B", hl.dsp.exec_cmd(var.terminal .. " --class bluetui bluetui"))
 hl.bind("SUPER + SHIFT + S", hl.dsp.exec_cmd('grim -g "$(slurp)" - | wl-copy'))
 hl.bind("SUPER + period", hl.dsp.exec_cmd("flatpak run it.mijorus.smile"))
 hl.bind("SUPER + SHIFT + N", hl.dsp.exec_cmd("$XDG_CONFIG_HOME/Scripts/quick-note.sh"))
--- hl.bind("SUPER + F", hl.dsp.exec_cmd(var.terminal .. " -o 'font.size'=13 -e yazi")) -- FALTA EDITOR NVIM?
 hl.bind("SUPER + F", hl.dsp.exec_cmd("kitty -o font_size=11 yazi")) -- FALTA EDITOR NVIM?
-hl.bind("SUPER + N", hl.dsp.exec_cmd("swaync-client -t"))
 hl.bind("SUPER + comma", hl.dsp.exec_cmd("$XDG_CONFIG_HOME/Scripts/config-picker.sh"))
-hl.bind(
-	"SUPER + ALT + N",
-	hl.dsp.exec_cmd(var.terminal .. " --working-directory ~/documents/notas/ -e nvim bullet-journal.md")
-)
 hl.bind("SUPER + ALT + P", hl.dsp.exec_cmd("$XDG_CONFIG_HOME/Scripts/fzf-global.sh"))
+
+-- ChillPill
+hl.bind("SUPER + N", hl.dsp.exec_cmd(var.chillpillIpc .. " controlCenter toggle"))
+hl.bind("SUPER + ALT + N", hl.dsp.exec_cmd(var.chillpillIpc .. " miniDashboard toggle"))
+hl.bind("SUPER + V", hl.dsp.exec_cmd(var.chillpillIpc .. " cliphist toggle"))
+hl.bind("SUPER + W", hl.dsp.exec_cmd(var.chillpillIpc .. " wallpaperSwitcher toggle"))
+hl.bind("SUPER + escape", hl.dsp.exec_cmd(var.chillpillIpc .. " powerMenu toggle"))
+hl.bind("SUPER + ALT + B", hl.dsp.exec_cmd(var.chillpillIpc .. " bluetoothState toggle"))
+hl.bind("SUPER + ALT + W", hl.dsp.exec_cmd(var.chillpillIpc .. " wifiState toggle"))
+-- theme picker sin atajo por ahora: qs ipc -p <repo>/qml call theme toggle
 
 -- Zoom dinámico de acuerdo al layout actual
 hl.bind("SUPER + Z", function()
@@ -34,17 +38,13 @@ hl.bind("SUPER + Z", function()
 	end
 end, { description = "Alterna ancho entre actual y máximo" })
 
---Recuperar mayor y menor que
-hl.bind("CTRL + bar", hl.dsp.exec_cmd("wtype '>'"))
-hl.bind("CTRL + SHIFT + bar", hl.dsp.exec_cmd("wtype '<'"))
-
 -- Básicos
 hl.bind("SUPER + Return", hl.dsp.exec_cmd(var.terminal))
-hl.bind("SUPER + SHIFT + Return", hl.dsp.exec_cmd(var.terminal .. " -e sh -c 'tmux attach || tmux'"))
+hl.bind("SUPER + SHIFT + Return", hl.dsp.exec_cmd(var.terminal .. " sh -c 'tmux attach || tmux'"))
 hl.bind("SUPER + b", hl.dsp.exec_cmd("vivaldi"))
 hl.bind("SUPER + q", hl.dsp.window.close())
 hl.bind("SUPER + SHIFT + F", hl.dsp.exec_cmd(var.fileManager))
-hl.bind("SUPER + V", hl.dsp.layout("togglesplit"))
+hl.bind("SUPER + SHIFT + T", hl.dsp.layout("togglesplit"))
 hl.bind("SUPER + SHIFT + V", hl.dsp.window.float({ action = "toggle" }))
 hl.bind("SUPER + SPACE", hl.dsp.exec_cmd(var.menu))
 hl.bind("SUPER + P", hl.dsp.window.pseudo())

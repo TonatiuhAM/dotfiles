@@ -14,7 +14,7 @@ local colors = require('themes.catppuccin-mocha')
 hl.config({
 	general = {
 		gaps_in = 5,
-		gaps_out = { top = 11, right = 9, bottom = 9, left = 9 },
+		gaps_out = { top = 22, right = 9, bottom = 9, left = 9 },
 		border_size = 2,
 		col = {
 			active_border = colors.teal,

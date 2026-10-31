@@ -40,11 +40,11 @@ wk.add({
 -- Abrir notificaciones de Noice con Leader + n + n
 vim.keymap.set("n", "<leader>nn", "<cmd>Noice history<CR>", { desc = "Historial de Notificaciones" })
 
--- Abrir Alacritty en el directorio del archivo actual con Leader + n + t
+-- Abrir kitty en el directorio del archivo actual con Leader + n + t
 vim.keymap.set("n", "<leader>nt", function()
   local dir = vim.fn.expand("%:p:h")
-  vim.fn.jobstart({ "setsid", "-f", "alacritty", "--working-directory", dir }, { detach = true })
-end, { silent = true, desc = "Abrir Alacritty aquí" })
+  vim.fn.jobstart({ "setsid", "-f", "kitty", "--working-directory", dir }, { detach = true })
+end, { silent = true, desc = "Abrir kitty aquí" })
 
 -- ====================================
 -- KEYMAPS DESACTIVADAS

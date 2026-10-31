@@ -36,7 +36,7 @@ require('mini.tabline').setup()
 
 require('mini.extra').setup()
 require('mini.git').setup()
-require('mini.notify').setup()
+require('mini.notify').setup({ lsp_progress = { enable = false } })
 
 require('mini.pick').setup({
   source = {

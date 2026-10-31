@@ -58,7 +58,7 @@ hl.window_rule({
 	match = { class = "btop" },
 	float = true,
 	center = true,
-	size = { 800, 600 },
+	size = { 1200, 800 },
 })
 
 hl.window_rule({
@@ -97,13 +97,6 @@ hl.window_rule({
 })
 
 hl.window_rule({
-	name = "Cisco Packet Tracer",
-	match = { class = "PakctetTracer" },
-	float = true,
-	center = true,
-})
-
-hl.window_rule({
 	name = " WhatsApp a Workspace M",
 	match = { title = "WhatsApp Web"},
 	workspace = "special:M",
@@ -114,15 +107,3 @@ hl.window_rule({
 	match = { initial_title = "Spotify"},
 	workspace = "special:M",
 })
-
--- Rustdesk
--- hl.window_rule({
--- 	name = "RustDesk",
--- 	match = { class = "rustdesk" },
--- 	float = true,
--- 	size = { 500, 800 },
--- 	move = {
--- 		1300,
--- 		150,
--- 	},
--- })

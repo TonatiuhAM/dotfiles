@@ -44,21 +44,24 @@ local function markdown_menu()
 
     -- Bloques de código
     { text = "󰅩 Código: Convertir a Code Block",         run = function() feed_visual_keys("<Plug>(MarkdownPlusCodeBlock)") end },
-    { text = "󰅩 Código: Insertar Code Block",        run = function() feed_normal_keys("<Plug>(MarkdownPlusCodeBlock)") end },
+    { text = "󰅩 Código: Insertar Code Block",        run = function() feed_normal_keys("<Plug>(MarkdownPlusCodeBlockInsert)") end },
     { text = " Código: Código en linea",    run = function() feed_visual_keys("<Plug>(MarkdownPlusCodeInline)") end },
 
     -- Tablas
     { text = " Tabla: Crear nueva tabla",             run = function() feed_normal_keys("<Plug>(MarkdownPlusTableCreate)") end },
-    { text = "󰏫 Tabla: Editar texto de celda actual",  run = function() feed_normal_keys("<Plug>(MarkdownPlusTableCellEdit)") end },
+    { text = " Tabla: Editar texto de celda actual",  run = function() feed_normal_keys("<Plug>(MarkdownPlusTableEditCell)") end },
     { text = " Tabla: Formatear / Alinear tabla",      run = function() feed_normal_keys("<Plug>(MarkdownPlusTableFormat)") end },
     { text = " Tabla: Insertar fila abajo",            run = function() feed_normal_keys("<Plug>(MarkdownPlusTableInsertRowBelow)") end },
-    { text = " Tabla: Insertar columna derecha",       run = function() feed_normal_keys("<Plug>(MarkdownPlusTableInsertColRight)") end },
+    { text = " Tabla: Insertar fila arriba",            run = function() feed_normal_keys("<Plug>(MarkdownPlusTableInsertRowAbove)") end },
+    { text = " Tabla: Insertar columna derecha",       run = function() feed_normal_keys("<Plug>(MarkdownPlusTableInsertColumnRight)") end },
+    { text = " Tabla: Insertar columna izquierda",       run = function() feed_normal_keys("<Plug>(MarkdownPlusTableInsertColumnLeft)") end },
 
     -- Formato de texto
     { text = " Formato: Negrita (Bold)",              run = function() feed_visual_keys("<Plug>(MarkdownPlusBold)") end },
     { text = "󰞋 Formato: Cursiva (Italic)",            run = function() feed_visual_keys("<Plug>(MarkdownPlusItalic)") end },
     { text = "󰿠 Formato: Tachado (Strikethrough)",     run = function() feed_visual_keys("<Plug>(MarkdownPlusStrikethrough)") end },
-    { text = " Enlace: Convertir en Link",            run = function() feed_visual_keys("<Plug>(MarkdownPlusLink)") end },
+    { text = " Enlace: Convertir en Link",            run = function() feed_visual_keys("<Plug>(MarkdownPlusSelectionToLink)") end },
+    { text = " Enlace: Insertar Markdown Link",       run = function() feed_normal_keys("<Plug>(MarkdownPlusInsertLink)") end },
   }
 
   local ok, MiniPick = pcall(require, "mini.pick")
@@ -84,6 +87,44 @@ end
 -- Keymaps
 -- ====================================================================
 
+-- Originales
+vim.keymap.set("i", "<CR>", "<Plug>(MarkdownPlusListEnter)", {
+  buffer = true,
+  silent = true,
+  desc = "Enter continua lista",
+})
+
+vim.keymap.set("n", "o", "<Plug>(MarkdownPlusNewListItemBelow)", {
+  buffer = true,
+  silent = true,
+  desc = "Nueva lista debajo",
+})
+
+vim.keymap.set("n", "O", "<Plug>(MarkdownPlusNewListItemAbove)", {
+  buffer = true,
+  silent = true,
+  desc = "Nueva lista arriba",
+})
+
+vim.keymap.set("i", "<A-CR>", "<Plug>(MarkdownPlusListShiftEnter)", {
+  buffer = true,
+  silent = true,
+  desc = "Continuar en la siguiente linea",
+})
+
+vim.keymap.set("i", "<Tab>", "<Plug>(MarkdownPlusListIndent)", {
+  buffer = true,
+  silent = true,
+  desc = "Tab en listas",
+})
+
+vim.keymap.set("i", "<S-Tab>", "<Plug>(MarkdownPlusListOutdent)", {
+  buffer = true,
+  silent = true,
+  desc = "Un-tab en listas",
+})
+
+-- Nuevos
 local bufnr = vim.api.nvim_get_current_buf()
 
 -- Menú con fuzzy search
@@ -119,3 +160,93 @@ vim.keymap.set("n", "<localleader>-", "<Plug>(MarkdownPlusToggleListUnordered)",
   remap = true,
   desc = "Alternat checkbox"
 })
+
+vim.keymap.set({ "n", "x"}, "<localleader>b", "<Plug>(MarkdownPlusBold)", {
+  buffer = true,
+  silent = true,
+  remap = true,
+  desc = "Bold"
+})
+
+vim.keymap.set({ "n", "x"}, "<localleader>=", "<Plug>(MarkdownPlusHighlight)", {
+  buffer = true,
+  silent = true,
+  remap = true,
+  desc = "Highlight"
+})
+
+vim.keymap.set({ "n", "x"}, "<localleader>s", "<Plug>(MarkdownPlusStrikethrough)", {
+  buffer = true,
+  silent = true,
+  remap = true,
+  desc = "Strikethrough"
+})
+
+vim.keymap.set({ "n", "x"}, "<localleader>`", "<Plug>(MarkdownPlusCode)", {
+  buffer = true,
+  silent = true,
+  remap = true,
+  desc = "Inline Code"
+})
+
+-- Función para busqueda de tags en notas
+local notes_dir = vim.fn.expand("~/documents/notas/")
+
+local function pick_notes_by_tag()
+  local cmd = {
+    "rg",
+    "-P",
+    "--no-filename",
+    "--only-matching",
+    "--no-heading",
+    "-e", "(?<=^|\\s)#[a-zA-Z][\\w-]*",
+    notes_dir,
+  }
+
+  local output = vim.fn.systemlist(cmd)
+
+  if vim.v.shell_error ~= 0 or #output == 0 then
+    vim.notify("No se encontraron etiquetas válidas en " .. notes_dir, vim.log.levels.WARN)
+    return
+  end
+
+  local seen = {}
+  local tags = {}
+
+  for _, raw_tag in ipairs(output) do
+    local tag = vim.trim(raw_tag)
+
+    local is_hex_color = tag:match("^#[0-9a-fA-F]+$") and (#tag == 4 or #tag == 7 or #tag == 9)
+
+    if not is_hex_color and not seen[tag] then
+      seen[tag] = true
+      table.insert(tags, tag)
+    end
+  end
+
+  table.sort(tags)
+
+  MiniPick.start({
+    source = {
+      items = tags,
+      name = "Etiquetas de Notas",
+      choose = function(selected_tag)
+        if not selected_tag then return end
+
+        vim.schedule(function()
+          MiniPick.builtin.grep({
+            pattern = selected_tag,
+          }, {
+            source = {
+              cwd = notes_dir,
+              name = "Notas con: " .. selected_tag,
+            },
+          })
+        end)
+      end,
+    },
+  })
+end
+
+-- Keymap para invocar el selector de tags
+vim.keymap.set("n", "<localleader>t", pick_notes_by_tag, { desc = "Listar y buscar por [t]ags" })

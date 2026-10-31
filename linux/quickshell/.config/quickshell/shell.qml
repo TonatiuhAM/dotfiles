@@ -2,8 +2,8 @@
 
 import Quickshell
 import QtQuick
-import "./gruvbox"
-import "./Launcher"
+import "./simple-catppuccin/simple-bar"
+import "./simple-catppuccin/app-launcher"
 
 ShellRoot {
     id: root

@@ -8,11 +8,11 @@
 TMPFILE=$(mktemp /tmp/dev-layout-XXXXXX)
 trap 'rm -f "$TMPFILE"' EXIT
 
-# Fase 1: Selector flotante — bloquea hasta que alacritty cierra.
+# Fase 1: Selector flotante — bloquea hasta que kitty cierra.
 # --create-only: crea/localiza la sesión pero no hace attach aquí, solo
 # imprime su nombre (el attach real ocurre en la Fase 2, terminal derecha).
-alacritty --class dev-workspace-picker \
-    -e bash -c "\$XDG_CONFIG_HOME/Scripts/tmux-sessionizer.sh --create-only > ${TMPFILE}"
+kitty --class dev-workspace-picker \
+    bash -c "\$XDG_CONFIG_HOME/Scripts/tmux-sessionizer.sh --create-only > ${TMPFILE}"
 
 SESSION=$(cat "$TMPFILE")
 [[ -z "$SESSION" ]] && exit 0
@@ -21,14 +21,14 @@ SESSION=$(cat "$TMPFILE")
 CWD=$(tmux display-message -p -t "$SESSION" '#{pane_current_path}')
 
 # Fase 2: Terminal izquierda — trabajo general
-alacritty --class dev-workspace-main \
+kitty --class dev-workspace-main \
     --working-directory "$CWD" &
 
 sleep 0.3
 
 # Fase 2: Terminal derecha — sesión de tmux elegida
-alacritty --class dev-workspace-tmux \
-    -e bash -c "tmux attach-session -t '$SESSION'" &
+kitty --class dev-workspace-tmux \
+    bash -c "tmux attach-session -t '$SESSION'" &
 
 sleep 0.4
 

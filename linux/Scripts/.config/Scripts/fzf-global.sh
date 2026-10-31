@@ -2,7 +2,7 @@
 
 # Si se ejecuta fuera de una terminal (ej. atajo global), abre fzf en una ventana flotante/interactiva
 if [ ! -t 0 ]; then
-  alacritty --class "fzf-global" -e "$0"
+  kitty --class "fzf-global" "$0"
   exit 0
 fi
 
@@ -42,10 +42,10 @@ else
   cwd="${root:-$(dirname "$target")}"
 fi
 
-setsid alacritty --working-directory "$cwd" -e nvim "$target" >/dev/null 2>&1 &
+setsid kitty --working-directory "$cwd" nvim "$target" >/dev/null 2>&1 &
 
 # Da tiempo a que la nueva ventana se independice antes de que esta
 # terminal (la del picker, lanzada por el keybind) se cierre. Sin esto,
-# al invocar el script vía keybind de Hyprland, la ventana de alacritty
+# al invocar el script vía keybind de Hyprland, la ventana de kitty
 # recién lanzada muere junto con la terminal del picker (race condition).
 sleep 0.3

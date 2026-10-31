@@ -1,0 +1,138 @@
+import Quickshell
+import Quickshell.Io
+import Quickshell.Services.Pipewire
+import QtQuick
+import QtQuick.Layouts
+
+RowLayout {
+  id: root
+  signal volumeChanged
+
+  // tells our own slider writes apart from external ones (media keys,
+  // pavucontrol, wpctl/pactl) so the display keeps the boosted value while
+  // our write is still travelling, but always follows real external changes
+  property bool selfWrite: false
+
+  Timer {
+    id: selfWriteGuard
+    interval: 200
+    onTriggered: {
+      root.selfWrite = false
+      // settle on the real value (also covers PipeWire clamping)
+      if (root.ready && root.intendedVol !== root.vol)
+        root.intendedVol = root.vol
+    }
+  }
+
+  // single entry point for changing the volume through the UI
+  function setVolume(pct) {
+    selfWrite = true
+    selfWriteGuard.restart()
+    intendedVol = pct
+    sink.audio.volume = pct / 100
+  }
+
+  onVolChanged: {
+    // sync the displayed value with the real volume for external changes;
+    // must also run above 100% (maxVolume > 100) or lowering the volume
+    // would leave the pill/OSD stuck on the old value
+    if (ready && !selfWrite && intendedVol !== vol)
+      intendedVol = vol
+    root.volumeChanged()
+  }
+  onMutedChanged: root.volumeChanged()
+  onIntendedVolChanged: root.volumeChanged()
+  property string fg: Theme.fg
+  property string mutedColor: Theme.mutedFg
+  property var sink: Pipewire.defaultAudioSink
+  readonly property bool ready: sink && sink.ready
+  readonly property bool muted: ready && sink.audio.muted
+  readonly property int vol: ready ? Math.round(sink.audio.volume * 100) : 0
+  property int intendedVol: vol
+
+  readonly property var sinkProps: ready ? sink.properties : ({})
+
+  property string activePort: ""
+  readonly property bool isHeadphone: activePort.indexOf("headphone") !== -1
+                                     || activePort.indexOf("headset") !== -1
+  spacing: 4 * Config.paddingScale
+  function checkPort() {
+    if (!ready) return
+    portCheck.command = ["bash", "-c",
+      "pactl list sinks | awk -v RS='' '/Name: " + sink.name + "/' | grep -oP 'Active Port: \\K.*'"]
+    portCheck.running = true
+  }
+
+  Process {
+    id: portCheck
+    stdout: SplitParser { onRead: data => root.activePort = data.trim() }
+  }
+
+  // watch for jack plug/unplug events ral time
+  Process {
+    running: true
+    command: ["pactl", "subscribe"]
+    stdout: SplitParser {
+      onRead: data => { if (data.indexOf("on sink") !== -1) root.checkPort() }
+    }
+  }
+
+  Component.onCompleted: checkPort()
+  onSinkChanged: checkPort()
+
+  property string icon: {
+      const r = ready, m = muted, h = isHeadphone, v = intendedVol   // force-read all deps
+      if (!r || m) return h ? "\uf025" : String.fromCodePoint(0xf0581)
+      if (h) return "\uee58"
+      if (v === 0) return String.fromCodePoint(0xf0581)
+      if (v < 40) return String.fromCodePoint(0xf0580)
+      return String.fromCodePoint(0xf057e)
+  }
+
+  function toggleMute() {
+    sink.audio.muted = !sink.audio.muted
+  }
+
+  // icon
+  Text {
+    text: root.icon
+
+    color: {
+      if (root.muted || vol === 0) {
+        console.log("audio volume status:", root.muted)
+        return root.mutedColor
+      }
+      return root.fg
+    }
+
+    font.family: Theme.nerdFontFamily
+    font.pixelSize: 13 * Config.pillScale
+  }
+
+  MouseArea {
+    id: audioMuted
+    cursorShape: Qt.PointingHandCursor
+    onClicked: sink.audio.muted = !sink.audio.muted
+    hoverEnabled: true
+  }
+
+  // percentage
+  Text {
+    text: {
+      if (!root.ready) return "-"
+      if (root.muted) return "0%"
+      return root.intendedVol + "%"
+    }
+    color: fg
+
+    font {
+      pixelSize: 10 * Config.pillScale
+      family: Theme.fontFamily
+      weight: 500
+    }
+  }
+
+  PwObjectTracker {
+    objects: [root.sink]
+  }
+}

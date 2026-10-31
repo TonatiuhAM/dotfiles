@@ -1,0 +1,51 @@
+import Quickshell
+import Quickshell.Io
+import QtQuick
+
+Text {
+  id: clockText
+
+  property string todayEvent: ""
+  property string fontFamily: Theme.fontFamily
+
+  FileView {
+    id: eventsFile
+    path: {
+      if (!Config.holidaysUsable()) return ""
+      const year = new Date().getFullYear()
+      return Quickshell.env("HOME") + "/.cache/chillpill-shell/" + Config.holidaysCacheName(year)
+    }
+    watchChanges: true
+    onLoaded: clockText.parseEvents(text())
+    onLoadFailed: clockText.todayEvent = ""
+  }
+
+  function parseEvents(jsonText) {
+    try {
+      const data = JSON.parse(jsonText)
+      const d = new Date()
+      const todayKey = d.getFullYear() + "-" + (d.getMonth() + 1) + "-" + d.getDate()
+      clockText.todayEvent = data[todayKey] || ""
+    } catch (e) {
+      clockText.todayEvent = ""
+    }
+  }
+
+  // spanish short names by hand so it doesn't depend on the system locale ("Lun 23 May")
+  readonly property var dayNames: ["Dom", "Lun", "Mar", "Mié", "Jue", "Vie", "Sáb"]
+  readonly property var monthNames: ["Ene", "Feb", "Mar", "Abr", "May", "Jun", "Jul", "Ago", "Sep", "Oct", "Nov", "Dic"]
+
+  function shortDate(d) {
+    return dayNames[d.getDay()] + " " + d.getDate() + " " + monthNames[d.getMonth()]
+  }
+
+  text: Qt.formatDateTime(clock.date, Config.clockFormat) + "  " + shortDate(clock.date)
+  color: Theme.fg
+
+  font {
+    family: Theme.fontFamily
+    weight: 500
+    pixelSize: 10 * Config.pillScale
+    letterSpacing: -0.5
+  }
+}

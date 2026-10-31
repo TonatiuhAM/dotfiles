@@ -13,7 +13,9 @@ killall -9 qs || true
 
 # Volver a lanzar quickshell en segundo plano e independizar el proceso
 # (Redirigimos la salida a /dev/null para que no ensucie tu terminal o logs)
-nohup qs >/dev/null 2>&1 &
+# lanzar ChillPill (sin argumentos qs cargaría ~/.config/quickshell/shell.qml, la barra vieja)
+CHILLPILL="$HOME/.config/quickshell/chillpill"
+QML_IMPORT_PATH="$CHILLPILL/build/qml" nohup qs -p "$CHILLPILL" >/dev/null 2>&1 &
 
 # Si en el futuro regresas a waybar, hazlo igual:
 # nohup waybar >/dev/null 2>&1 &
