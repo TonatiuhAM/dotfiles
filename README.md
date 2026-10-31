@@ -64,22 +64,20 @@ NAME
        dotfiles - gestión de configuraciones vía GNU Stow
 
 SYNOPSIS
-       stow -d <carpeta-de-paquetes> -t <destino> <paquete> [paquete ...]
+       cd ~/dotfiles && stow [-t <destino>] <paquete> [paquete ...]
 
 DESCRIPTION
-       Cada carpeta de primer nivel dentro de linux/ (o macos-personal/) es un
-       paquete de Stow independiente, con su propia ruta relativa a $HOME ya
-       incluida adentro (linux/hypr/.config/hypr/hyprland.lua -> ~/.config/
-       hypr/hyprland.lua). Instala, quita o prueba cada app por separado sin
+       Cada carpeta de primer nivel del repo es un paquete de Stow
+       independiente, con su propia ruta relativa a $HOME ya incluida adentro
+       (hypr/.config/hypr/hyprland.lua -> ~/.config/hypr/hyprland.lua).
+       Como el repo vive en ~/dotfiles, el destino por default de Stow (la
+       carpeta padre) ya es ~, así que -t ~ es opcional. Instala, quita o prueba cada app por separado sin
        arrastrar las demás.
 
 REQUIREMENTS
-       stow   sudo pacman -S stow   /   sudo dnf install stow   /   brew install stow
+       stow   sudo pacman -S stow   /   sudo dnf install stow
 
 OPTIONS
-       -d, --dir=DIR
-              Carpeta donde viven los paquetes (linux o macos-personal).
-
        -t, --target=DIR
               Carpeta destino donde se crean los symlinks (normalmente ~).
 
@@ -106,27 +104,26 @@ OPTIONS
               "git diff" de inmediato si lo usas.
 
 EXAMPLES
-       stow -nv -d linux -t ~ hypr
+       stow -nv -t ~ hypr
               Simula (no aplica nada) e imprime cada symlink que crearía.
 
-       stow -d linux -t ~ hypr quickshell
+       stow -t ~ hypr quickshell
               Instala varios paquetes de un jalón.
 
-       stow -R -d linux -t ~ kitty
+       stow -R -t ~ kitty
               Re-enlaza "kitty" después de editar qué archivos tiene el
               paquete.
 
-       stow -D -d linux -t ~ waybar
+       stow -D -t ~ waybar
               Quita los symlinks de "waybar" sin tocar el repo.
 
-       for app in linux/*/; do stow -d linux -t ~ "${app#linux/}"; done
+       for app in */; do stow -t ~ "${app%/}"; done
               Instala todo de un jalón. No es el flujo recomendado: el punto
               de tener paquetes por app es justo no instalar lo que no usas.
 
-SEE ALSO
-       macos-personal/ usa el mismo patrón, solo cambia -d:
+       .zshenv vive en la raíz del repo (no es un paquete) y se enlaza a mano:
 
-              stow -nv -d macos-personal -t ~ nvim kitty tmux
+              ln -s dotfiles/.zshenv ~/.zshenv
 
 WARNINGS
        Estos archivos están estrictamente personalizados para mi hardware y
