@@ -1,5 +1,0 @@
--- colors.lua (generado automáticamente por matugen, no editar)
--- image = {{image}}
-<* for name, value in colors *>
-{{name}} = "rgba({{value.default.hex_stripped}}ff)"
-<* endfor *>
