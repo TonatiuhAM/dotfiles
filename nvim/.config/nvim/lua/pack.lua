@@ -20,6 +20,9 @@ vim.api.nvim_create_autocmd('PackChanged', {
       run_build(name, { 'make' }, ev.data.path)
     elseif name == 'LuaSnip' then
       if vim.fn.has 'win32' ~= 1 and vim.fn.executable 'make' == 1 then run_build(name, { 'make', 'install_jsregexp' }, ev.data.path) end
+    elseif name == 'markdown-preview.nvim' then
+      -- descarga el servidor precompilado (app/bin); sin él :MarkdownPreview no hace nada
+      run_build(name, { 'bash', 'install.sh' }, vim.fs.joinpath(ev.data.path, 'app'))
     elseif name == 'nvim-treesitter' then
       if not ev.data.active then vim.cmd.packadd 'nvim-treesitter' end
       vim.cmd 'TSUpdate'

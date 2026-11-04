@@ -1,6 +1,6 @@
 import Quickshell
 import QtQuick
-import QtMultimedia
+import Quickshell.Io
 
 Item {
   id: root
@@ -18,14 +18,16 @@ Item {
   property int maxStored: Config.maxNotificationsInStack
   property bool avoidDuplicateNotifications: Config.avoidDuplicateNotifications
 
-  SoundEffect {
+  // Played by a separate process on purpose. QtMultimedia's SoundEffect keeps its own
+  // PipeWire connection in a background thread for the shell's whole lifetime, and that
+  // thread segfaulted the shell when a Bluetooth output went away.
+  Process {
     id: notifySound
-    source: "file://" + Quickshell.shellDir + "/share/notification.wav"
-    volume: 1
+    command: ["pw-play", Quickshell.shellDir + "/share/notification.wav"]
   }
 
   function trigger(): void {
-    if (notifySound.status === SoundEffect.Ready) notifySound.play()
+    notifySound.running = true // no-op while a sound is already playing
   }
 
   function syncReversed(): void {

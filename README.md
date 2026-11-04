@@ -1,10 +1,9 @@
 # 🐧 Tona's Dotfiles 
 
 <div align="center">
-  <img src="https://img.shields.io/badge/OS-EndeavourOS-blueviolet?style=flat-square&logo=arch-linux&logoColor=white" />
-  <img src="https://img.shields.io/badge/WM-Hyprland-81c8be?style=flat-square&logo=hyprland&logoColor=white" />
-  <img src="https://img.shields.io/badge/Editor-Neovim-57a143?style=flat-square&logo=neovim&logoColor=white" />
-  <img src="https://img.shields.io/badge/Shell-ZSH-f15a24?style=flat-square&logo=zsh&logoColor=white" />
+  <img src="https://img.shields.io/badge/Fedora-%23294172.svg?style=for-the-badge&logo=fedora&logoColor=white" />
+  <img src="https://img.shields.io/badge/Hyprland-%2358E1FF.svg?style=for-the-badge&logo=hyprland&logoColor=black" />
+  <img src="https://img.shields.io/badge/neovim-%2357A143.svg?style=for-the-badge&logo=neovim&logoColor=white" />
 </div>
 
 
@@ -13,34 +12,21 @@
 ```text
 ~/dotfiles -----------------------------------------------------------------------------------
 » tona --version
-
-tona-dotfiles v2.4.0 (Keyboard-driven, minimalist ecosystem)
-"La simplicidad es la máxima sofisticación."
-```
-
-```text
-
-~/dotfiles -----------------------------------------------------------------------------------
-» fastfetch --source ascii.txt
+tona-dotfiles v3.0.0 | "La simplicidad es la máxima sofisticación."
 
 ⚡ CORE SYSTEMS
-├── OS       :: EndeavourOS (Arch Linux)
-├── WM       :: Hyprland (Wayland Tiling Compositor)
-└── Shell    :: ZSH (Zoxide + FZF + Autosuggestions)
-
-🪐 UI & NOTIFICATIONS
-├── Quickshell :: Flexible, QML-based desktop shell component toolkit
-├── SwayNC     :: Lightweight, Wayland-native notification daemon
-└── Matugen    :: Material You color generation CLI utility
-
+├── OS                  :: Fedora 44
+├── Window Manager      :: Hyprland
+├── UI                  :: Quickshell
+└── Shell               :: ZSH
+  
 💻 APPLICATIONS
-├── Terminal :: Kitty (Fast, GPU-accelerated)
-├── Editor   :: Neovim (Custom Lua configuration, Lazy-powered)
-├── Multiplex:: tmux (Session management)
-├── File Mngr:: Yazi (Blazing fast terminal file manager)
-└── Git UI   :: Lazygit (Keyboard-driven git workflow)
+├── Terminal            :: Kitty
+├── Editor              :: Neovim
+├── Multiplex           :: tmux
+├── File Manager        :: Yazi
+└── IA Agent            :: Claude Code
 ```
-
 
 ## 📸 Screenshots
 

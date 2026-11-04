@@ -34,7 +34,7 @@
   "weatherRefreshInterval": 3600000,
   "avoidDuplicateNotifications": true,
   "defaultTerminal": "kitty",
-  "pillScale": 1.15,
+  "pillScale": 1.00,
   "dpiScale": 1.25,
   "wallpapersDir": "~/Wallpapers",
   "customWallpaperScript": "",

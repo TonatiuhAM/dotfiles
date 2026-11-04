@@ -11,10 +11,7 @@ require("render-markdown").setup({
     render_modes = false,
     atx = true,
     setext = true,
-    sign = {
-      enabled = true,
-      highlight = "RenderMarkdownHeadingSign",
-    },
+    sign = true,
     icons = { "󰼏 ", "󰎨 " },
     position = "inline",
     signs = { "󰫎 " },

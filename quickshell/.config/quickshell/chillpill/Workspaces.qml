@@ -1,9 +1,7 @@
 import Quickshell
 import Quickshell.Hyprland
 import Quickshell.Io
-import Quickshell.Widgets
 import QtQuick
-import QtQuick.Effects
 import QtQuick.Layouts
 
 RowLayout {
@@ -23,106 +21,24 @@ RowLayout {
       property string activeBg: Theme.wsActiveBg
       property string inactiveBg: Theme.wsInactiveBg
 
-      // one entry per distinct app open in this workspace (deduped by appId/class)
-      readonly property var apps: {
-        if (!ws) return []
-        const seen = new Set()
-        const out = []
-        for (const t of ws.toplevels.values) {
-          const id = t.wayland?.appId || t.lastIpcObject?.class || ""
-          if (!id || seen.has(id)) continue
-          seen.add(id)
-          out.push(id)
-        }
-        return out
-      }
-
-      readonly property real baseSize: 17.5 * Config.pillScale
-      readonly property real iconSize: 11 * Config.pillScale
-
-      // square pill when empty, grows to the right to fit the app icons
-      Layout.preferredWidth: apps.length > 0 ? content.implicitWidth + 2 * (5 * Config.pillScale) : baseSize
-      Layout.preferredHeight: baseSize
+      // square pill showing only the workspace number
+      Layout.preferredWidth: 17.5 * Config.pillScale
+      Layout.preferredHeight: Layout.preferredWidth
       radius: 8 * Config.pillScale
       color: isActive ? activeBg : (ws ? inactiveBg : Theme.transparent)
 
       // animate color transition on workspace switch
       Behavior on color { ColorAnimation { duration: 120 } }
-      Behavior on Layout.preferredWidth { NumberAnimation { duration: 120; easing.type: Easing.OutCubic } }
 
-      Row {
-        id: content
+      Text {
         anchors.centerIn: parent
-        spacing: 3 * Config.pillScale
-
-        Text {
-          anchors.verticalCenter: parent.verticalCenter
-          text: wsButton.index + 1
-          color: wsButton.isActive ? Theme.wsActiveFg : Theme.wsInactiveFg
-          font {
-            family: Theme.fontFamily
-            pixelSize: 10 * Config.pillScale
-            weight: 700
-          }
+        text: wsButton.index + 1
+        color: wsButton.isActive ? Theme.wsActiveFg : Theme.wsInactiveFg
+        font {
+          family: Theme.fontFamily
+          pixelSize: 10 * Config.pillScale
+          weight: 700
         }
-
-        Repeater {
-          model: wsButton.apps
-
-          delegate: Item {
-            id: appIcon
-            required property string modelData
-            anchors.verticalCenter: parent.verticalCenter
-            implicitWidth: wsButton.iconSize
-            implicitHeight: wsButton.iconSize
-            // dim icons on non-focused workspaces
-            opacity: wsButton.isActive ? 1.0 : 0.7
-
-            // checked lookup: "" when nothing in the theme matches, so we never
-            // hand IconImage a missing name (that renders the purple/black checkerboard)
-            readonly property string iconSrc: wsButton.resolveIcon(modelData)
-
-            IconImage {
-              anchors.fill: parent
-              visible: appIcon.iconSrc !== ""
-              source: appIcon.iconSrc
-              // black & white: fully desaturate the icon
-              layer.enabled: true
-              layer.effect: MultiEffect { saturation: -1.0 }
-            }
-
-            // generic glyph for apps with no resolvable icon
-            Text {
-              anchors.centerIn: parent
-              visible: appIcon.iconSrc === ""
-              text: String.fromCodePoint(0xf08c6) // nf-md-application_outline
-              color: wsButton.isActive ? Theme.wsActiveFg : Theme.wsInactiveFg
-              font.family: Theme.nerdFontFamily
-              font.pixelSize: wsButton.iconSize
-            }
-          }
-        }
-      }
-
-      // try several icon names for an app id and return the first one that exists
-      function resolveIcon(appId) {
-        const lower = appId.toLowerCase()
-        const candidates = []
-        const entry = DesktopEntries.heuristicLookup(appId)
-        if (entry?.icon) candidates.push(entry.icon)
-        candidates.push(appId, lower)
-        // reverse-DNS ids (org.gnome.Nautilus -> nautilus)
-        if (lower.includes(".")) candidates.push(lower.split(".").pop())
-        // browser PWAs / suffixed classes (vivaldi-stable -> vivaldi)
-        if (lower.includes("-")) candidates.push(lower.split("-")[0])
-
-        for (const c of candidates) {
-          if (!c) continue
-          if (c.startsWith("/")) return "file://" + c
-          const path = Quickshell.iconPath(c, true)
-          if (path) return path
-        }
-        return Quickshell.iconPath("application-x-executable", true)
       }
 
       // clickable text buttons

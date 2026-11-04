@@ -14,6 +14,10 @@ import Quickshell.Services.Notifications
 ShellRoot {
   id: shellRoot
 
+  // Moves audio to Bluetooth headphones when they connect and back to the
+  // previous output when they disconnect (see BluetoothAudioRouter.qml)
+  BluetoothAudioRouter {}
+
   IpcHandler {
       target: "cliphist"
       function toggle(): void { box.controlCenter = false; box.miniDashboard = false; box.cliphistOpen = !box.cliphistOpen; box.spotlight = false; box.wallpaperSwitcherOpen = false; box.powerMenu = false; box.themePicker = false }
